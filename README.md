@@ -1,4 +1,4 @@
-# Fokuso
+# Fokuso React Frontend
 
  A web-based platform designed to enhance the learning experience with features tailored for study management, collaborative learning, and productivity. This app aims to provide users with an intuitive interface to track their progress, access study materials, and collaborate with peers.
  
