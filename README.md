@@ -8,16 +8,13 @@
  
  ## Technologies Used
  
- - **Frontend**: React (or another frontend framework)
+ - **Frontend**: React 
  - **Backend**: Django API
  - **Database**: PostgreSQL 
- - **Deployment**: Docker?
  
  Make sure you have the following installed:
  
  - Node.js
- - Python (if using Django for backend)
- - PostgreSQL (or your chosen database)
  
  ### Clone the repository
  
