@@ -24,7 +24,7 @@ function LandingPage() {
         <Card>
           <CardContent className="p-6">
             <h3 className="text-xl font-semibold mb-2">Feature Two</h3>
-            <p className="text-gray-600">Care.</p>
+            <p className="text-gray-600">Fuck again.</p>
           </CardContent>
         </Card>
         <Card>
