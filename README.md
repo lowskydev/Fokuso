@@ -20,3 +20,12 @@
  
  ```bash
  git clone https://github.com/lowskydev/Fokuso.git
+```
+
+```bash
+npm install
+```
+
+```bash
+npm run dev
+```
