@@ -4,9 +4,9 @@ import { Link } from "react-router-dom";
 
 function LandingPage() {
   return (
-    <main className="flex flex-col items-center justify-center text-center px-6 py-20">
+    <main className="flex flex-col items-center justify-center text-center px-6 py-20 bg-background text-foreground">
       <h2 className="text-4xl font-bold mb-4">Welcome to Fokuso</h2>
-      <p className="text-lg text-gray-600 mb-8 max-w-xl">
+      <p className="text-lg text-muted-foreground mb-8 max-w-xl">
         Fokuso helps you manage tasks, connect with others, and stay productive. Explore the features and get started now.
       </p>
 
@@ -18,19 +18,19 @@ function LandingPage() {
         <Card>
           <CardContent className="p-6">
             <h3 className="text-xl font-semibold mb-2">Feature One</h3>
-            <p className="text-gray-600">Fuck.</p>
+            <p>Fuck.</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-6">
             <h3 className="text-xl font-semibold mb-2">Feature Two</h3>
-            <p className="text-gray-600">Care.</p>
+            <p>Care.</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-6">
             <h3 className="text-xl font-semibold mb-2">Feature Three</h3>
-            <p className="text-gray-600">Lay low.</p>
+            <p >Lay low.</p>
           </CardContent>
         </Card>
       </div>
