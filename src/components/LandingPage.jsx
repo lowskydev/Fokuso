@@ -1,41 +1,121 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 
 function LandingPage() {
+  const features = [
+    {
+      title: "Pomodoro Timer",
+      description: "Improve your concentration and productivity using Pomodoro Timer.",
+    },
+    {
+      title: "Calendar",
+      description: "Manage your study timings to learn efficiently.",
+    },
+    {
+      title: "Flash Cards",
+      description: "Create personalized Flash Cards to test your memory.",
+    },
+  ];
+
+  //default times
+  const [studyTime, setStudyTime] = useState(25); 
+  const [breakTime, setBreakTime] = useState(5);
+  const [showModal, setShowModal] = useState(false);
+
+  //saves the customized timer and redirects to page
+  const handleSaveSettings = () => {
+    
+    localStorage.setItem("studyDuration", studyTime * 60); 
+    localStorage.setItem("breakDuration", breakTime * 60); 
+    setShowModal(false);
+    
+    window.location.href = "/pomodoropage";
+  };
+
   return (
-    <main className="flex flex-col items-center justify-center text-center px-6 py-20">
-      <h2 className="text-4xl font-bold mb-4">Welcome to Fokuso</h2>
-      <p className="text-lg text-gray-600 mb-8 max-w-xl">
+    <main className="flex flex-col items-center justify-center text-center px-6 py-20 min-h-screen bg-gradient-to-br from-blue-100 to-purple-200 dark:from-zinc-900 dark:to-zinc-800">
+      <h2 className="text-4xl font-bold mb-4 text-zinc-900 dark:text-white">
+        Welcome to Fokuso
+      </h2>
+      <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-xl">
         Fokuso helps you manage tasks, connect with others, and stay productive. Explore the features and get started now.
       </p>
 
       <Link to="/register">
-        <Button size="lg" className="mb-12 cursor-pointer">Get Started</Button>
+        <Button size="lg" className="mb-12 cursor-pointer">
+          Get Started
+        </Button>
       </Link>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl">
-        <Card>
-          <CardContent className="p-6">
-            <h3 className="text-xl font-semibold mb-2">Feature One</h3>
-            <p className="text-gray-600">Fuck.</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6">
-            <h3 className="text-xl font-semibold mb-2">Feature Two</h3>
-            <p className="text-gray-600">Fuck again.</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6">
-            <h3 className="text-xl font-semibold mb-2">Feature Three</h3>
-            <p className="text-gray-600">Lay low.</p>
-          </CardContent>
-        </Card>
+      {}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl mb-12">
+        {features.map((feature, index) => (
+          <FeatureCard
+            key={index}
+            title={feature.title}
+            description={feature.description}
+            isPomodoro={feature.title === "Pomodoro Timer"}
+            onClick={() => {
+              if (feature.title === "Pomodoro Timer") {
+                setShowModal(true);  //pop up
+              }
+            }}
+          />
+        ))}
       </div>
+
+      {}
+      {showModal && (
+        <div className="fixed inset-0 flex justify-center items-center bg-gray-800 bg-opacity-70 dark:bg-opacity-80">
+          <div className="bg-white dark:bg-zinc-800 p-8 rounded-xl shadow-xl w-96">
+            <h3 className="text-xl font-semibold mb-4 text-zinc-900 dark:text-white">
+              Customize Pomodoro Timer
+            </h3>
+            <div className="mb-4">
+              <label className="block mb-2 text-gray-700 dark:text-white">Study Time (minutes)</label>
+              <input
+                type="number"
+                value={studyTime}
+                onChange={(e) => setStudyTime(Math.max(1, Number(e.target.value)))}
+                className="w-full p-2 border border-gray-300 rounded-lg mb-4 dark:bg-zinc-700 dark:text-white"
+                min={1}
+              />
+            </div>
+            <div className="mb-6">
+              <label className="block mb-2 text-gray-700 dark:text-white">Break Time (minutes)</label>
+              <input
+                type="number"
+                value={breakTime}
+                onChange={(e) => setBreakTime(Math.max(1, Number(e.target.value)))}
+                className="w-full p-2 border border-gray-300 rounded-lg dark:bg-zinc-700 dark:text-white"
+                min={1}
+              />
+            </div>
+            <div className="flex justify-between">
+              <Button variant="outline" onClick={() => setShowModal(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleSaveSettings}>Save and Start</Button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
+
+const FeatureCard = ({ title, description, isPomodoro, onClick }) => {
+  return (
+    <div className="w-full h-52 cursor-pointer" onClick={onClick}>
+      <Card className="w-full h-full flex items-center justify-center shadow-lg dark:bg-zinc-800 rounded-lg">
+        <CardContent className="flex items-center justify-center h-full">
+          <h3 className="text-xl font-semibold text-gray-800 dark:text-white">{title}</h3>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
 
 export default LandingPage;

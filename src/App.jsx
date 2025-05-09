@@ -3,6 +3,8 @@ import LandingPage from "./components/LandingPage";
 import Navbar from "./components/Navbar";
 import LoginPage from "./components/LoginPage";
 import RegisterPage from "./components/RegisterPage";
+import PomodoroPage from "@/components/PomodoroPage"
+
 
 function App() {
   return (
@@ -12,6 +14,7 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/pomodoropage" element={<PomodoroPage />} />
           <Route path="/register" element={<RegisterPage />} />
         </Routes>
       </div>
