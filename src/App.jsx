@@ -10,6 +10,7 @@ import CalendarPage from "@/components/pages/CalendarPage";
 import TodoPage from "@/components/pages/TodoPage";
 import StatsPage from "@/components/pages/StatsPage";
 import { ThemeProvider } from "./components/theme-provider";
+import PageNotFound from "./components/pages/PageNotFound";
 
 
 
@@ -36,6 +37,8 @@ function AppContent() {
               <Route path="/dashboard/stats" element={<StatsPage />} />
             </Route>
           </Route>
+
+          <Route path="*" element={<PageNotFound />} />
         </Routes>
       </ThemeProvider>
     </>
