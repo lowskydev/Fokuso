@@ -17,12 +17,11 @@ const SidebarItem = ({ label, path }) => {
 
 export default function DashboardLayout() {
   const { user, logout } = useAuthStore();
-  console.log("user", user);
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
-    navigate("/login");
+    navigate("/");
   };
 
   return (
