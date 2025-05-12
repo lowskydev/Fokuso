@@ -28,7 +28,7 @@ export default function DashboardLayout() {
     <div className="flex h-screen bg-background text-foreground">
       {/* Sidebar */}
       <aside className="w-64 p-4 bg-muted border-r shadow-sm">
-        <h2 className="text-xl font-bold mb-6">StudySpace</h2>
+        <h2 className="text-xl font-bold mb-6">Fokuso</h2>
         <nav className="space-y-2">
           <SidebarItem label="Pomodoro" path="/dashboard/pomodoro" />
           <SidebarItem label="Calendar" path="/dashboard/calendar" />

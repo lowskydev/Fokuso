@@ -1,11 +1,14 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
-import LandingPage from "./components/LandingPage";
+import LandingPage from "./components/pages/LandingPage";
 import Navbar from "./components/Navbar";
-import LoginPage from "./components/LoginPage";
-import RegisterPage from "./components/RegisterPage";
+import LoginPage from "./components/pages/LoginPage";
+import RegisterPage from "./components/pages/RegisterPage";
 import PomodoroPage from "@/components/pages/PomodoroPage"
 import PrivateRoute from "@/components/PrivateRoute";
-import TestDashboard from "@/components/TestDashboard";
+import DashboardLayout from "./components/layouts/DashboardLayout";
+import CalendarPage from "@/components/pages/CalendarPage";
+import TodoPage from "@/components/pages/TodoPage";
+import StatsPage from "@/components/pages/StatsPage";
 
 
 
@@ -24,8 +27,12 @@ function AppContent() {
         <Route path="/register" element={<RegisterPage />} />
 
         <Route element={<PrivateRoute />}>
-          <Route path="/testdashboard" element={<TestDashboard />} />
-          <Route path="/pomodoropage" element={<PomodoroPage />} />
+          <Route path="/dashboard" element={<DashboardLayout />}>
+            <Route path="/dashboard/pomodoro" element={<PomodoroPage />} />
+            <Route path="/dashboard/calendar" element={<CalendarPage />} />
+            <Route path="/dashboard/todo" element={<TodoPage />} />
+            <Route path="/dashboard/stats" element={<StatsPage />} />
+          </Route>
         </Route>
       </Routes>
     </>

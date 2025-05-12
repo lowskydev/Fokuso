@@ -63,7 +63,7 @@ function LoginPage() {
 
       // Optionally redirect to dashboard or home
       toast.success("Login successful!");
-      navigate("/testdashboard");
+      navigate("/dashboard");
 
     } catch (err) {
       toast.error("Something went wrong. Please try again.");
