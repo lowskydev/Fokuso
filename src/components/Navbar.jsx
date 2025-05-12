@@ -5,7 +5,7 @@ import logo from "@/assets/logo.png";
 
 function Navbar() {
   return (
-    <nav className="border-b border-border shadow p-4 sticky top-0 z-50">
+    <nav className="bg-background border-b border-border shadow p-4 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <Link to="/" className="flex items-center gap-2">
           <img src={logo} alt="Fokuso Logo" className="h-14 w-14" />

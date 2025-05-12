@@ -21,7 +21,6 @@ export default function DashboardLayout() {
 
   const handleLogout = () => {
     logout();
-    navigate("/");
   };
 
   return (

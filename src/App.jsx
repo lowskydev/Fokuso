@@ -9,6 +9,7 @@ import DashboardLayout from "./components/layouts/DashboardLayout";
 import CalendarPage from "@/components/pages/CalendarPage";
 import TodoPage from "@/components/pages/TodoPage";
 import StatsPage from "@/components/pages/StatsPage";
+import { ThemeProvider } from "./components/theme-provider";
 
 
 
@@ -20,21 +21,23 @@ function AppContent() {
 
   return (
     <>
-      {showNavbar && <Navbar />}
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
+      <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+        {showNavbar && <Navbar />}
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
 
-        <Route element={<PrivateRoute />}>
-          <Route path="/dashboard" element={<DashboardLayout />}>
-            <Route path="/dashboard/pomodoro" element={<PomodoroPage />} />
-            <Route path="/dashboard/calendar" element={<CalendarPage />} />
-            <Route path="/dashboard/todo" element={<TodoPage />} />
-            <Route path="/dashboard/stats" element={<StatsPage />} />
+          <Route element={<PrivateRoute />}>
+            <Route path="/dashboard" element={<DashboardLayout />}>
+              <Route path="/dashboard/pomodoro" element={<PomodoroPage />} />
+              <Route path="/dashboard/calendar" element={<CalendarPage />} />
+              <Route path="/dashboard/todo" element={<TodoPage />} />
+              <Route path="/dashboard/stats" element={<StatsPage />} />
+            </Route>
           </Route>
-        </Route>
-      </Routes>
+        </Routes>
+      </ThemeProvider>
     </>
   );
 }
