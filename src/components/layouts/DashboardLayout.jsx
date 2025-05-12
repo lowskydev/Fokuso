@@ -17,6 +17,7 @@ const SidebarItem = ({ label, path }) => {
 
 export default function DashboardLayout() {
   const { user, logout } = useAuthStore();
+  console.log("user", user);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -39,7 +40,7 @@ export default function DashboardLayout() {
         <Separator className="my-6" />
 
         <div className="text-sm mb-2">Logged in as:</div>
-        <div className="font-semibold mb-4">{user?.name || "User"}</div>
+        <div className="font-semibold mb-4">{user || "User"}</div>
 
         <Button variant="destructive" onClick={handleLogout} className="w-full mt-auto">
           Logout
