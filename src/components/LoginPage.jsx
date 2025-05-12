@@ -43,8 +43,23 @@ function LoginPage() {
         return;
       }
 
-      // Save token to local storage
-      login(data.token, data.user);
+      // get user name at /api/user/me/
+      const userResponse = await fetch(import.meta.env.VITE_API_URL + "/api/user/me/", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Token ${data.token}`
+        }
+      });
+
+      const userData = await userResponse.json();
+      if (!userResponse.ok) {
+        toast.error("Failed to fetch user data.");
+        return;
+      }
+
+      // Save token and user data to Zustand store
+      login(data.token, userData.name);
 
       // Optionally redirect to dashboard or home
       toast.success("Login successful!");
