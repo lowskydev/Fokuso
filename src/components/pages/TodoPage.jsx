@@ -7,8 +7,8 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { AddTaskModal } from "@/components/todo/AddTaskModal"
 import {
-  Plus,
   CheckCircle2,
   Circle,
   Clock,
@@ -23,22 +23,20 @@ import {
 } from "lucide-react"
 
 function TodoPage() {
-  const [newTask, setNewTask] = useState("")
   const [filter, setFilter] = useState("all")
   const [searchTerm, setSearchTerm] = useState("")
 
-  // Dummy todo data
-  const [todos, setTodos] = useState([
+   const [todos, setTodos] = useState([
     {
       id: 1,
-      title: "Complete React project documentation",
-      description: "Write comprehensive docs for the new dashboard components",
+      title: "Finish Fokuso",
+      description: "We need to really get this done while we still have the momentum",
       completed: false,
       priority: "high",
       category: "work",
-      dueDate: "2025-06-22",
+      dueDate: "2025-06-27",
       createdAt: "2025-06-15",
-      tags: ["react", "documentation", "urgent"],
+      tags: ["fokuso", "software", "urgent", "cs"],
     },
     {
       id: 2,
@@ -141,30 +139,50 @@ function TodoPage() {
     },
   ])
 
+  // Handle adding new task (this is where you'll integrate with your backend)
+  const handleAddTask = async (taskData) => {
+    try {
+      // TODO: Replace with actual API call
+      // const response = await fetch('/api/tasks', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     'Authorization': `Bearer ${token}`,
+      //   },
+      //   body: JSON.stringify(taskData),
+      // });
+      //
+      // if (!response.ok) {
+      //   throw new Error('Failed to create task');
+      // }
+      //
+      // const newTask = await response.json();
+
+      // For now, simulate API call with timeout
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+
+      // Create new task with generated ID (in real app, this comes from backend)
+      const newTask = {
+        id: Date.now(),
+        ...taskData,
+      }
+
+      // Add to local state (in real app, you might refetch or use the returned task)
+      setTodos((prev) => [newTask, ...prev])
+
+      console.log("Task added successfully:", newTask)
+    } catch (error) {
+      console.error("Error adding task:", error)
+      throw error // Re-throw to let modal handle the error
+    }
+  }
+
   const toggleTodo = (id) => {
     setTodos(todos.map((todo) => (todo.id === id ? { ...todo, completed: !todo.completed } : todo)))
   }
 
   const deleteTodo = (id) => {
     setTodos(todos.filter((todo) => todo.id !== id))
-  }
-
-  const addTodo = () => {
-    if (newTask.trim()) {
-      const newTodoItem = {
-        id: Date.now(),
-        title: newTask,
-        description: "",
-        completed: false,
-        priority: "medium",
-        category: "personal",
-        dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0], // 7 days from now
-        createdAt: new Date().toISOString().split("T")[0],
-        tags: [],
-      }
-      setTodos([newTodoItem, ...todos])
-      setNewTask("")
-    }
   }
 
   const getPriorityColor = (priority) => {
@@ -249,6 +267,7 @@ function TodoPage() {
           </h1>
           <p className="text-muted-foreground text-lg mt-2">Organize and track your tasks efficiently</p>
         </div>
+        <AddTaskModal onAddTask={handleAddTask} />
       </div>
 
       {/* Statistics */}
@@ -310,53 +329,32 @@ function TodoPage() {
         </Card>
       </div>
 
-      {/* Add Task & Filters */}
+      {/* Search and Filters */}
       <Card className="bg-card/80 backdrop-blur-sm border-border shadow-xl">
         <CardContent className="p-6">
-          <div className="space-y-4">
-            {/* Add new task */}
-            <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input
-                placeholder="Add a new task..."
-                value={newTask}
-                onChange={(e) => setNewTask(e.target.value)}
-                onKeyPress={(e) => e.key === "Enter" && addTodo()}
-                className="flex-1 h-12 text-lg"
+                placeholder="Search tasks..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
               />
-              <Button
-                onClick={addTodo}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 h-12 px-6"
-              >
-                <Plus className="w-5 h-5 mr-2" />
-                Add Task
-              </Button>
             </div>
-
-            {/* Search and filters */}
-            <div className="flex flex-col sm:flex-row gap-3">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                <Input
-                  placeholder="Search tasks..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              <Select value={filter} onValueChange={setFilter}>
-                <SelectTrigger className="w-full sm:w-48">
-                  <Filter className="w-4 h-4 mr-2" />
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Tasks</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                  <SelectItem value="high">High Priority</SelectItem>
-                  <SelectItem value="overdue">Overdue</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            <Select value={filter} onValueChange={setFilter}>
+              <SelectTrigger className="w-full sm:w-48">
+                <Filter className="w-4 h-4 mr-2" />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Tasks</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
+                <SelectItem value="high">High Priority</SelectItem>
+                <SelectItem value="overdue">Overdue</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </CardContent>
       </Card>
@@ -444,28 +442,30 @@ function TodoPage() {
                           <span className="capitalize">{todo.category}</span>
                         </Badge>
 
-                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                          <Calendar className="w-4 h-4" />
-                          <span
-                            className={
-                              isOverdue(todo.dueDate) && !todo.completed
-                                ? "text-red-600 dark:text-red-400 font-medium"
-                                : isDueToday(todo.dueDate)
-                                  ? "text-yellow-600 dark:text-yellow-400 font-medium"
-                                  : ""
-                            }
-                          >
-                            {new Date(todo.dueDate).toLocaleDateString()}
-                          </span>
-                          {isOverdue(todo.dueDate) && !todo.completed && (
-                            <Badge className="bg-red-500/20 text-red-600 border-red-500/30 ml-2">Overdue</Badge>
-                          )}
-                          {isDueToday(todo.dueDate) && !todo.completed && (
-                            <Badge className="bg-yellow-500/20 text-yellow-600 border-yellow-500/30 ml-2">
-                              Due Today
-                            </Badge>
-                          )}
-                        </div>
+                        {todo.dueDate && (
+                          <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                            <Calendar className="w-4 h-4" />
+                            <span
+                              className={
+                                isOverdue(todo.dueDate) && !todo.completed
+                                  ? "text-red-600 dark:text-red-400 font-medium"
+                                  : isDueToday(todo.dueDate)
+                                    ? "text-yellow-600 dark:text-yellow-400 font-medium"
+                                    : ""
+                              }
+                            >
+                              {new Date(todo.dueDate).toLocaleDateString()}
+                            </span>
+                            {isOverdue(todo.dueDate) && !todo.completed && (
+                              <Badge className="bg-red-500/20 text-red-600 border-red-500/30 ml-2">Overdue</Badge>
+                            )}
+                            {isDueToday(todo.dueDate) && !todo.completed && (
+                              <Badge className="bg-yellow-500/20 text-yellow-600 border-yellow-500/30 ml-2">
+                                Due Today
+                              </Badge>
+                            )}
+                          </div>
+                        )}
                       </div>
 
                       {todo.tags.length > 0 && (
