@@ -6,9 +6,8 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Timer, Calendar, CheckSquare, BarChart3, Brain, LogOut, User, ChevronRight, Sparkles } from "lucide-react"
+import { Timer, Calendar, CheckSquare, BarChart3, Brain, LogOut, ChevronRight, Sparkles } from "lucide-react"
 import logo from "@/assets/logo.png"
-// import themeToggle
 import ThemeToggle from "@/components/ThemeToggle"
 
 const SidebarItem = ({ label, path, icon: Icon, isActive }) => {
@@ -136,25 +135,8 @@ export default function DashboardLayout() {
 
         <Separator className="my-8 bg-white/20" />
 
-        {/* User Profile Section - Enhanced */}
-        <div className="absolute bottom-8 left-8 right-8 space-y-6">
-          <div className="flex items-center gap-4 p-6 backdrop-blur-sm rounded-2xl">
-            <Avatar className="w-14 h-14 border-2 border-primary/30">
-              <AvatarFallback className="bg-gradient-to-br from-primary to-red-500 text-primary-foreground font-bold text-lg">
-                {getInitials(user)}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1 min-w-0">
-              <div className="text-sm text-muted-foreground/80 font-medium">Welcome back</div>
-              <div className="font-bold text-foreground truncate text-lg">{user || "User"}</div>
-              <div className="flex items-center gap-2 mt-1">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-xs text-green-600 dark:text-green-400 font-medium">Online</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Logout Button - Enhanced */}
+        {/* Logout Button - Enhanced */}
+        <div className="absolute bottom-8 left-8 right-8">
           <Button
             variant="outline"
             onClick={handleLogout}
@@ -164,7 +146,7 @@ export default function DashboardLayout() {
             Sign Out
           </Button>
 
-          <div className="text-center">
+          <div className="text-center mt-4">
             <p className="text-sm text-muted-foreground/70 font-medium">Stay focused, stay productive</p>
           </div>
         </div>
@@ -188,13 +170,22 @@ export default function DashboardLayout() {
               </p>
             </div>
             <div className="flex items-center gap-4">
-              <Badge
-                variant="secondary"
-                className="bg-gradient-to-r from-primary/20 to-red-500/20 text-primary border-primary/30 px-6 py-3 text-lg font-semibold backdrop-blur-sm shadow-lg"
-              >
-                <User className="w-5 h-5 mr-2" />
-                {user || "User"}
-              </Badge>
+              {/* User Profile Section - Moved to top right */}
+              <div className="flex items-center gap-3 p-4 backdrop-blur-sm rounded-2xl">
+                <Avatar className="w-12 h-12 border-2 border-primary/30">
+                  <AvatarFallback className="bg-gradient-to-br from-primary to-red-500 text-primary-foreground font-bold text-lg">
+                    {getInitials(user)}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm text-muted-foreground/80 font-medium">Welcome back</div>
+                  <div className="font-bold text-foreground truncate text-lg">{user || "User"}</div>
+                  <div className="flex items-center gap-2 mt-1">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <span className="text-xs text-green-600 dark:text-green-400 font-medium">Online</span>
+                  </div>
+                </div>
+              </div>
 
               {/* Theme Toggle */}
               <div className="p-2 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-300">
