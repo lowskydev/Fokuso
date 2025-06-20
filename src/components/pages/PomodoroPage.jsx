@@ -37,6 +37,17 @@ function PomodoroPage() {
     }
   }, [soundEnabled, soundType])
 
+  const handleStartPause = useCallback(() => {
+    setIsRunning((prev) => !prev)
+  }, [])
+
+  const handleReset = useCallback(() => {
+    setIsRunning(false)
+    setIsBreak(false)
+    setTimeLeft(studyDuration)
+    setBreakTimeLeft(breakDuration)
+  }, [studyDuration, breakDuration])
+
   useEffect(() => {
     let timer
     if (isRunning) {
@@ -82,16 +93,7 @@ function PomodoroPage() {
 
     window.addEventListener("keydown", handleKeyPress)
     return () => window.removeEventListener("keydown", handleKeyPress)
-  }, [])
-
-  const handleStartPause = () => setIsRunning((prev) => !prev)
-
-  const handleReset = () => {
-    setIsRunning(false)
-    setIsBreak(false)
-    setTimeLeft(studyDuration)
-    setBreakTimeLeft(breakDuration)
-  }
+  }, [handleStartPause, handleReset])
 
   const handleDurationChange = (type, value) => {
     const seconds = Math.max(1, Math.floor(Number(value) * 60))

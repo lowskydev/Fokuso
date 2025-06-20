@@ -8,9 +8,9 @@ import PrivateRoute from "@/components/PrivateRoute";
 import DashboardLayout from "./components/layouts/DashboardLayout";
 import CalendarPage from "@/components/pages/CalendarPage";
 import TodoPage from "@/components/pages/TodoPage";
-import StatsPage from "@/components/pages/StatsPage";
 import { ThemeProvider } from "./components/theme-provider";
 import PageNotFound from "./components/pages/PageNotFound";
+import StatisticsPage from "./components/pages/StatisticsPage";
 
 
 
@@ -34,7 +34,7 @@ function AppContent() {
               <Route path="/dashboard/pomodoro" element={<PomodoroPage />} />
               <Route path="/dashboard/calendar" element={<CalendarPage />} />
               <Route path="/dashboard/todo" element={<TodoPage />} />
-              <Route path="/dashboard/stats" element={<StatsPage />} />
+              <Route path="/dashboard/stats" element={<StatisticsPage />} />
             </Route>
           </Route>
 
