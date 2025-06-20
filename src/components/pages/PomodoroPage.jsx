@@ -1,184 +1,193 @@
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+"use client"
+
+import { useState, useEffect, useCallback } from "react"
+import { Card, CardContent } from "@/components/ui/card"
+import { playNotificationSound } from "@/utils/sound"
+import { TimerStats } from "@/components/pomodoro/timer-stats"
+import { TimerDisplay } from "@/components/pomodoro/timer-display"
+import { TimerControls } from "@/components/pomodoro/timer-controls"
+import { SettingsDialog } from "@/components/pomodoro/settings-dialog"
 
 function PomodoroPage() {
-  const defaultStudy = 1500; // 25 min
-  const defaultBreak = 300; // 5 min
+  const defaultStudy = 1500 // 25 min
+  const defaultBreak = 300 // 5 min
 
   const [studyDuration, setStudyDuration] = useState(
-    parseInt(localStorage.getItem("studyDuration") || defaultStudy, 10)
-  );
+    Number.parseInt(localStorage.getItem("studyDuration") || defaultStudy, 10),
+  )
   const [breakDuration, setBreakDuration] = useState(
-    parseInt(localStorage.getItem("breakDuration") || defaultBreak, 10)
-  );
+    Number.parseInt(localStorage.getItem("breakDuration") || defaultBreak, 10),
+  )
 
-  const [timeLeft, setTimeLeft] = useState(studyDuration);
-  const [breakTimeLeft, setBreakTimeLeft] = useState(breakDuration);
-  const [isRunning, setIsRunning] = useState(false);
-  const [isBreak, setIsBreak] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(studyDuration)
+  const [breakTimeLeft, setBreakTimeLeft] = useState(breakDuration)
+  const [isRunning, setIsRunning] = useState(false)
+  const [isBreak, setIsBreak] = useState(false)
+  const [completedSessions, setCompletedSessions] = useState(
+    Number.parseInt(localStorage.getItem("completedSessions") || "0", 10),
+  )
+  const [soundEnabled, setSoundEnabled] = useState(localStorage.getItem("soundEnabled") !== "false")
+  const [soundType, setSoundType] = useState(localStorage.getItem("soundType") || "bell")
+  const [selectedPreset, setSelectedPreset] = useState(null)
+
+  // Play notification sound
+  const playNotification = useCallback(() => {
+    if (soundEnabled) {
+      playNotificationSound(soundType)
+    }
+  }, [soundEnabled, soundType])
 
   useEffect(() => {
-    let timer;
+    let timer
     if (isRunning) {
       timer = setInterval(() => {
         if (!isBreak && timeLeft > 0) {
-          setTimeLeft((prev) => prev - 1);
+          setTimeLeft((prev) => prev - 1)
         } else if (isBreak && breakTimeLeft > 0) {
-          setBreakTimeLeft((prev) => prev - 1);
+          setBreakTimeLeft((prev) => prev - 1)
         } else {
           if (!isBreak) {
-            setIsBreak(true);
-            setBreakTimeLeft(breakDuration);
+            // Study session completed
+            setIsBreak(true)
+            setBreakTimeLeft(breakDuration)
+            setCompletedSessions((prev) => {
+              const newCount = prev + 1
+              localStorage.setItem("completedSessions", newCount.toString())
+              return newCount
+            })
+            playNotification()
           } else {
-            setIsBreak(false);
-            setTimeLeft(studyDuration);
+            // Break completed
+            setIsBreak(false)
+            setTimeLeft(studyDuration)
+            playNotification()
           }
         }
-      }, 1000);
+      }, 1000)
     }
-    return () => clearInterval(timer);
-  }, [isRunning, isBreak, timeLeft, breakTimeLeft, studyDuration, breakDuration]);
+    return () => clearInterval(timer)
+  }, [isRunning, isBreak, timeLeft, breakTimeLeft, studyDuration, breakDuration, playNotification])
 
-  const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
-  };
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      if (e.code === "Space" && !e.target.matches("input")) {
+        e.preventDefault()
+        handleStartPause()
+      } else if (e.code === "KeyR" && e.ctrlKey) {
+        e.preventDefault()
+        handleReset()
+      }
+    }
 
-  const handleStartPause = () => setIsRunning((prev) => !prev);
+    window.addEventListener("keydown", handleKeyPress)
+    return () => window.removeEventListener("keydown", handleKeyPress)
+  }, [])
+
+  const handleStartPause = () => setIsRunning((prev) => !prev)
 
   const handleReset = () => {
-    setIsRunning(false);
-    setIsBreak(false);
-    setTimeLeft(studyDuration);
-    setBreakTimeLeft(breakDuration);
-  };
+    setIsRunning(false)
+    setIsBreak(false)
+    setTimeLeft(studyDuration)
+    setBreakTimeLeft(breakDuration)
+  }
 
   const handleDurationChange = (type, value) => {
-    const seconds = Math.max(1, Math.floor(Number(value) * 60));
+    const seconds = Math.max(1, Math.floor(Number(value) * 60))
     if (type === "study") {
-      setStudyDuration(seconds);
-      localStorage.setItem("studyDuration", seconds);
-      if (!isBreak) setTimeLeft(seconds);
+      setStudyDuration(seconds)
+      localStorage.setItem("studyDuration", seconds)
+      if (!isBreak) setTimeLeft(seconds)
     } else {
-      setBreakDuration(seconds);
-      localStorage.setItem("breakDuration", seconds);
-      if (isBreak) setBreakTimeLeft(seconds);
+      setBreakDuration(seconds)
+      localStorage.setItem("breakDuration", seconds)
+      if (isBreak) setBreakTimeLeft(seconds)
     }
-  };
+    // Clear preset selection when manually changing durations
+    setSelectedPreset(null)
+  }
 
-  const backgroundClass = isBreak
-    ? "from-indigo-200 to-blue-400 dark:from-zinc-900 dark:to-blue-800"
-    : "from-orange-200 to-rose-400 dark:from-zinc-900 dark:to-rose-800";
+  const toggleSound = () => {
+    const newSoundEnabled = !soundEnabled
+    setSoundEnabled(newSoundEnabled)
+    localStorage.setItem("soundEnabled", newSoundEnabled.toString())
+  }
 
-  const progress =
-    isBreak && breakDuration
-      ? ((breakDuration - breakTimeLeft) / breakDuration) * 100
-      : !isBreak && studyDuration
-      ? ((studyDuration - timeLeft) / studyDuration) * 100
-      : 0;
+  const handleSoundTypeChange = (newSoundType) => {
+    setSoundType(newSoundType)
+    localStorage.setItem("soundType", newSoundType)
+  }
+
+  const testSound = () => {
+    playNotificationSound(soundType)
+  }
+
+  const handlePresetSelect = (preset) => {
+    setStudyDuration(preset.focus)
+    setBreakDuration(preset.break)
+    localStorage.setItem("studyDuration", preset.focus.toString())
+    localStorage.setItem("breakDuration", preset.break.toString())
+    if (!isBreak) setTimeLeft(preset.focus)
+    else setBreakTimeLeft(preset.break)
+    setSelectedPreset(preset.id)
+  }
+
+  const currentTime = isBreak ? breakTimeLeft : timeLeft
+  const totalTime = isBreak ? breakDuration : studyDuration
+  const progress = totalTime > 0 ? ((totalTime - currentTime) / totalTime) * 100 : 0
+
+  const getMotivationalText = () => {
+    if (isBreak) {
+      return "Take a breather, you've earned it!"
+    }
+    if (currentTime > totalTime * 0.75) {
+      return "Let's get started! You've got this."
+    } else if (currentTime > totalTime * 0.25) {
+      return "You're in the zone! Keep going."
+    } else {
+      return "Almost there! Stay focused."
+    }
+  }
 
   return (
-    <main
-      className={`flex flex-col items-center justify-center px-6 py-20 min-h-screen bg-gradient-to-br transition-colors duration-1000 ${backgroundClass}`}
-    >
-      <h2 className="text-4xl font-bold text-center mb-2 text-zinc-900 dark:text-white">
-        {isBreak ? "Break Session" : "Study Session"}
-      </h2>
-      <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 text-center">
-        Stay Fokused!
-      </p>
+    <div className="space-y-6">
+      <TimerStats completedSessions={completedSessions} isBreak={isBreak} isRunning={isRunning} />
 
-      <Card className="w-full max-w-md shadow-2xl rounded-2xl border-0 mb-8">
-        <CardContent className="flex flex-col items-center gap-8 py-10 w-full">
+      <Card className="bg-card/80 backdrop-blur-sm border-border shadow-2xl">
+        <CardContent className="p-8">
+          <TimerDisplay
+            currentTime={currentTime}
+            isBreak={isBreak}
+            progress={progress}
+            getMotivationalText={getMotivationalText}
+          />
 
-          {/* Timers */}
-          <div
-            className={`transition-all duration-500 font-mono tracking-wider ${
-              !isBreak
-                ? "text-7xl text-gray-900 dark:text-white"
-                : "text-3xl text-gray-500 dark:text-gray-400"
-            }`}
+          <TimerControls
+            isRunning={isRunning}
+            isBreak={isBreak}
+            handleStartPause={handleStartPause}
+            handleReset={handleReset}
           >
-            {formatTime(timeLeft)}
-          </div>
-
-          <div
-            className={`transition-all duration-500 font-mono tracking-wider ${
-              isBreak
-                ? "text-7xl text-gray-900 dark:text-white"
-                : "text-3xl text-gray-500 dark:text-gray-400"
-            }`}
-          >
-            {formatTime(breakTimeLeft)}
-          </div>
-
-          {/* Progress Bar */}
-          <div className="w-full bg-gray-200 dark:bg-zinc-800 rounded-full h-3 overflow-hidden">
-            <div
-              className="h-full bg-green-500 transition-all duration-500"
-              style={{ width: `${progress}%` }}
+            <SettingsDialog
+              soundEnabled={soundEnabled}
+              soundType={soundType}
+              studyDuration={studyDuration}
+              breakDuration={breakDuration}
+              completedSessions={completedSessions}
+              selectedPreset={selectedPreset}
+              toggleSound={toggleSound}
+              handleSoundTypeChange={handleSoundTypeChange}
+              testSound={testSound}
+              handleDurationChange={handleDurationChange}
+              onPresetSelect={handlePresetSelect}
+              setCompletedSessions={setCompletedSessions}
             />
-          </div>
-
-          {/* Remaining Time Label */}
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            There is this much time left in the {isBreak ? "break" : "session"}.
-          </p>
-
-          {/* Controls */}
-          <div className="flex gap-4">
-            <Button onClick={handleStartPause}>
-              {isRunning ? "Pause" : "Start"}
-            </Button>
-            <Button onClick={handleReset} variant="outline">
-              Reset
-            </Button>
-          </div>
+          </TimerControls>
         </CardContent>
       </Card>
-
-      {/* Duration Settings */}
-      <Card className="w-full max-w-md shadow-xl rounded-2xl border-0">
-        <CardContent className="flex flex-col gap-6 py-8">
-          <h3 className="text-xl font-semibold text-zinc-900 dark:text-white text-center">
-            Customize Durations
-          </h3>
-          <div className="flex flex-col gap-4 sm:flex-row sm:justify-around px-2">
-            <div className="flex flex-col items-center gap-2">
-              <Label htmlFor="studyDuration" className="text-sm text-zinc-700 dark:text-gray-300">
-                Study (min)
-              </Label>
-              <Input
-                id="studyDuration"
-                type="number"
-                min="1"
-                defaultValue={Math.floor(studyDuration / 60)}
-                onChange={(e) => handleDurationChange("study", e.target.value)}
-                className="w-24 text-center"
-              />
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <Label htmlFor="breakDuration" className="text-sm text-zinc-700 dark:text-gray-300">
-                Break (min)
-              </Label>
-              <Input
-                id="breakDuration"
-                type="number"
-                min="1"
-                defaultValue={Math.floor(breakDuration / 60)}
-                onChange={(e) => handleDurationChange("break", e.target.value)}
-                className="w-24 text-center"
-              />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </main>
-  );
+    </div>
+  )
 }
 
-export default PomodoroPage;
+export default PomodoroPage
