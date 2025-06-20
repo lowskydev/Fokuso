@@ -95,9 +95,9 @@ export default function DashboardLayout() {
       <div className="absolute inset-0 bg-gradient-to-t from-transparent via-primary/5 to-primary/10 pointer-events-none"></div>
 
       {/* Sidebar - Enhanced with glass morphism */}
-      <aside className="relative z-10 w-80 p-8 bg-white/10 backdrop-blur-xl border-r border-white/20 shadow-2xl">
-        {/* Logo Section - Enhanced */}
-        <div className="mb-12">
+      <aside className="relative z-10 w-80 bg-white/10 backdrop-blur-xl border-r border-white/20 shadow-2xl flex flex-col">
+        {/* Logo Section - Fixed at top */}
+        <div className="flex-shrink-0 p-8 pb-4">
           <div className="flex items-center gap-4 mb-4 p-4 rounded-2xl backdrop-blur-sm">
             <img src={logo || "/placeholder.svg"} alt="Fokuso Logo" className="w-12 h-12 rounded-xl" />
             <div>
@@ -115,39 +115,43 @@ export default function DashboardLayout() {
           </div>
         </div>
 
-        {/* Navigation - Enhanced */}
-        <nav className="space-y-4">
-          <div className="mb-6">
-            <h3 className="text-sm font-semibold text-muted-foreground/80 uppercase tracking-wider mb-4 px-4">
-              Navigation
-            </h3>
-          </div>
-          {navigationItems.map((item) => (
-            <SidebarItem
-              key={item.path}
-              label={item.label}
-              path={item.path}
-              icon={item.icon}
-              isActive={location.pathname === item.path}
-            />
-          ))}
-        </nav>
+        {/* Navigation - Scrollable middle section */}
+        <div className="flex-1 overflow-y-auto px-8 pb-4 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent hover:scrollbar-thumb-white/30">
+          <nav className="space-y-4">
+            <div className="mb-6">
+              <h3 className="text-sm font-semibold text-muted-foreground/80 uppercase tracking-wider mb-4 px-4">
+                Navigation
+              </h3>
+            </div>
+            {navigationItems.map((item) => (
+              <SidebarItem
+                key={item.path}
+                label={item.label}
+                path={item.path}
+                icon={item.icon}
+                isActive={location.pathname === item.path}
+              />
+            ))}
+          </nav>
+        </div>
 
-        <Separator className="my-8 bg-white/20" />
+        <div className="flex-shrink-0 px-8">
+          <Separator className="mb-6 bg-white/20" />
 
-        {/* Logout Button - Enhanced */}
-        <div className="absolute bottom-8 left-8 right-8">
-          <Button
-            variant="outline"
-            onClick={handleLogout}
-            className="w-full h-14 bg-white/5 backdrop-blur-sm border-transparent hover:border-red-500/50 hover:bg-red-50/10 dark:hover:bg-red-950/20 hover:text-red-600 dark:hover:text-red-400 transition-all duration-300 group transform hover:scale-[1.02] text-lg font-semibold"
-          >
-            <LogOut className="w-5 h-5 mr-3 group-hover:rotate-12 transition-transform duration-300" />
-            Sign Out
-          </Button>
+          {/* Logout Button - Fixed at bottom */}
+          <div className="pb-8">
+            <Button
+              variant="outline"
+              onClick={handleLogout}
+              className="w-full h-14 bg-white/5 backdrop-blur-sm border-transparent hover:border-red-500/50 hover:bg-red-50/10 dark:hover:bg-red-950/20 hover:text-red-600 dark:hover:text-red-400 transition-all duration-300 group transform hover:scale-[1.02] text-lg font-semibold"
+            >
+              <LogOut className="w-5 h-5 mr-3 group-hover:rotate-12 transition-transform duration-300" />
+              Sign Out
+            </Button>
 
-          <div className="text-center mt-4">
-            <p className="text-sm text-muted-foreground/70 font-medium">Stay focused, stay productive</p>
+            <div className="text-center mt-4">
+              <p className="text-sm text-muted-foreground/70 font-medium">Stay focused, stay productive</p>
+            </div>
           </div>
         </div>
       </aside>
