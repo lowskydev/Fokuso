@@ -12,42 +12,42 @@ function CalendarPage() {
   // Dummy calendar data
   const [events, setEvents] = useState({
     "2025-06-01": [
-      { id: 1, title: "Morning Focus Session", time: "09:00", type: "other", duration: 25 },
-      { id: 2, title: "Project Review", time: "14:00", type: "meeting", duration: 60 },
+      { id: 1, title: "Walk bongo", time: "09:00", endTime: "09:25", type: "other", duration: 25 },
+      { id: 2, title: "Project Review", time: "14:00", endTime: "15:00", type: "meeting", duration: 60 },
     ],
     "2025-06-03": [
-      { id: 3, title: "Deep Work Block", time: "10:00", type: "focus", duration: 90 },
-      { id: 4, title: "Study Session", time: "16:00", type: "study", duration: 45 },
+      { id: 3, title: "Deep Work Block", time: "10:00", endTime: "11:30", type: "focus", duration: 90 },
+      { id: 4, title: "Study Session", time: "16:00", endTime: "16:45", type: "study", duration: 45 },
     ],
     "2025-06-05": [
-      { id: 5, title: "Focus Sprint", time: "08:30", type: "focus", duration: 25 },
-      { id: 6, title: "Learning Time", time: "13:00", type: "study", duration: 30 },
-      { id: 7, title: "Team Sync", time: "15:30", type: "meeting", duration: 30 },
+      { id: 5, title: "Focus Sprint", time: "08:30", endTime: "08:55", type: "focus", duration: 25 },
+      { id: 6, title: "Learning Time", time: "13:00", endTime: "13:30", type: "study", duration: 30 },
+      { id: 7, title: "Team Sync", time: "15:30", endTime: "16:00", type: "meeting", duration: 30 },
     ],
-    "2025-06-08": [{ id: 8, title: "Extended Focus", time: "09:00", type: "focus", duration: 50 }],
+    "2025-06-08": [{ id: 8, title: "Extended Focus", time: "09:00", endTime: "09:50", type: "focus", duration: 50 }],
     "2025-06-10": [
-      { id: 9, title: "Quick Focus", time: "11:00", type: "focus", duration: 15 },
-      { id: 10, title: "Afternoon Study", time: "14:30", type: "study", duration: 60 },
+      { id: 9, title: "Quick Focus", time: "11:00", endTime: "11:15", type: "focus", duration: 15 },
+      { id: 10, title: "Afternoon Study", time: "14:30", endTime: "15:30", type: "study", duration: 60 },
     ],
     "2025-06-12": [
-      { id: 11, title: "Morning Routine", time: "07:00", type: "focus", duration: 25 },
-      { id: 12, title: "Project Work", time: "10:00", type: "focus", duration: 90 },
+      { id: 11, title: "Morning Routine", time: "07:00", endTime: "07:25", type: "focus", duration: 25 },
+      { id: 12, title: "Project Work", time: "10:00", endTime: "11:30", type: "focus", duration: 90 },
     ],
     "2025-06-15": [
-      { id: 13, title: "Focus Block", time: "09:30", type: "focus", duration: 45 },
-      { id: 14, title: "Review Session", time: "16:00", type: "study", duration: 30 },
+      { id: 13, title: "Focus Block", time: "09:30", endTime: "10:15", type: "focus", duration: 45 },
+      { id: 14, title: "Review Session", time: "16:00", endTime: "16:30", type: "study", duration: 30 },
     ],
-    "2025-06-18": [{ id: 15, title: "Deep Work", time: "08:00", type: "focus", duration: 120 }],
+    "2025-06-18": [{ id: 15, title: "Deep break", time: "08:00", endTime: "10:00", type: "break", duration: 120 }],
     "2025-06-20": [
-      { id: 16, title: "Focus Session", time: "10:00", type: "focus", duration: 25 },
-      { id: 17, title: "Learning Block", time: "14:00", type: "study", duration: 90 },
-      { id: 18, title: "Planning Meeting", time: "16:30", type: "meeting", duration: 45 },
+      { id: 16, title: "Focus Session", time: "10:00", endTime: "10:25", type: "focus", duration: 25 },
+      { id: 17, title: "Learning Block", time: "14:00", endTime: "15:30", type: "study", duration: 90 },
+      { id: 18, title: "Planning Meeting", time: "16:30", endTime: "17:15", type: "meeting", duration: 45 },
     ],
-    "2025-06-22": [{ id: 19, title: "Weekend Focus", time: "09:00", type: "focus", duration: 60 }],
-    "2025-06-25": [{ id: 20, title: "Holiday Planning", time: "10:00", type: "study", duration: 30 }],
+    "2025-06-22": [{ id: 19, title: "Weekend Focus", time: "09:00", endTime: "10:00", type: "focus", duration: 60 }],
+    "2025-06-25": [{ id: 20, title: "Holiday Planning", time: "10:00", endTime: "10:30", type: "study", duration: 30 }],
     "2025-06-28": [
-      { id: 21, title: "Year-end Review", time: "09:00", type: "focus", duration: 90 },
-      { id: 22, title: "Goal Setting", time: "15:00", type: "study", duration: 60 },
+      { id: 21, title: "Year-end Review", time: "09:00", endTime: "10:30", type: "focus", duration: 90 },
+      { id: 22, title: "Goal Setting", time: "15:00", endTime: "16:00", type: "study", duration: 60 },
     ],
   })
 
@@ -78,6 +78,7 @@ function CalendarPage() {
         id: Date.now(),
         title: eventData.title,
         time: eventData.startTime || "All Day",
+        endTime: eventData.endTime || "All Day",
         type: eventData.type,
         duration: eventData.duration,
         description: eventData.description,
@@ -296,10 +297,12 @@ function CalendarPage() {
                         <div
                           key={event.id}
                           className={`text-xs p-1 rounded border ${getEventTypeColor(event.type)} cursor-pointer hover:scale-105 transition-transform`}
-                          title={`${event.title} - ${event.time} (${event.duration}min)`}
+                          title={`${event.title} - ${event.time} to ${event.endTime} (${event.duration}min)`}
                         >
                           <div className="font-medium truncate">{event.title}</div>
-                          <div className="text-xs opacity-75">{event.time}</div>
+                          <div className="text-xs opacity-75">
+                            {event.time} - {event.endTime}
+                          </div>
                         </div>
                       ))}
                     </div>
