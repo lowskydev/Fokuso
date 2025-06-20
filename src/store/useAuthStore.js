@@ -1,23 +1,30 @@
-import { Navigate } from "react-router-dom";
 import { create } from "zustand";
+import { persist, devtools } from "zustand/middleware";
 
-const useAuthStore = create((set) => ({
-  token: localStorage.getItem("token") || null,
-  user: JSON.parse(localStorage.getItem("user")) || null,
+const useAuthStore = create(
+  devtools(
+    persist(
+      (set, get) => ({
+        token: null,
+        user: null,
 
-  login: (token, user=null) => {
-    localStorage.setItem("token", token);
-    localStorage.setItem("user", JSON.stringify(user));
-    set({ token, user });
-  },
+        login: (token, user = null) => {
+          set({ token, user }, false, "auth/login");
+        },
 
-  logout: () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    set({ token: null, user: null });
-  },
+        logout: () => {
+          set({ token: null, user: null }, false, "auth/logout");
+        },
 
-  isAuthenticated: () => !!localStorage.getItem("token"),
-}));
+        isAuthenticated: () => !!get().token,
+      }),
+      {
+        name: "auth-storage",
+        partialize: (state) => ({ token: state.token, user: state.user }),
+      }
+    ),
+    { name: "AuthStore" }
+  )
+);
 
 export default useAuthStore;

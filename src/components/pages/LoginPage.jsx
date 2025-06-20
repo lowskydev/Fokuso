@@ -85,7 +85,7 @@ function LoginPage() {
                 placeholder="Enter your email"
                 required
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {setEmail(e.target.value)}}
               />
             </div>
             <div>
