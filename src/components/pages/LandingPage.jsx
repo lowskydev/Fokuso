@@ -4,15 +4,12 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Timer, Calendar, Brain, ArrowRight, Sparkles, Star } from "lucide-react"
+import { Timer, BarChart3, Brain, ArrowRight, Sparkles, Star } from "lucide-react"
 import { Link } from "react-router-dom"
 
 function LandingPage() {
   const [isVisible, setIsVisible] = useState(false)
   const [activeFeature, setActiveFeature] = useState(0)
-  const [studyTime, setStudyTime] = useState(25)
-  const [breakTime, setBreakTime] = useState(5)
-  const [showModal, setShowModal] = useState(false)
 
   useEffect(() => {
     setIsVisible(true)
@@ -28,14 +25,14 @@ function LandingPage() {
       description: "Boost your focus with scientifically-proven time management techniques",
       icon: Timer,
       color: "from-red-500 to-rose-500",
-      stats: "25min sessions",
+      stats: "Custom Sessions",
     },
     {
-      title: "Smart Calendar",
-      description: "Intelligent scheduling that adapts to your learning patterns",
-      icon: Calendar,
+      title: "Personalized Statistics",
+      description: "Track your progress and optimize your study habits with detailed insights",
+      icon: BarChart3,
       color: "from-rose-500 to-pink-500",
-      stats: "Smart Planning",
+      stats: "Keep Track",
     },
     {
       title: "Flash Cards",
@@ -45,13 +42,6 @@ function LandingPage() {
       stats: "Memory Boost",
     },
   ]
-
-  const handleSaveSettings = () => {
-    localStorage.setItem("studyDuration", studyTime * 60)
-    localStorage.setItem("breakDuration", breakTime * 60)
-    setShowModal(false)
-    window.location.href = "/pomodoropage"
-  }
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-red-50 via-rose-100 to-pink-200 dark:bg-gradient-to-br dark:from-background dark:via-card dark:to-muted overflow-hidden">
@@ -101,12 +91,12 @@ function LandingPage() {
             {/* Stats */}
             <div className="grid grid-cols-3 gap-8 max-w-md mx-auto mb-16">
               <div className="text-center">
-                <div className="text-3xl font-bold text-primary">25min</div>
+                <div className="text-3xl font-bold text-primary">Custom</div>
                 <div className="text-sm text-muted-foreground">Focus Sessions</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-primary">5min</div>
-                <div className="text-sm text-muted-foreground">Break Time</div>
+                <div className="text-3xl font-bold text-primary">Focus</div>
+                <div className="text-sm text-muted-foreground">Your Way</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-primary">Free</div>
@@ -139,11 +129,6 @@ function LandingPage() {
                   feature={feature}
                   index={index}
                   isActive={activeFeature === index}
-                  onClick={() => {
-                    if (feature.title === "Pomodoro Timer") {
-                      setShowModal(true)
-                    }
-                  }}
                 />
               ))}
             </div>
@@ -246,10 +231,6 @@ const FeatureCard = ({ feature, index, isActive, onClick }) => {
             <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
           </div>
 
-          <div className="flex items-center text-primary font-semibold group-hover:translate-x-2 transition-transform duration-300">
-            Learn More
-            <ArrowRight className="ml-2 w-4 h-4" />
-          </div>
         </CardContent>
       </Card>
     </div>
