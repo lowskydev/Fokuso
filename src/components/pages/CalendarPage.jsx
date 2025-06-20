@@ -3,15 +3,16 @@
 import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { ChevronLeft, ChevronRight, Calendar, Clock, Target, Plus } from "lucide-react"
+import { AddEventModal } from "@/components/calendar/AddEventModal"
+import { ChevronLeft, ChevronRight, Calendar, Clock, Target } from "lucide-react"
 
 function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date())
 
   // Dummy calendar data
-  const events = {
+  const [events, setEvents] = useState({
     "2025-06-01": [
-      { id: 1, title: "Morning Focus Session", time: "09:00", type: "focus", duration: 25 },
+      { id: 1, title: "Morning Focus Session", time: "09:00", type: "other", duration: 25 },
       { id: 2, title: "Project Review", time: "14:00", type: "meeting", duration: 60 },
     ],
     "2025-06-03": [
@@ -48,6 +49,56 @@ function CalendarPage() {
       { id: 21, title: "Year-end Review", time: "09:00", type: "focus", duration: 90 },
       { id: 22, title: "Goal Setting", time: "15:00", type: "study", duration: 60 },
     ],
+  })
+
+  // Handle adding new event (this is where you'll integrate with your backend)
+  const handleAddEvent = async (eventData) => {
+    try {
+      // TODO: Replace with actual API call
+      // const response = await fetch('/api/events', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     'Authorization': `Bearer ${token}`,
+      //   },
+      //   body: JSON.stringify(eventData),
+      // });
+      //
+      // if (!response.ok) {
+      //   throw new Error('Failed to create event');
+      // }
+      //
+      // const newEvent = await response.json();
+
+      // For now, simulate API call with timeout
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+
+      // Create new event with generated ID (in real app, this comes from backend)
+      const newEvent = {
+        id: Date.now(),
+        title: eventData.title,
+        time: eventData.startTime || "All Day",
+        type: eventData.type,
+        duration: eventData.duration,
+        description: eventData.description,
+        isAllDay: eventData.isAllDay,
+        isRecurring: eventData.isRecurring,
+        recurringType: eventData.recurringType,
+        recurringEnd: eventData.recurringEnd,
+      }
+
+      // Add to local state (in real app, you might refetch or use the returned event)
+      const dateKey = eventData.date
+      setEvents((prev) => ({
+        ...prev,
+        [dateKey]: [...(prev[dateKey] || []), newEvent],
+      }))
+
+      console.log("Event added successfully:", newEvent)
+    } catch (error) {
+      console.error("Error adding event:", error)
+      throw error // Re-throw to let modal handle the error
+    }
   }
 
   const monthNames = [
@@ -112,6 +163,10 @@ function CalendarPage() {
         return "bg-blue-500/20 text-blue-600 border-blue-500/30"
       case "meeting":
         return "bg-green-500/20 text-green-600 border-green-500/30"
+      case "break":
+        return "bg-yellow-500/20 text-yellow-600 border-yellow-500/30"
+      case "other":
+        return "bg-purple-500/20 text-purple-600 border-purple-500/30"
       default:
         return "bg-muted text-muted-foreground"
     }
@@ -133,10 +188,7 @@ function CalendarPage() {
           </h1>
           <p className="text-muted-foreground text-lg mt-2">Plan and track your focus sessions</p>
         </div>
-        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-          <Plus className="w-5 h-5 mr-2" />
-          Add Session
-        </Button>
+        <AddEventModal onAddEvent={handleAddEvent} />
       </div>
 
       {/* Monthly Stats */}
@@ -277,6 +329,14 @@ function CalendarPage() {
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 rounded bg-green-500/20 border border-green-500/30"></div>
               <span className="text-sm text-muted-foreground">Meetings</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded bg-yellow-500/20 border border-yellow-500/30"></div>
+              <span className="text-sm text-muted-foreground">Break Time</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded bg-purple-500/20 border border-purple-500/30"></div>
+              <span className="text-sm text-muted-foreground">Other</span>
             </div>
           </div>
         </CardContent>
