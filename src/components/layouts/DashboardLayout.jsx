@@ -56,11 +56,11 @@ export default function DashboardLayout() {
   }
 
   const navigationItems = [
+    { label: "Statistics", path: "/dashboard/stats", icon: BarChart3 },
     { label: "Pomodoro", path: "/dashboard/pomodoro", icon: Timer },
+    { label: "Flash Cards", path: "/dashboard/flashcards", icon: Brain },
     { label: "Calendar", path: "/dashboard/calendar", icon: Calendar },
     { label: "Todo List", path: "/dashboard/todo", icon: CheckSquare },
-    { label: "Flash Cards", path: "/dashboard/flashcards", icon: Brain },
-    { label: "Statistics", path: "/dashboard/stats", icon: BarChart3 },
   ]
 
   const getInitials = (name) => {
