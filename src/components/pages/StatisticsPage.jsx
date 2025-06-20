@@ -62,8 +62,8 @@ function StatisticsPage() {
     { title: "Century Club", description: "Complete 500 total sessions", earned: false },
   ]
 
-  return (
-    <div className="space-y-8">
+return (
+    <div className="space-y-8 pb-8">
       <StatsHeader />
       <StatsOverview stats={stats} />
 
