@@ -7,7 +7,8 @@ import { Separator } from "@/components/ui/separator"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Settings, Volume2, VolumeX, Timer, Coffee } from "lucide-react"
-import { TimerPresets } from "./timer-presets"
+import { TimerPresets } from "./TimerPresets"
+import { useState, useEffect } from "react"
 
 export function SettingsDialog({
   soundEnabled,
@@ -23,6 +24,25 @@ export function SettingsDialog({
   onPresetSelect,
   setCompletedSessions,
 }) {
+  const [studyMinutes, setStudyMinutes] = useState(Math.floor(studyDuration / 60))
+  const [breakMinutes, setBreakMinutes] = useState(Math.floor(breakDuration / 60))
+
+  // Update input values when durations change (from preset selection)
+  useEffect(() => {
+    setStudyMinutes(Math.floor(studyDuration / 60))
+    setBreakMinutes(Math.floor(breakDuration / 60))
+  }, [studyDuration, breakDuration])
+
+  const handleStudyChange = (value) => {
+    setStudyMinutes(value)
+    handleDurationChange("study", value)
+  }
+
+  const handleBreakChange = (value) => {
+    setBreakMinutes(value)
+    handleDurationChange("break", value)
+  }
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -107,8 +127,8 @@ export function SettingsDialog({
                 type="number"
                 min="1"
                 max="120"
-                defaultValue={Math.floor(studyDuration / 60)}
-                onChange={(e) => handleDurationChange("study", e.target.value)}
+                value={studyMinutes}
+                onChange={(e) => handleStudyChange(e.target.value)}
                 className="text-lg p-4 h-12"
               />
               <p className="text-sm text-muted-foreground">Recommended: 25 minutes for optimal focus</p>
@@ -126,8 +146,8 @@ export function SettingsDialog({
                 type="number"
                 min="1"
                 max="30"
-                defaultValue={Math.floor(breakDuration / 60)}
-                onChange={(e) => handleDurationChange("break", e.target.value)}
+                value={breakMinutes}
+                onChange={(e) => handleBreakChange(e.target.value)}
                 className="text-lg p-4 h-12"
               />
               <p className="text-sm text-muted-foreground">Recommended: 5 minutes for short breaks</p>

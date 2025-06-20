@@ -3,10 +3,10 @@
 import { useState, useEffect, useCallback } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { playNotificationSound } from "@/utils/sound"
-import { TimerStats } from "@/components/pomodoro/timer-stats"
-import { TimerDisplay } from "@/components/pomodoro/timer-display"
-import { TimerControls } from "@/components/pomodoro/timer-controls"
-import { SettingsDialog } from "@/components/pomodoro/settings-dialog"
+import { TimerStats } from "@/components/pomodoro/TimerStats"
+import { TimerDisplay } from "@/components/pomodoro/TimerDisplay"
+import { TimerControls } from "@/components/pomodoro/TimerControls"
+import { SettingsDialog } from "@/components/pomodoro/SettingsDialog"
 
 function PomodoroPage() {
   const defaultStudy = 1500 // 25 min
