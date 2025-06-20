@@ -20,6 +20,13 @@ function StatisticsPage() {
     thisWeekSessions: 18,
     thisMonthSessions: 73,
     totalBreakTime: 1235, // in minutes
+
+    // Flashcard data
+    flashcardsReviewedToday: 24,
+    totalFlashcards: 156,
+    correctAnswers: 18,
+    incorrectAnswers: 6,
+    cardsToReview: 12,
   }
 
   // Hourly data for today's progress graph
