@@ -6,6 +6,7 @@ import { WeeklyOverview } from "@/components/statistics/WeeklyOverview"
 import { DetailedStats } from "@/components/statistics/DetailedStats"
 import { Achievements } from "@/components/statistics/Achievements"
 
+
 function StatisticsPage() {
   // Dummy data - will be replaced with real database queries later
   const stats = {
@@ -21,14 +22,35 @@ function StatisticsPage() {
     totalBreakTime: 1235, // in minutes
   }
 
+  // Hourly data for today's progress graph
+  const hourlyData = [
+    { hour: "6", sessions: 0 },
+    { hour: "7", sessions: 0 },
+    { hour: "8", sessions: 1 },
+    { hour: "9", sessions: 2 },
+    { hour: "10", sessions: 3 },
+    { hour: "11", sessions: 3 },
+    { hour: "12", sessions: 4 },
+    { hour: "13", sessions: 4 },
+    { hour: "14", sessions: 5 },
+    { hour: "15", sessions: 5 },
+    { hour: "16", sessions: 5 },
+    { hour: "17", sessions: 5 },
+    { hour: "18", sessions: 5 },
+    { hour: "19", sessions: 5 },
+    { hour: "20", sessions: 5 },
+    { hour: "21", sessions: 5 },
+    { hour: "22", sessions: 7 },
+  ]
+
   const weeklyData = [
     { day: "Mon", sessions: 4, focusTime: 100 },
     { day: "Tue", sessions: 3, focusTime: 75 },
     { day: "Wed", sessions: 5, focusTime: 125 },
     { day: "Thu", sessions: 2, focusTime: 50 },
     { day: "Fri", sessions: 3, focusTime: 75 },
-    { day: "Sat", sessions: 1, focusTime: 25 },
-    { day: "Sun", sessions: 0, focusTime: 0 },
+    { day: "Sat", sessions: 0, focusTime: 0 },
+    { day: "Sun", sessions: 7, focusTime: 175 },
   ]
 
   const achievements = [
@@ -46,7 +68,7 @@ function StatisticsPage() {
       <StatsOverview stats={stats} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <TodayProgress stats={stats} />
+        <TodayProgress stats={stats} hourlyData={hourlyData} />
         <WeeklyOverview weeklyData={weeklyData} />
       </div>
 

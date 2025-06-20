@@ -11,6 +11,10 @@ export function WeeklyOverview({ weeklyData }) {
     return `${mins}m`
   }
 
+  // Calculate the maximum sessions to set proper scale
+  const maxSessions = Math.max(...weeklyData.map((day) => day.sessions))
+  const maxScale = Math.max(maxSessions, 5) // Ensure minimum scale of 5
+
   return (
     <Card className="bg-card/80 backdrop-blur-sm border-border shadow-xl">
       <CardHeader>
@@ -31,7 +35,7 @@ export function WeeklyOverview({ weeklyData }) {
                   <div className="w-full bg-muted rounded-full h-2">
                     <div
                       className="bg-gradient-to-r from-primary to-red-500 h-2 rounded-full transition-all duration-500"
-                      style={{ width: `${(day.sessions / 5) * 100}%` }}
+                      style={{ width: `${(day.sessions / maxScale) * 100}%` }}
                     ></div>
                   </div>
                   <span className="text-sm font-medium w-16">{day.sessions} sessions</span>
