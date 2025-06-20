@@ -29,6 +29,7 @@ function StatisticsPage() {
   }
 
   // Hourly data for today's progress graph
+  // At which hour the user has completed how many sessions (not cumulative)
   const hourlyData = [
     { hour: "6", sessions: 0 },
     { hour: "7", sessions: 0 },
@@ -59,13 +60,38 @@ function StatisticsPage() {
     { day: "Sun", sessions: 7, focusTime: 175 },
   ]
 
+  // Dynamic achievements based on actual data
   const achievements = [
-    { title: "First Timer", description: "Complete your first Pomodoro session", earned: true },
-    { title: "Consistency King", description: "7-day streak achieved", earned: true },
-    { title: "Focus Master", description: "Complete 100 sessions", earned: true },
-    { title: "Marathon Runner", description: "Focus for 10 hours in a day", earned: false },
-    { title: "Week Warrior", description: "Complete 50 sessions in a week", earned: false },
-    { title: "Century Club", description: "Complete 500 total sessions", earned: false },
+    {
+      title: "First Timer",
+      description: "Complete your first Pomodoro session",
+      earned: stats.totalSessions >= 1,
+    },
+    {
+      title: "Consistency King",
+      description: "7-day streak achieved",
+      earned: stats.currentStreak >= 7,
+    },
+    {
+      title: "Focus Master",
+      description: "Complete 100 sessions",
+      earned: stats.totalSessions >= 100,
+    },
+    {
+      title: "Marathon Runner",
+      description: "Focus for 10 hours in a day",
+      earned: stats.todayFocusTime >= 600,
+    },
+    {
+      title: "Week Warrior",
+      description: "Complete 50 sessions in a week",
+      earned: stats.thisWeekSessions >= 50,
+    },
+    {
+      title: "Century Club",
+      description: "Complete 500 total sessions",
+      earned: stats.totalSessions >= 500,
+    },
   ]
 
 return (

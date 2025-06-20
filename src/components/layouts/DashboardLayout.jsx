@@ -184,10 +184,6 @@ export default function DashboardLayout() {
                 <div className="flex-1 min-w-0">
                   <div className="text-sm text-muted-foreground/80 font-medium">Welcome back</div>
                   <div className="font-bold text-foreground truncate text-lg">{user || "User"}</div>
-                  <div className="flex items-center gap-2 mt-1">
-                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                    <span className="text-xs text-green-600 dark:text-green-400 font-medium">Online</span>
-                  </div>
                 </div>
               </div>
 

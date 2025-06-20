@@ -35,7 +35,7 @@ export function SettingsDialog({
           Settings
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px] bg-card/95 backdrop-blur-md border-border">
+      <DialogContent className="sm:max-w-[600px] bg-card/95 backdrop-blur-md border-border max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-foreground flex items-center gap-3">
             <Settings className="w-6 h-6 text-primary" />
