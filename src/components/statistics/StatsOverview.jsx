@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card"
-import { Trophy, Clock, Flame, Target } from "lucide-react"
+import { Trophy, Clock, Flame, Brain } from "lucide-react"
 
 export function StatsOverview({ stats }) {
   const formatHours = (minutes) => {
@@ -26,9 +26,9 @@ export function StatsOverview({ stats }) {
       gradient: "from-green-500 to-green-600",
     },
     {
-      title: "Completion Rate",
-      value: `${stats.completionRate}%`,
-      icon: Target,
+      title: "Flashcards Reviewed Today",
+      value: `${stats.flashcardsReviewedToday}`,
+      icon: Brain,
       gradient: "from-purple-500 to-purple-600",
     },
   ]

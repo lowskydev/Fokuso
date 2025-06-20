@@ -16,7 +16,6 @@ function StatisticsPage() {
     currentStreak: 12,
     longestStreak: 28,
     averageSessionLength: 25,
-    completionRate: 87,
     thisWeekSessions: 18,
     thisMonthSessions: 73,
     totalBreakTime: 1235, // in minutes
