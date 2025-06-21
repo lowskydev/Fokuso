@@ -12,7 +12,20 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 
+import { useEffect } from "react"
+
 function RegisterPage() {
+  useEffect(() => {
+    // Scroll to top first, then prevent body scrolling
+    window.scrollTo(0, 0)
+    document.body.classList.add('auth-page')
+
+    return () => {
+      // Cleanup when component unmounts
+      document.body.classList.remove('auth-page')
+    }
+  }, [])
+
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")

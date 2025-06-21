@@ -14,7 +14,20 @@ import { toast } from "sonner"
 
 import useAuthStore from "@/store/useAuthStore"
 
+import { useEffect } from "react"
+
 function LoginPage() {
+  useEffect(() => {
+    // Scroll to top first, then prevent body scrolling
+    window.scrollTo(0, 0)
+    document.body.classList.add('auth-page')
+
+    return () => {
+      // Cleanup when component unmounts
+      document.body.classList.remove('auth-page')
+    }
+  }, [])
+
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
