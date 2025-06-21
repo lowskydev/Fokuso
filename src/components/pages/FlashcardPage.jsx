@@ -79,10 +79,6 @@ function FlashcardsPage() {
     const deckCards = flashcards.filter((card) => card.deck === deckId)
     const cardCount = deckCards.length
 
-    // Count cards mastered today from this deck
-    // A card is considered "mastered today" if:
-    // 1. It has interval_display that includes "day" (meaning it's graduated from learning)
-    // 2. It was updated today (meaning it was reviewed today and graduated)
     const today = new Date().toDateString()
     const masteredToday = deckCards.filter((card) => {
       const wasMasteredToday =
@@ -100,11 +96,14 @@ function FlashcardsPage() {
 
     const progress = cardCount > 0 ? Math.round((masteredCards / cardCount) * 100) : 0
 
+    const allMastered = masteredCards === cardCount
+
     return {
       cardCount,
       masteredToday, // This is the new "today" count for each deck
       masteredCards,
       progress,
+      allMastered,
     }
   }
 
@@ -309,11 +308,16 @@ function FlashcardsPage() {
                         {/* Action Button */}
                         <Button
                           onClick={(e) => handleLearnClick(e, deck.id)}
-                          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105"
+                          disabled={stats.allMastered}
+                          className={`w-full shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105 ${
+                            stats.allMastered
+                              ? "bg-gray-400 dark:bg-gray-600 text-gray-600 dark:text-gray-400 cursor-not-allowed hover:bg-gray-400 dark:hover:bg-gray-600"
+                              : "bg-primary hover:bg-primary/90 text-primary-foreground"
+                          }`}
                         >
                           <Play className="w-4 h-4 mr-2" />
-                          Learn Now
-                        </Button>
+                          {stats.allMastered ? "Nothing to Learn!" : "Learn Now"}
+                      </Button>
                       </div>
                     </CardContent>
                   </Card>

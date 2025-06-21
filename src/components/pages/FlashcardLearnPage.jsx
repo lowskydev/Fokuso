@@ -132,7 +132,10 @@ function FlashcardLearnPage() {
       setCurrentCardIndex(currentCardIndex + 1)
       setShowAnswer(false)
     } else {
+      // Session completed - refresh flashcards to get updated state
+      fetchFlashcards(deckId).then(() => {
       setIsSessionComplete(true)
+    })
     }
   }
 
@@ -185,6 +188,11 @@ function FlashcardLearnPage() {
   }
 
   if (isSessionComplete || learningCards.length === 0) {
+    // Check if the current learning session had any non-mastered cards
+    const hasUnmasteredCards = learningCards.some(card =>
+    !card.interval_display || !card.interval_display.includes("day")
+  )
+
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <Card className="w-full max-w-2xl bg-card/80 backdrop-blur-sm border-border shadow-2xl">
@@ -202,7 +210,9 @@ function FlashcardLearnPage() {
                 </h1>
                 <p className="text-muted-foreground text-lg">
                   {learningCards.length === 0
-                    ? "All your cards are up to date. Great job!"
+                    ? !hasUnmasteredCards
+                      ? "Congratulations! You've mastered all cards in this deck!"
+                      : "All your cards are up to date. Great job!"
                     : "Great job on completing your study session"}
                 </p>
               </div>
@@ -247,9 +257,10 @@ function FlashcardLearnPage() {
                 </div>
               )}
 
-              {/* Action Buttons */}
+               {/* Action Buttons */}
               <div className="flex gap-3">
-                {learningCards.length > 0 && sessionStats.total > 0 && (
+                {/* Only show Study Again button if we had unmastered cards and reviewed some */}
+                {hasUnmasteredCards && sessionStats.total > 0 && (
                   <Button variant="outline" onClick={handleReset} className="flex-1">
                     <RotateCcw className="w-4 h-4 mr-2" />
                     Study Again
@@ -298,10 +309,6 @@ function FlashcardLearnPage() {
             <Badge variant="secondary" className="px-4 py-2">
               {currentCardIndex + 1} of {learningCards.length}
             </Badge>
-            <Button variant="outline" onClick={handleReset} className="hover:bg-primary/5">
-              <RotateCcw className="w-4 h-4 mr-2" />
-              Reset
-            </Button>
           </div>
         </div>
 
