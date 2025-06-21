@@ -1,3 +1,4 @@
+// src/components/flashcards/EditDeckModal.jsx
 "use client"
 
 import { useState } from "react"
@@ -58,27 +59,6 @@ export function EditDeckModal({ deck, onEditDeck, onDeleteDeck, trigger }) {
     setIsLoading(true)
 
     try {
-      // TODO: Replace with actual API call
-      // const response = await fetch(`/api/flashcard-decks/${deck.id}`, {
-      //   method: 'PUT',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Authorization': `Bearer ${token}`,
-      //   },
-      //   body: JSON.stringify({
-      //     name: formData.name.trim(),
-      //   }),
-      // });
-      //
-      // if (!response.ok) {
-      //   throw new Error('Failed to update deck');
-      // }
-      //
-      // const updatedDeck = await response.json();
-
-      // For now, simulate API call with timeout
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
       // Prepare updated deck data
       const updatedDeck = {
         ...deck,
@@ -104,21 +84,6 @@ export function EditDeckModal({ deck, onEditDeck, onDeleteDeck, trigger }) {
     setIsDeleting(true)
 
     try {
-      // TODO: Replace with actual API call
-      // const response = await fetch(`/api/flashcard-decks/${deck.id}`, {
-      //   method: 'DELETE',
-      //   headers: {
-      //     'Authorization': `Bearer ${token}`,
-      //   },
-      // });
-      //
-      // if (!response.ok) {
-      //   throw new Error('Failed to delete deck');
-      // }
-
-      // For now, simulate API call with timeout
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
       // Call the parent component's delete deck function
       await onDeleteDeck(deck.id)
 
