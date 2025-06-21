@@ -11,6 +11,9 @@ import TodoPage from "@/components/pages/TodoPage";
 import { ThemeProvider } from "./components/theme-provider";
 import PageNotFound from "./components/pages/PageNotFound";
 import StatisticsPage from "./components/pages/StatisticsPage";
+import FlashcardsPage from "./components/pages/FlashcardPage";
+import FlashcardDeckPage from "./components/pages/FlashcardDeckPage";
+import FlashcardLearnPage from "./components/pages/FlashcardLearnPage";
 
 
 
@@ -31,10 +34,13 @@ function AppContent() {
 
           <Route element={<PrivateRoute />}>
             <Route path="/dashboard" element={<DashboardLayout />}>
-              <Route path="/dashboard/pomodoro" element={<PomodoroPage />} />
-              <Route path="/dashboard/calendar" element={<CalendarPage />} />
-              <Route path="/dashboard/todo" element={<TodoPage />} />
-              <Route path="/dashboard/stats" element={<StatisticsPage />} />
+              <Route path="pomodoro" element={<PomodoroPage />} />
+              <Route path="calendar" element={<CalendarPage />} />
+              <Route path="todo" element={<TodoPage />} />
+              <Route path="stats" element={<StatisticsPage />} />
+              <Route path="flashcards" element={<FlashcardsPage />} />
+              <Route path="flashcards/deck/:deckId" element={<FlashcardDeckPage />} />
+              <Route path="flashcards/learn/:deckId" element={<FlashcardLearnPage />} />
             </Route>
           </Route>
 
