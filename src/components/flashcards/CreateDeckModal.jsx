@@ -1,95 +1,101 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Plus, Loader2, Save, Brain } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Plus, Loader2, Save, Brain } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export function CreateDeckModal({ onCreateDeck, trigger }) {
-  const [open, setOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [errors, setErrors] = useState({})
+  const [open, setOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   // Form state
   const [formData, setFormData] = useState({
     name: "",
-  })
+  });
 
   // Form validation
   const validateForm = () => {
-    const newErrors = {}
+    const newErrors = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = "Deck name is required"
+      newErrors.name = "Deck name is required";
     }
 
     if (formData.name.length > 100) {
-      newErrors.name = "Name must be less than 100 characters"
+      newErrors.name = "Name must be less than 100 characters";
     }
 
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!validateForm()) {
-      return
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
       // Call the parent component's create deck function
-      await onCreateDeck({ name: formData.name.trim() })
+      await onCreateDeck({ name: formData.name.trim() });
 
       // Reset form and close modal
-      resetForm()
-      setOpen(false)
+      resetForm();
+      setOpen(false);
     } catch (error) {
-      console.error("Error creating deck:", error)
-      setErrors({ submit: "Failed to create deck. Please try again." })
+      console.error("Error creating deck:", error);
+      setErrors({ submit: "Failed to create deck. Please try again." });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   // Reset form to initial state
   const resetForm = () => {
     setFormData({
       name: "",
-    })
-    setErrors({})
-  }
+    });
+    setErrors({});
+  };
 
   // Reset form when modal opens
   const handleOpenChange = (newOpen) => {
     if (newOpen) {
-      resetForm()
+      resetForm();
     }
-    setOpen(newOpen)
-  }
+    setOpen(newOpen);
+  };
 
   // Handle input changes
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
-    }))
+    }));
 
     // Clear field error when user starts typing
     if (errors[field]) {
       setErrors((prev) => ({
         ...prev,
         [field]: undefined,
-      }))
+      }));
     }
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -114,7 +120,10 @@ export function CreateDeckModal({ onCreateDeck, trigger }) {
         <form onSubmit={handleSubmit} className="space-y-6 py-4">
           {/* Deck Name */}
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-sm font-medium text-foreground">
+            <Label
+              htmlFor="name"
+              className="text-sm font-medium text-foreground"
+            >
               Deck Name *
             </Label>
             <Input
@@ -122,18 +131,29 @@ export function CreateDeckModal({ onCreateDeck, trigger }) {
               placeholder="Enter deck name..."
               value={formData.name}
               onChange={(e) => handleInputChange("name", e.target.value)}
-              className={cn("h-12 text-lg", errors.name && "border-red-500 focus:border-red-500")}
+              className={cn(
+                "h-12 text-lg",
+                errors.name && "border-red-500 focus:border-red-500"
+              )}
               maxLength={100}
               autoFocus
             />
-            {errors.name && <p className="text-sm text-red-600 dark:text-red-400">{errors.name}</p>}
-            <p className="text-xs text-muted-foreground">{formData.name.length}/100 characters</p>
+            {errors.name && (
+              <p className="text-sm text-red-600 dark:text-red-400">
+                {errors.name}
+              </p>
+            )}
+            <p className="text-xs text-muted-foreground">
+              {formData.name.length}/100 characters
+            </p>
           </div>
 
           {/* Submit Error */}
           {errors.submit && (
             <div className="p-3 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg">
-              <p className="text-sm text-red-600 dark:text-red-400">{errors.submit}</p>
+              <p className="text-sm text-red-600 dark:text-red-400">
+                {errors.submit}
+              </p>
             </div>
           )}
 
@@ -148,7 +168,11 @@ export function CreateDeckModal({ onCreateDeck, trigger }) {
             >
               Cancel
             </Button>
-            <Button type="submit" className="flex-1 bg-primary hover:bg-primary/90" disabled={isLoading}>
+            <Button
+              type="submit"
+              className="flex-1 bg-primary hover:bg-primary/90"
+              disabled={isLoading}
+            >
               {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -165,5 +189,5 @@ export function CreateDeckModal({ onCreateDeck, trigger }) {
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

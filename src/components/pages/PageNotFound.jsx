@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Link } from "react-router-dom"
-import { Home, ArrowLeft, Sparkles, Search } from "lucide-react"
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Link } from "react-router-dom";
+import { Home, ArrowLeft, Sparkles, Search } from "lucide-react";
 
 function PageNotFound() {
   return (
@@ -42,8 +42,10 @@ function PageNotFound() {
               Oops! Page Not Found
             </h2>
             <p className="text-xl text-muted-foreground max-w-lg mx-auto leading-relaxed">
-              The page you're looking for seems to have wandered off. Let's get you back on track to your
-              <span className="font-semibold text-primary"> focus journey</span>.
+              The page you're looking for seems to have wandered off. Let's get
+              you back on track to your
+              <span className="font-semibold text-primary"> focus journey</span>
+              .
             </p>
           </div>
 
@@ -72,7 +74,9 @@ function PageNotFound() {
 
           {/* Helpful Links */}
           <div className="space-y-4">
-            <p className="text-muted-foreground font-medium">Or try one of these:</p>
+            <p className="text-muted-foreground font-medium">
+              Or try one of these:
+            </p>
             <div className="flex flex-wrap justify-center gap-3">
               <Link to="/login">
                 <Button
@@ -112,7 +116,7 @@ function PageNotFound() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default PageNotFound
+export default PageNotFound;

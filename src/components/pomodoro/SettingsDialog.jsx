@@ -1,14 +1,26 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Separator } from "@/components/ui/separator"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Settings, Volume2, VolumeX, Timer, Coffee } from "lucide-react"
-import { TimerPresets } from "./TimerPresets"
-import { useState, useEffect } from "react"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Settings, Volume2, VolumeX, Timer, Coffee } from "lucide-react";
+import { TimerPresets } from "./TimerPresets";
+import { useState, useEffect } from "react";
 
 export function SettingsDialog({
   soundEnabled,
@@ -24,24 +36,28 @@ export function SettingsDialog({
   onPresetSelect,
   setCompletedSessions,
 }) {
-  const [studyMinutes, setStudyMinutes] = useState(Math.floor(studyDuration / 60))
-  const [breakMinutes, setBreakMinutes] = useState(Math.floor(breakDuration / 60))
+  const [studyMinutes, setStudyMinutes] = useState(
+    Math.floor(studyDuration / 60)
+  );
+  const [breakMinutes, setBreakMinutes] = useState(
+    Math.floor(breakDuration / 60)
+  );
 
   // Update input values when durations change (from preset selection)
   useEffect(() => {
-    setStudyMinutes(Math.floor(studyDuration / 60))
-    setBreakMinutes(Math.floor(breakDuration / 60))
-  }, [studyDuration, breakDuration])
+    setStudyMinutes(Math.floor(studyDuration / 60));
+    setBreakMinutes(Math.floor(breakDuration / 60));
+  }, [studyDuration, breakDuration]);
 
   const handleStudyChange = (value) => {
-    setStudyMinutes(value)
-    handleDurationChange("study", value)
-  }
+    setStudyMinutes(value);
+    handleDurationChange("study", value);
+  };
 
   const handleBreakChange = (value) => {
-    setBreakMinutes(value)
-    handleDurationChange("break", value)
-  }
+    setBreakMinutes(value);
+    handleDurationChange("break", value);
+  };
 
   return (
     <Dialog>
@@ -66,11 +82,24 @@ export function SettingsDialog({
         <div className="space-y-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h4 className="text-lg font-medium text-foreground">Sound Notifications</h4>
-              <p className="text-sm text-muted-foreground">Play sound when sessions complete</p>
+              <h4 className="text-lg font-medium text-foreground">
+                Sound Notifications
+              </h4>
+              <p className="text-sm text-muted-foreground">
+                Play sound when sessions complete
+              </p>
             </div>
-            <Button onClick={toggleSound} variant="outline" size="sm" className="flex items-center gap-2">
-              {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+            <Button
+              onClick={toggleSound}
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              {soundEnabled ? (
+                <Volume2 className="w-4 h-4" />
+              ) : (
+                <VolumeX className="w-4 h-4" />
+              )}
               {soundEnabled ? "Sound On" : "Sound Off"}
             </Button>
           </div>
@@ -79,11 +108,18 @@ export function SettingsDialog({
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h4 className="text-lg font-medium text-foreground">Notification Sound</h4>
-                  <p className="text-sm text-muted-foreground">Choose your preferred notification sound</p>
+                  <h4 className="text-lg font-medium text-foreground">
+                    Notification Sound
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    Choose your preferred notification sound
+                  </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Select value={soundType} onValueChange={handleSoundTypeChange}>
+                  <Select
+                    value={soundType}
+                    onValueChange={handleSoundTypeChange}
+                  >
                     <SelectTrigger className="w-32">
                       <SelectValue />
                     </SelectTrigger>
@@ -103,14 +139,21 @@ export function SettingsDialog({
 
           <Separator />
 
-          <TimerPresets selectedPreset={selectedPreset} onPresetSelect={onPresetSelect} />
+          <TimerPresets
+            selectedPreset={selectedPreset}
+            onPresetSelect={onPresetSelect}
+          />
 
           <Separator />
 
           <div className="space-y-4">
             <div>
-              <h4 className="text-lg font-medium text-foreground">Custom Duration</h4>
-              <p className="text-sm text-muted-foreground">Set your own focus and break times</p>
+              <h4 className="text-lg font-medium text-foreground">
+                Custom Duration
+              </h4>
+              <p className="text-sm text-muted-foreground">
+                Set your own focus and break times
+              </p>
             </div>
           </div>
 
@@ -131,7 +174,9 @@ export function SettingsDialog({
                 onChange={(e) => handleStudyChange(e.target.value)}
                 className="text-lg p-4 h-12"
               />
-              <p className="text-sm text-muted-foreground">Recommended: 25 minutes for optimal focus</p>
+              <p className="text-sm text-muted-foreground">
+                Recommended: 25 minutes for optimal focus
+              </p>
             </div>
 
             <div className="space-y-4">
@@ -150,7 +195,9 @@ export function SettingsDialog({
                 onChange={(e) => handleBreakChange(e.target.value)}
                 className="text-lg p-4 h-12"
               />
-              <p className="text-sm text-muted-foreground">Recommended: 5 minutes for short breaks</p>
+              <p className="text-sm text-muted-foreground">
+                Recommended: 5 minutes for short breaks
+              </p>
             </div>
           </div>
 
@@ -158,13 +205,17 @@ export function SettingsDialog({
 
           <div className="flex items-center justify-between">
             <div>
-              <h4 className="text-lg font-medium text-foreground">Reset Statistics</h4>
-              <p className="text-sm text-muted-foreground">Clear your completed sessions count</p>
+              <h4 className="text-lg font-medium text-foreground">
+                Reset Statistics
+              </h4>
+              <p className="text-sm text-muted-foreground">
+                Clear your completed sessions count
+              </p>
             </div>
             <Button
               onClick={() => {
-                setCompletedSessions(0)
-                localStorage.setItem("completedSessions", "0")
+                setCompletedSessions(0);
+                localStorage.setItem("completedSessions", "0");
               }}
               variant="outline"
               className="text-red-600 border-red-200 hover:bg-red-50 dark:text-red-400 dark:border-red-800 dark:hover:bg-red-950/20"
@@ -175,5 +226,5 @@ export function SettingsDialog({
         </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

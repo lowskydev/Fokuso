@@ -1,26 +1,24 @@
-"use client"
-import { StatsHeader } from "@/components/statistics/StatsHeader"
-import { StatsOverview } from "@/components/statistics/StatsOverview"
-import { TodayProgress } from "@/components/statistics/TodayProgress"
-import { WeeklyOverview } from "@/components/statistics/WeeklyOverview"
-import { DetailedStats } from "@/components/statistics/DetailedStats"
-import { Achievements } from "@/components/statistics/Achievements"
-import useFlashcardStore from "@/store/useFlashcardStore"
+"use client";
+import { StatsHeader } from "@/components/statistics/StatsHeader";
+import { StatsOverview } from "@/components/statistics/StatsOverview";
+import { TodayProgress } from "@/components/statistics/TodayProgress";
+import { WeeklyOverview } from "@/components/statistics/WeeklyOverview";
+import { DetailedStats } from "@/components/statistics/DetailedStats";
+import { Achievements } from "@/components/statistics/Achievements";
+import useFlashcardStore from "@/store/useFlashcardStore";
 
-import { useEffect } from "react"
-
-
+import { useEffect } from "react";
 
 function StatisticsPage() {
   // Dummy data - will be replaced with real database queries later
 
-  const { reviewsToday, dailyStats, fetchTodayStats, fetchDailyStats } = useFlashcardStore()
+  const { reviewsToday, dailyStats, fetchTodayStats, fetchDailyStats } =
+    useFlashcardStore();
 
   useEffect(() => {
-    fetchTodayStats()
-    fetchDailyStats(7) // Get last 7 days
-  }, [fetchTodayStats, fetchDailyStats])
-
+    fetchTodayStats();
+    fetchDailyStats(7); // Get last 7 days
+  }, [fetchTodayStats, fetchDailyStats]);
 
   const stats = {
     totalSessions: 247,
@@ -39,7 +37,7 @@ function StatisticsPage() {
     correctAnswers: 18,
     incorrectAnswers: 6,
     cardsToReview: 12,
-  }
+  };
 
   // Hourly data for today's progress graph
   // At which hour the user has completed how many sessions (not cumulative)
@@ -61,7 +59,7 @@ function StatisticsPage() {
     { hour: "20", sessions: 5 },
     { hour: "21", sessions: 5 },
     { hour: "22", sessions: 7 },
-  ]
+  ];
 
   const weeklyData = [
     { day: "Mon", sessions: 4, focusTime: 100 },
@@ -71,7 +69,7 @@ function StatisticsPage() {
     { day: "Fri", sessions: 3, focusTime: 75 },
     { day: "Sat", sessions: 0, focusTime: 0 },
     { day: "Sun", sessions: 7, focusTime: 175 },
-  ]
+  ];
 
   // Dynamic achievements based on actual data
   const achievements = [
@@ -105,10 +103,9 @@ function StatisticsPage() {
       description: "Complete 500 total sessions",
       earned: stats.totalSessions >= 500,
     },
-  ]
+  ];
 
-
-return (
+  return (
     <div className="space-y-8 pb-8">
       <StatsHeader />
       <StatsOverview stats={stats} />
@@ -121,7 +118,7 @@ return (
       <DetailedStats stats={stats} />
       <Achievements achievements={achievements} />
     </div>
-  )
+  );
 }
 
-export default StatisticsPage
+export default StatisticsPage;

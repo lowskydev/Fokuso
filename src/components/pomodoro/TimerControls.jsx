@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Play, Pause, RotateCcw } from "lucide-react"
+import { Button } from "@/components/ui/button";
+import { Play, Pause, RotateCcw } from "lucide-react";
 
 export function TimerControls({
   isRunning,
@@ -52,12 +52,13 @@ export function TimerControls({
       {/* Keyboard Shortcuts */}
       <div className="text-sm text-muted-foreground space-y-1 text-center">
         <p>
-          <kbd className="px-2 py-1 bg-muted rounded text-xs">Space</kbd> Start/Pause
+          <kbd className="px-2 py-1 bg-muted rounded text-xs">Space</kbd>{" "}
+          Start/Pause
         </p>
         <p>
           <kbd className="px-2 py-1 bg-muted rounded text-xs">Ctrl+R</kbd> Reset
         </p>
       </div>
     </div>
-  )
+  );
 }

@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { Link } from "react-router-dom"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Sparkles } from "lucide-react"
-import ThemeToggle from "./ThemeToggle"
-import logo from "@/assets/logo.png"
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Sparkles } from "lucide-react";
+import ThemeToggle from "./ThemeToggle";
+import logo from "@/assets/logo.png";
 
 function Navbar() {
   return (
@@ -16,7 +16,10 @@ function Navbar() {
       <div className="relative max-w-7xl mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
           {/* Logo Section */}
-          <Link to="/" className="flex items-center gap-3 group transition-all duration-300 hover:scale-105">
+          <Link
+            to="/"
+            className="flex items-center gap-3 group transition-all duration-300 hover:scale-105"
+          >
             <div className="relative">
               <img
                 src={logo || "/placeholder.svg"}
@@ -71,7 +74,7 @@ function Navbar() {
       {/* Bottom gradient line */}
       <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
     </nav>
-  )
+  );
 }
 
-export default Navbar
+export default Navbar;

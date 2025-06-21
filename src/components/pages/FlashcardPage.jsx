@@ -1,19 +1,29 @@
 // src/components/pages/FlashcardPage.jsx
-"use client"
+"use client";
 
-import { useEffect } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Progress } from "@/components/ui/progress"
-import { useNavigate } from "react-router-dom"
-import { Brain, BookOpen, Target, TrendingUp, Plus, Play, BarChart3, Calendar, Zap } from "lucide-react"
-import useFlashcardStore from "@/store/useFlashcardStore"
-import { toast } from "sonner"
+import { useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { useNavigate } from "react-router-dom";
+import {
+  Brain,
+  BookOpen,
+  Target,
+  TrendingUp,
+  Plus,
+  Play,
+  BarChart3,
+  Calendar,
+  Zap,
+} from "lucide-react";
+import useFlashcardStore from "@/store/useFlashcardStore";
+import { toast } from "sonner";
 // Import the new CreateDeckModal component at the top
-import { CreateDeckModal } from "@/components/flashcards/CreateDeckModal"
+import { CreateDeckModal } from "@/components/flashcards/CreateDeckModal";
 
 function FlashcardsPage() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const {
     decks,
@@ -27,76 +37,78 @@ function FlashcardsPage() {
     fetchTodayStats,
     createDeck,
     clearError,
-  } = useFlashcardStore()
+  } = useFlashcardStore();
 
   // Local state for creating decks
   // const [isCreatingDeck, setIsCreatingDeck] = useState(false)
 
   useEffect(() => {
     // Fetch decks, flashcards, and today's stats when component mounts
-    fetchDecks()
-    fetchFlashcards()
-    fetchTodayStats()
-  }, [fetchDecks, fetchFlashcards, fetchTodayStats])
+    fetchDecks();
+    fetchFlashcards();
+    fetchTodayStats();
+  }, [fetchDecks, fetchFlashcards, fetchTodayStats]);
 
   useEffect(() => {
     // Show error toast if there's an error
     if (error) {
-      toast.error(error)
-      clearError()
+      toast.error(error);
+      clearError();
     }
-  }, [error, clearError])
+  }, [error, clearError]);
 
   // Calculate stats from real data
-  const totalCards = flashcards.length
+  const totalCards = flashcards.length;
   const totalMastered = flashcards.filter((card) => {
-    return card.interval_display && card.interval_display.includes("day")
-  }).length
+    return card.interval_display && card.interval_display.includes("day");
+  }).length;
 
-  const overallProgress = totalCards > 0 ? Math.round((totalMastered / totalCards) * 100) : 0
+  const overallProgress =
+    totalCards > 0 ? Math.round((totalMastered / totalCards) * 100) : 0;
 
   // Update the handleCreateDeck function to work with the modal
   const handleCreateDeck = async (deckData) => {
     try {
-      await createDeck(deckData)
-      toast.success("Deck created successfully!")
+      await createDeck(deckData);
+      toast.success("Deck created successfully!");
     } catch (error) {
-      toast.error("Failed to create deck")
-      throw error // Re-throw to let modal handle the error
+      toast.error("Failed to create deck");
+      throw error; // Re-throw to let modal handle the error
     }
-  }
+  };
 
   const handleDeckClick = (deckId) => {
-    navigate(`/dashboard/flashcards/deck/${deckId}`)
-  }
+    navigate(`/dashboard/flashcards/deck/${deckId}`);
+  };
 
   const handleLearnClick = (e, deckId) => {
-    e.stopPropagation()
-    navigate(`/dashboard/flashcards/learn/${deckId}`)
-  }
+    e.stopPropagation();
+    navigate(`/dashboard/flashcards/learn/${deckId}`);
+  };
 
   const getDeckStats = (deckId) => {
-    const deckCards = flashcards.filter((card) => card.deck === deckId)
-    const cardCount = deckCards.length
+    const deckCards = flashcards.filter((card) => card.deck === deckId);
+    const cardCount = deckCards.length;
 
-    const today = new Date().toDateString()
+    const today = new Date().toDateString();
     const masteredToday = deckCards.filter((card) => {
       const wasMasteredToday =
         card.interval_display &&
         card.interval_display.includes("day") &&
         card.updated_at &&
-        new Date(card.updated_at).toDateString() === today
-      return wasMasteredToday
-    }).length
+        new Date(card.updated_at).toDateString() === today;
+      return wasMasteredToday;
+    }).length;
 
     // Total mastered cards (regardless of when they were mastered)
     const masteredCards = deckCards.filter(
-      (card) => card.interval_display && card.interval_display.includes("day"),
-    ).length
+      (card) => card.interval_display && card.interval_display.includes("day")
+    ).length;
 
-    const progress = cardCount > 0 ? Math.round((masteredCards / cardCount) * 100) : 0
+    const progress =
+      cardCount > 0 ? Math.round((masteredCards / cardCount) * 100) : 0;
 
-    const allMastered = masteredCards === cardCount
+    const allMastered = masteredCards === cardCount;
 
     return {
       cardCount,
@@ -104,8 +116,8 @@ function FlashcardsPage() {
       masteredCards,
       progress,
       allMastered,
-    }
-  }
+    };
+  };
 
   if (isLoading && decks.length === 0) {
     return (
@@ -117,7 +129,7 @@ function FlashcardsPage() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -128,7 +140,9 @@ function FlashcardsPage() {
           <h1 className="text-4xl font-bold bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">
             Flashcards
           </h1>
-          <p className="text-muted-foreground text-lg mt-2">Master knowledge through spaced repetition</p>
+          <p className="text-muted-foreground text-lg mt-2">
+            Master knowledge through spaced repetition
+          </p>
         </div>
         {/* In the header section, replace the existing Create Deck button with: */}
         <CreateDeckModal onCreateDeck={handleCreateDeck} />
@@ -144,7 +158,9 @@ function FlashcardsPage() {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Total Cards</p>
-                <p className="text-2xl font-bold text-foreground">{totalCards}</p>
+                <p className="text-2xl font-bold text-foreground">
+                  {totalCards}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -158,7 +174,9 @@ function FlashcardsPage() {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Reviewed Today</p>
-                <p className="text-2xl font-bold text-foreground">{reviewsToday}</p>
+                <p className="text-2xl font-bold text-foreground">
+                  {reviewsToday}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -188,8 +206,12 @@ function FlashcardsPage() {
                 <TrendingUp className="w-5 h-5 text-purple-500" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Overall Progress</p>
-                <p className="text-2xl font-bold text-foreground">{overallProgress}%</p>
+                <p className="text-sm text-muted-foreground">
+                  Overall Progress
+                </p>
+                <p className="text-2xl font-bold text-foreground">
+                  {overallProgress}%
+                </p>
               </div>
             </div>
           </CardContent>
@@ -238,8 +260,12 @@ function FlashcardsPage() {
               <div className="w-16 h-16 bg-muted/50 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Brain className="w-8 h-8 text-muted-foreground" />
               </div>
-              <p className="text-muted-foreground text-lg">No flashcard decks yet</p>
-              <p className="text-muted-foreground/60 mb-4">Create your first deck to get started</p>
+              <p className="text-muted-foreground text-lg">
+                No flashcard decks yet
+              </p>
+              <p className="text-muted-foreground/60 mb-4">
+                Create your first deck to get started
+              </p>
               <Button onClick={handleCreateDeck} disabled={false}>
                 <Plus className="w-4 h-4 mr-2" />
                 Create Your First Deck
@@ -248,7 +274,7 @@ function FlashcardsPage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {decks.map((deck) => {
-                const stats = getDeckStats(deck.id)
+                const stats = getDeckStats(deck.id);
                 const colors = [
                   "bg-blue-500",
                   "bg-cyan-500",
@@ -258,8 +284,8 @@ function FlashcardsPage() {
                   "bg-red-500",
                   "bg-indigo-500",
                   "bg-pink-500",
-                ]
-                const color = colors[(deck.id - 1) % colors.length]
+                ];
+                const color = colors[(deck.id - 1) % colors.length];
 
                 return (
                   <Card
@@ -272,11 +298,18 @@ function FlashcardsPage() {
                         {/* Deck Header */}
                         <div className="flex items-start justify-between">
                           <div className={`p-3 rounded-xl ${color}/20`}>
-                            <Brain className={`w-6 h-6 text-white`} style={{ filter: "brightness(0.8)" }} />
+                            <Brain
+                              className={`w-6 h-6 text-white`}
+                              style={{ filter: "brightness(0.8)" }}
+                            />
                           </div>
                           <div className="text-right">
-                            <p className="text-sm text-muted-foreground">Progress</p>
-                            <p className="text-lg font-bold text-foreground">{stats.progress}%</p>
+                            <p className="text-sm text-muted-foreground">
+                              Progress
+                            </p>
+                            <p className="text-lg font-bold text-foreground">
+                              {stats.progress}%
+                            </p>
                           </div>
                         </div>
 
@@ -286,7 +319,8 @@ function FlashcardsPage() {
                             {deck.name}
                           </h3>
                           <p className="text-sm text-muted-foreground mt-1">
-                            Created {new Date(deck.created_at).toLocaleDateString()}
+                            Created{" "}
+                            {new Date(deck.created_at).toLocaleDateString()}
                           </p>
                         </div>
 
@@ -302,7 +336,10 @@ function FlashcardsPage() {
                         {/* Last Updated */}
                         <div className="flex items-center gap-2 text-xs text-muted-foreground">
                           <Calendar className="w-3 h-3" />
-                          <span>Updated: {new Date(deck.updated_at).toLocaleDateString()}</span>
+                          <span>
+                            Updated:{" "}
+                            {new Date(deck.updated_at).toLocaleDateString()}
+                          </span>
                         </div>
 
                         {/* Action Button */}
@@ -316,19 +353,21 @@ function FlashcardsPage() {
                           }`}
                         >
                           <Play className="w-4 h-4 mr-2" />
-                          {stats.allMastered ? "Nothing to Learn!" : "Learn Now"}
-                      </Button>
+                          {stats.allMastered
+                            ? "Nothing to Learn!"
+                            : "Learn Now"}
+                        </Button>
                       </div>
                     </CardContent>
                   </Card>
-                )
+                );
               })}
             </div>
           )}
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
 
-export default FlashcardsPage
+export default FlashcardsPage;

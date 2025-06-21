@@ -1,19 +1,19 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { BarChart3 } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { BarChart3 } from "lucide-react";
 
 export function WeeklyOverview({ weeklyData }) {
   const formatTime = (minutes) => {
-    const hours = Math.floor(minutes / 60)
-    const mins = minutes % 60
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
     if (hours > 0) {
-      return `${hours}h ${mins}m`
+      return `${hours}h ${mins}m`;
     }
-    return `${mins}m`
-  }
+    return `${mins}m`;
+  };
 
   // Calculate the maximum sessions to set proper scale
-  const maxSessions = Math.max(...weeklyData.map((day) => day.sessions))
-  const maxScale = Math.max(maxSessions, 5) // Ensure minimum scale of 5
+  const maxSessions = Math.max(...weeklyData.map((day) => day.sessions));
+  const maxScale = Math.max(maxSessions, 5); // Ensure minimum scale of 5
 
   return (
     <Card className="bg-card/80 backdrop-blur-sm border-border shadow-xl">
@@ -29,7 +29,9 @@ export function WeeklyOverview({ weeklyData }) {
         <div className="space-y-4">
           {weeklyData.map((day, index) => (
             <div key={day.day} className="flex items-center gap-4">
-              <div className="w-12 text-sm font-medium text-muted-foreground">{day.day}</div>
+              <div className="w-12 text-sm font-medium text-muted-foreground">
+                {day.day}
+              </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
                   <div className="w-full bg-muted rounded-full h-2">
@@ -38,14 +40,18 @@ export function WeeklyOverview({ weeklyData }) {
                       style={{ width: `${(day.sessions / maxScale) * 100}%` }}
                     ></div>
                   </div>
-                  <span className="text-sm font-medium w-16">{day.sessions} sessions</span>
+                  <span className="text-sm font-medium w-16">
+                    {day.sessions} sessions
+                  </span>
                 </div>
-                <p className="text-xs text-muted-foreground">{formatTime(day.focusTime)} focused</p>
+                <p className="text-xs text-muted-foreground">
+                  {formatTime(day.focusTime)} focused
+                </p>
               </div>
             </div>
           ))}
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

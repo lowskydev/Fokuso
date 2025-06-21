@@ -1,12 +1,18 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Badge } from "@/components/ui/badge"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,17 +23,39 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Separator } from "@/components/ui/separator"
-import { Edit, Loader2, Save, Trash2, AlertTriangle, Brain, X, Tag, BarChart3 } from "lucide-react"
-import { cn } from "@/lib/utils"
+} from "@/components/ui/alert-dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import {
+  Edit,
+  Loader2,
+  Save,
+  Trash2,
+  AlertTriangle,
+  Brain,
+  X,
+  Tag,
+  BarChart3,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
-export function EditFlashcardModal({ flashcard, decks, onEditFlashcard, onDeleteFlashcard, trigger }) {
-  const [open, setOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [isDeleting, setIsDeleting] = useState(false)
-  const [errors, setErrors] = useState({})
+export function EditFlashcardModal({
+  flashcard,
+  decks,
+  onEditFlashcard,
+  onDeleteFlashcard,
+  trigger,
+}) {
+  const [open, setOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [errors, setErrors] = useState({});
 
   // Form state
   const [formData, setFormData] = useState({
@@ -35,51 +63,51 @@ export function EditFlashcardModal({ flashcard, decks, onEditFlashcard, onDelete
     answer: flashcard?.answer || "",
     deck: flashcard?.deck || "",
     tags: flashcard?.tags || [],
-  })
+  });
 
-  const [tagInput, setTagInput] = useState("")
+  const [tagInput, setTagInput] = useState("");
 
   // Form validation
   const validateForm = () => {
-    const newErrors = {}
+    const newErrors = {};
 
     if (!formData.question.trim()) {
-      newErrors.question = "Question is required"
+      newErrors.question = "Question is required";
     }
 
     if (formData.question.length > 500) {
-      newErrors.question = "Question must be less than 500 characters"
+      newErrors.question = "Question must be less than 500 characters";
     }
 
     if (!formData.answer.trim()) {
-      newErrors.answer = "Answer is required"
+      newErrors.answer = "Answer is required";
     }
 
     if (formData.answer.length > 1000) {
-      newErrors.answer = "Answer must be less than 1000 characters"
+      newErrors.answer = "Answer must be less than 1000 characters";
     }
 
     if (!formData.deck) {
-      newErrors.deck = "Please select a deck"
+      newErrors.deck = "Please select a deck";
     }
 
     if (formData.tags.length > 10) {
-      newErrors.tags = "Maximum 10 tags allowed"
+      newErrors.tags = "Maximum 10 tags allowed";
     }
 
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!validateForm()) {
-      return
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
       // Prepare updated flashcard data
@@ -90,38 +118,38 @@ export function EditFlashcardModal({ flashcard, decks, onEditFlashcard, onDelete
         deck: Number.parseInt(formData.deck),
         tags: formData.tags,
         updated_at: new Date().toISOString(),
-      }
+      };
 
       // Call the parent component's edit flashcard function
-      await onEditFlashcard(updatedFlashcard)
+      await onEditFlashcard(updatedFlashcard);
 
       // Close modal
-      setOpen(false)
+      setOpen(false);
     } catch (error) {
-      console.error("Error updating flashcard:", error)
-      setErrors({ submit: "Failed to update flashcard. Please try again." })
+      console.error("Error updating flashcard:", error);
+      setErrors({ submit: "Failed to update flashcard. Please try again." });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   // Handle flashcard deletion
   const handleDelete = async () => {
-    setIsDeleting(true)
+    setIsDeleting(true);
 
     try {
       // Call the parent component's delete flashcard function
-      await onDeleteFlashcard(flashcard.id)
+      await onDeleteFlashcard(flashcard.id);
 
       // Close modal
-      setOpen(false)
+      setOpen(false);
     } catch (error) {
-      console.error("Error deleting flashcard:", error)
-      setErrors({ submit: "Failed to delete flashcard. Please try again." })
+      console.error("Error deleting flashcard:", error);
+      setErrors({ submit: "Failed to delete flashcard. Please try again." });
     } finally {
-      setIsDeleting(false)
+      setIsDeleting(false);
     }
-  }
+  };
 
   // Reset form when modal opens
   const handleOpenChange = (newOpen) => {
@@ -131,75 +159,78 @@ export function EditFlashcardModal({ flashcard, decks, onEditFlashcard, onDelete
         answer: flashcard?.answer || "",
         deck: flashcard?.deck || "",
         tags: flashcard?.tags || [],
-      })
-      setTagInput("")
-      setErrors({})
+      });
+      setTagInput("");
+      setErrors({});
     }
-    setOpen(newOpen)
-  }
+    setOpen(newOpen);
+  };
 
   // Handle input changes
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
-    }))
+    }));
 
     // Clear field error when user starts typing
     if (errors[field]) {
       setErrors((prev) => ({
         ...prev,
         [field]: undefined,
-      }))
+      }));
     }
-  }
+  };
 
   // Handle tag addition
   const addTag = () => {
-    const tag = tagInput.trim().toLowerCase()
+    const tag = tagInput.trim().toLowerCase();
     if (tag && !formData.tags.includes(tag) && formData.tags.length < 10) {
       setFormData((prev) => ({
         ...prev,
         tags: [...prev.tags, tag],
-      }))
-      setTagInput("")
+      }));
+      setTagInput("");
     }
-  }
+  };
 
   // Handle tag removal
   const removeTag = (tagToRemove) => {
     setFormData((prev) => ({
       ...prev,
       tags: prev.tags.filter((tag) => tag !== tagToRemove),
-    }))
-  }
+    }));
+  };
 
   // Handle tag input key press
   const handleTagKeyPress = (e) => {
     if (e.key === "Enter" || e.key === ",") {
-      e.preventDefault()
-      addTag()
+      e.preventDefault();
+      addTag();
     }
-  }
+  };
 
   // Get deck name for display
-  const selectedDeck = decks?.find((deck) => deck.id === Number.parseInt(formData.deck))
-  const currentDeck = decks?.find((deck) => deck.id === flashcard?.deck)
+  const selectedDeck = decks?.find(
+    (deck) => deck.id === Number.parseInt(formData.deck)
+  );
+  const currentDeck = decks?.find((deck) => deck.id === flashcard?.deck);
 
   // Format dates
   const formatDate = (dateString) => {
-    if (!dateString) return "Unknown"
-    return new Date(dateString).toLocaleDateString()
-  }
+    if (!dateString) return "Unknown";
+    return new Date(dateString).toLocaleDateString();
+  };
 
   // Get card status info
   const getCardStatusInfo = () => {
-    if (!flashcard) return null
+    if (!flashcard) return null;
 
-    const now = new Date()
-    const reviewDate = new Date(flashcard.next_review)
-    const isOverdue = reviewDate <= now
-    const isDueSoon = reviewDate.getTime() - now.getTime() < 24 * 60 * 60 * 1000
+    const now = new Date();
+    const reviewDate = new Date(flashcard.next_review);
+    const isOverdue = reviewDate <= now;
+    const isDueSoon =
+      reviewDate.getTime() - now.getTime() < 24 * 60 * 60 * 1000;
 
     return {
       isOverdue,
@@ -208,10 +239,10 @@ export function EditFlashcardModal({ flashcard, decks, onEditFlashcard, onDelete
       repetitions: flashcard.repetition || 0,
       isLearning: flashcard.is_learning,
       interval: flashcard.interval_display || "New",
-    }
-  }
+    };
+  };
 
-  const statusInfo = getCardStatusInfo()
+  const statusInfo = getCardStatusInfo();
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -236,9 +267,16 @@ export function EditFlashcardModal({ flashcard, decks, onEditFlashcard, onDelete
         <form onSubmit={handleSubmit} className="space-y-6 py-4">
           {/* Deck Selection */}
           <div className="space-y-2">
-            <Label className="text-sm font-medium text-foreground">Deck *</Label>
-            <Select value={formData.deck.toString()} onValueChange={(value) => handleInputChange("deck", value)}>
-              <SelectTrigger className={cn("h-12", errors.deck && "border-red-500")}>
+            <Label className="text-sm font-medium text-foreground">
+              Deck *
+            </Label>
+            <Select
+              value={formData.deck.toString()}
+              onValueChange={(value) => handleInputChange("deck", value)}
+            >
+              <SelectTrigger
+                className={cn("h-12", errors.deck && "border-red-500")}
+              >
                 <SelectValue placeholder="Choose a deck for this flashcard" />
               </SelectTrigger>
               <SelectContent>
@@ -252,7 +290,11 @@ export function EditFlashcardModal({ flashcard, decks, onEditFlashcard, onDelete
                 ))}
               </SelectContent>
             </Select>
-            {errors.deck && <p className="text-sm text-red-600 dark:text-red-400">{errors.deck}</p>}
+            {errors.deck && (
+              <p className="text-sm text-red-600 dark:text-red-400">
+                {errors.deck}
+              </p>
+            )}
             {selectedDeck && selectedDeck.id !== flashcard?.deck && (
               <p className="text-xs text-yellow-600 dark:text-yellow-400">
                 ⚠️ Moving from "{currentDeck?.name}" to "{selectedDeck.name}"
@@ -262,7 +304,10 @@ export function EditFlashcardModal({ flashcard, decks, onEditFlashcard, onDelete
 
           {/* Question */}
           <div className="space-y-2">
-            <Label htmlFor="question" className="text-sm font-medium text-foreground">
+            <Label
+              htmlFor="question"
+              className="text-sm font-medium text-foreground"
+            >
               Question *
             </Label>
             <Textarea
@@ -272,17 +317,26 @@ export function EditFlashcardModal({ flashcard, decks, onEditFlashcard, onDelete
               onChange={(e) => handleInputChange("question", e.target.value)}
               className={cn(
                 "min-h-[100px] resize-none text-lg",
-                errors.question && "border-red-500 focus:border-red-500",
+                errors.question && "border-red-500 focus:border-red-500"
               )}
               maxLength={500}
             />
-            {errors.question && <p className="text-sm text-red-600 dark:text-red-400">{errors.question}</p>}
-            <p className="text-xs text-muted-foreground">{formData.question.length}/500 characters</p>
+            {errors.question && (
+              <p className="text-sm text-red-600 dark:text-red-400">
+                {errors.question}
+              </p>
+            )}
+            <p className="text-xs text-muted-foreground">
+              {formData.question.length}/500 characters
+            </p>
           </div>
 
           {/* Answer */}
           <div className="space-y-2">
-            <Label htmlFor="answer" className="text-sm font-medium text-foreground">
+            <Label
+              htmlFor="answer"
+              className="text-sm font-medium text-foreground"
+            >
               Answer *
             </Label>
             <Textarea
@@ -292,18 +346,26 @@ export function EditFlashcardModal({ flashcard, decks, onEditFlashcard, onDelete
               onChange={(e) => handleInputChange("answer", e.target.value)}
               className={cn(
                 "min-h-[120px] resize-none text-lg",
-                errors.answer && "border-red-500 focus:border-red-500",
+                errors.answer && "border-red-500 focus:border-red-500"
               )}
               maxLength={1000}
             />
-            {errors.answer && <p className="text-sm text-red-600 dark:text-red-400">{errors.answer}</p>}
-            <p className="text-xs text-muted-foreground">{formData.answer.length}/1000 characters</p>
+            {errors.answer && (
+              <p className="text-sm text-red-600 dark:text-red-400">
+                {errors.answer}
+              </p>
+            )}
+            <p className="text-xs text-muted-foreground">
+              {formData.answer.length}/1000 characters
+            </p>
           </div>
 
           {/* Submit Error */}
           {errors.submit && (
             <div className="p-3 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg">
-              <p className="text-sm text-red-600 dark:text-red-400">{errors.submit}</p>
+              <p className="text-sm text-red-600 dark:text-red-400">
+                {errors.submit}
+              </p>
             </div>
           )}
 
@@ -318,7 +380,11 @@ export function EditFlashcardModal({ flashcard, decks, onEditFlashcard, onDelete
             >
               Cancel
             </Button>
-            <Button type="submit" className="flex-1 bg-primary hover:bg-primary/90" disabled={isLoading || isDeleting}>
+            <Button
+              type="submit"
+              className="flex-1 bg-primary hover:bg-primary/90"
+              disabled={isLoading || isDeleting}
+            >
               {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -339,16 +405,21 @@ export function EditFlashcardModal({ flashcard, decks, onEditFlashcard, onDelete
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-red-500" />
-              <h4 className="font-medium text-red-600 dark:text-red-400">Danger Zone</h4>
+              <h4 className="font-medium text-red-600 dark:text-red-400">
+                Danger Zone
+              </h4>
             </div>
 
             <div className="p-4 bg-red-50/50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg">
               <div className="space-y-3">
                 <div>
-                  <h5 className="font-medium text-red-700 dark:text-red-400">Delete this flashcard</h5>
+                  <h5 className="font-medium text-red-700 dark:text-red-400">
+                    Delete this flashcard
+                  </h5>
                   <p className="text-sm text-red-600 dark:text-red-500">
-                    Once you delete a flashcard, there is no going back. This will permanently delete the flashcard and
-                    all its learning progress.
+                    Once you delete a flashcard, there is no going back. This
+                    will permanently delete the flashcard and all its learning
+                    progress.
                   </p>
                 </div>
 
@@ -380,17 +451,21 @@ export function EditFlashcardModal({ flashcard, decks, onEditFlashcard, onDelete
                         Are you absolutely sure?
                       </AlertDialogTitle>
                       <AlertDialogDescription className="text-muted-foreground">
-                        This action cannot be undone. This will permanently delete this flashcard and all its learning
-                        data.
+                        This action cannot be undone. This will permanently
+                        delete this flashcard and all its learning data.
                         <br />
                         <br />
                         <div className="p-3 bg-muted/50 rounded-lg mt-3">
-                          <p className="font-medium text-foreground mb-1">Question:</p>
+                          <p className="font-medium text-foreground mb-1">
+                            Question:
+                          </p>
                           <p className="text-sm text-muted-foreground mb-2">
                             {flashcard?.question?.substring(0, 100)}
                             {flashcard?.question?.length > 100 ? "..." : ""}
                           </p>
-                          <p className="font-medium text-foreground mb-1">Answer:</p>
+                          <p className="font-medium text-foreground mb-1">
+                            Answer:
+                          </p>
                           <p className="text-sm text-muted-foreground">
                             {flashcard?.answer?.substring(0, 100)}
                             {flashcard?.answer?.length > 100 ? "..." : ""}
@@ -403,7 +478,9 @@ export function EditFlashcardModal({ flashcard, decks, onEditFlashcard, onDelete
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+                      <AlertDialogCancel disabled={isDeleting}>
+                        Cancel
+                      </AlertDialogCancel>
                       <AlertDialogAction
                         onClick={handleDelete}
                         disabled={isDeleting}
@@ -430,5 +507,5 @@ export function EditFlashcardModal({ flashcard, decks, onEditFlashcard, onDelete
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

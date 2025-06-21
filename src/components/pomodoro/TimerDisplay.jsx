@@ -1,14 +1,19 @@
-import { Badge } from "@/components/ui/badge"
-import { Timer, Coffee } from "lucide-react"
+import { Badge } from "@/components/ui/badge";
+import { Timer, Coffee } from "lucide-react";
 
-export function TimerDisplay({ currentTime, isBreak, progress, getMotivationalText }) {
+export function TimerDisplay({
+  currentTime,
+  isBreak,
+  progress,
+  getMotivationalText,
+}) {
   const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60)
-    const secs = seconds % 60
-    return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`
-  }
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+  };
 
-  const getSessionType = () => (isBreak ? "Break Time" : "Focus Session")
+  const getSessionType = () => (isBreak ? "Break Time" : "Focus Session");
 
   return (
     <div className="text-center space-y-6">
@@ -21,7 +26,11 @@ export function TimerDisplay({ currentTime, isBreak, progress, getMotivationalTe
             : "bg-primary/10 text-primary border-primary/20"
         }`}
       >
-        {isBreak ? <Coffee className="w-5 h-5 mr-2" /> : <Timer className="w-5 h-5 mr-2" />}
+        {isBreak ? (
+          <Coffee className="w-5 h-5 mr-2" />
+        ) : (
+          <Timer className="w-5 h-5 mr-2" />
+        )}
         {getSessionType()}
       </Badge>
 
@@ -58,13 +67,17 @@ export function TimerDisplay({ currentTime, isBreak, progress, getMotivationalTe
               fill="none"
               strokeDasharray={`${2 * Math.PI * 45}`}
               strokeDashoffset={`${2 * Math.PI * 45 * (1 - progress / 100)}`}
-              className={`transition-all duration-1000 ${isBreak ? "text-blue-500" : "text-primary"}`}
+              className={`transition-all duration-1000 ${
+                isBreak ? "text-blue-500" : "text-primary"
+              }`}
               strokeLinecap="round"
             />
           </svg>
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center">
-              <div className="text-2xl font-bold text-foreground">{Math.round(progress)}%</div>
+              <div className="text-2xl font-bold text-foreground">
+                {Math.round(progress)}%
+              </div>
               <div className="text-sm text-muted-foreground">Complete</div>
             </div>
           </div>
@@ -72,7 +85,9 @@ export function TimerDisplay({ currentTime, isBreak, progress, getMotivationalTe
       </div>
 
       {/* Motivational Text */}
-      <p className="text-lg text-muted-foreground font-medium">{getMotivationalText()}</p>
+      <p className="text-lg text-muted-foreground font-medium">
+        {getMotivationalText()}
+      </p>
     </div>
-  )
+  );
 }

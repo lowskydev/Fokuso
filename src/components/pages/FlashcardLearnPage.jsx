@@ -1,180 +1,206 @@
 // src/components/pages/FlashcardLearnPage.jsx
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useParams, useNavigate } from "react-router-dom"
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Progress } from "@/components/ui/progress"
-import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, RotateCcw, Eye, CheckCircle, XCircle, Brain, Trophy, Target } from "lucide-react"
-import useFlashcardStore from "@/store/useFlashcardStore"
-import { toast } from "sonner"
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+import {
+  ArrowLeft,
+  RotateCcw,
+  Eye,
+  CheckCircle,
+  XCircle,
+  Brain,
+  Trophy,
+  Target,
+} from "lucide-react";
+import useFlashcardStore from "@/store/useFlashcardStore";
+import { toast } from "sonner";
 
 function FlashcardLearnPage() {
-  const { deckId } = useParams()
-  const navigate = useNavigate()
+  const { deckId } = useParams();
+  const navigate = useNavigate();
 
-  const { decks, flashcards, isLoading, error, fetchDecks, fetchFlashcards, reviewFlashcard, clearError } =
-    useFlashcardStore()
+  const {
+    decks,
+    flashcards,
+    isLoading,
+    error,
+    fetchDecks,
+    fetchFlashcards,
+    reviewFlashcard,
+    clearError,
+  } = useFlashcardStore();
 
   // Learning session state
-  const [currentCardIndex, setCurrentCardIndex] = useState(0)
-  const [showAnswer, setShowAnswer] = useState(false)
+  const [currentCardIndex, setCurrentCardIndex] = useState(0);
+  const [showAnswer, setShowAnswer] = useState(false);
   const [sessionStats, setSessionStats] = useState({
     correct: 0,
     incorrect: 0,
     total: 0,
-  })
-  const [isSessionComplete, setIsSessionComplete] = useState(false)
-  const [learningCards, setLearningCards] = useState([])
+  });
+  const [isSessionComplete, setIsSessionComplete] = useState(false);
+  const [learningCards, setLearningCards] = useState([]);
 
   // Get current deck
-  const deck = decks.find((d) => d.id === Number.parseInt(deckId))
+  const deck = decks.find((d) => d.id === Number.parseInt(deckId));
 
   useEffect(() => {
     // Fetch data if not already loaded
     if (decks.length === 0) {
-      fetchDecks()
+      fetchDecks();
     }
-    fetchFlashcards(deckId)
-  }, [deckId, fetchDecks, fetchFlashcards])
+    fetchFlashcards(deckId);
+  }, [deckId, fetchDecks, fetchFlashcards]);
 
   useEffect(() => {
-  // Filter flashcards for this deck that are not mastered
-  const deckFlashcards = flashcards.filter((card) => {
-    if (card.deck !== Number.parseInt(deckId)) return false
+    // Filter flashcards for this deck that are not mastered
+    const deckFlashcards = flashcards.filter((card) => {
+      if (card.deck !== Number.parseInt(deckId)) return false;
 
-    // Include cards that are due for review, in learning phase, or not yet mastered
-    const isDue = new Date(card.next_review) <= new Date()
-    const isLearning = card.is_learning
-    const isNotMastered = !card.interval_display || !card.interval_display.includes("day") || card.interval_display === "1 day"
+      // Include cards that are due for review, in learning phase, or not yet mastered
+      const isDue = new Date(card.next_review) <= new Date();
+      const isLearning = card.is_learning;
+      const isNotMastered =
+        !card.interval_display ||
+        !card.interval_display.includes("day") ||
+        card.interval_display === "1 day";
 
-    return isDue || isLearning || isNotMastered
-  })
+      return isDue || isLearning || isNotMastered;
+    });
 
-  setLearningCards(deckFlashcards)
+    setLearningCards(deckFlashcards);
 
-  if (deckFlashcards.length === 0 && flashcards.length > 0) {
-    // No cards available for learning
-    setIsSessionComplete(true)
-  }
-}, [flashcards, deckId])
+    if (deckFlashcards.length === 0 && flashcards.length > 0) {
+      // No cards available for learning
+      setIsSessionComplete(true);
+    }
+  }, [flashcards, deckId]);
 
   useEffect(() => {
     // Show error toast if there's an error
     if (error) {
-      toast.error(error)
-      clearError()
+      toast.error(error);
+      clearError();
     }
-  }, [error, clearError])
+  }, [error, clearError]);
 
-  const currentCard = learningCards[currentCardIndex]
+  const currentCard = learningCards[currentCardIndex];
 
   // Handle keyboard shortcuts
   useEffect(() => {
     const handleKeyPress = (e) => {
       if (e.code === "Space" && !isSessionComplete) {
-        e.preventDefault()
+        e.preventDefault();
         if (!showAnswer) {
-          setShowAnswer(true)
+          setShowAnswer(true);
         }
       } else if (e.code === "Digit1" && showAnswer && !isSessionComplete) {
-        e.preventDefault()
-        handleAgain()
+        e.preventDefault();
+        handleAgain();
       } else if (e.code === "Digit2" && showAnswer && !isSessionComplete) {
-        e.preventDefault()
-        handleGood()
+        e.preventDefault();
+        handleGood();
       } else if (e.code === "Digit3" && showAnswer && !isSessionComplete) {
-        e.preventDefault()
-        handleEasy()
+        e.preventDefault();
+        handleEasy();
       } else if (e.code === "KeyR" && !isSessionComplete) {
-        e.preventDefault()
-        handleReset()
+        e.preventDefault();
+        handleReset();
       }
-    }
+    };
 
-    window.addEventListener("keydown", handleKeyPress)
-    return () => window.removeEventListener("keydown", handleKeyPress)
-  }, [showAnswer, isSessionComplete])
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, [showAnswer, isSessionComplete]);
 
   const handleShowAnswer = () => {
-    setShowAnswer(true)
-  }
+    setShowAnswer(true);
+  };
 
   const handleReview = async (grade) => {
-    if (!currentCard) return
+    if (!currentCard) return;
 
     try {
-      await reviewFlashcard(currentCard.id, grade)
+      await reviewFlashcard(currentCard.id, grade);
 
       // Update session stats
-      const isCorrect = grade > 1 // Grade 2 (Good) and 3 (Easy) are considered correct
+      const isCorrect = grade > 1;
       setSessionStats((prev) => ({
         ...prev,
         correct: isCorrect ? prev.correct + 1 : prev.correct,
         incorrect: grade === 1 ? prev.incorrect + 1 : prev.incorrect,
         total: prev.total + 1,
-      }))
+      }));
 
-      nextCard()
+      nextCard();
     } catch (error) {
-      toast.error("Failed to review flashcard")
+      toast.error("Failed to review flashcard");
     }
-  }
+  };
 
-  const handleAgain = () => handleReview(1)
-  const handleGood = () => handleReview(2)
-  const handleEasy = () => handleReview(3)
+  const handleAgain = () => handleReview(1);
+  const handleGood = () => handleReview(2);
+  const handleEasy = () => handleReview(3);
 
   const nextCard = () => {
     if (currentCardIndex < learningCards.length - 1) {
-      setCurrentCardIndex(currentCardIndex + 1)
-      setShowAnswer(false)
+      setCurrentCardIndex(currentCardIndex + 1);
+      setShowAnswer(false);
     } else {
       // Session completed - refresh flashcards to get updated state
       fetchFlashcards(deckId).then(() => {
-      setIsSessionComplete(true)
-    })
+        setIsSessionComplete(true);
+      });
     }
-  }
+  };
 
   const handleReset = () => {
-    setCurrentCardIndex(0)
-    setShowAnswer(false)
-    setSessionStats({ correct: 0, incorrect: 0, total: 0 })
-    setIsSessionComplete(false)
-  }
+    setCurrentCardIndex(0);
+    setShowAnswer(false);
+    setSessionStats({ correct: 0, incorrect: 0, total: 0 });
+    setIsSessionComplete(false);
+  };
 
   const handleBackToDeck = () => {
-    navigate(`/dashboard/flashcards/deck/${deckId}`)
-  }
+    navigate(`/dashboard/flashcards/deck/${deckId}`);
+  };
 
   const handleBackToDecks = () => {
-    navigate("/dashboard/flashcards")
-  }
+    navigate("/dashboard/flashcards");
+  };
 
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
       case "Beginner":
-        return "bg-green-500/20 text-green-600 border-green-500/30"
+        return "bg-green-500/20 text-green-600 border-green-500/30";
       case "Intermediate":
-        return "bg-yellow-500/20 text-yellow-600 border-yellow-500/30"
+        return "bg-yellow-500/20 text-yellow-600 border-yellow-500/30";
       case "Advanced":
-        return "bg-red-500/20 text-red-600 border-red-500/30"
+        return "bg-red-500/20 text-red-600 border-red-500/30";
       default:
-        return "bg-muted text-muted-foreground"
+        return "bg-muted text-muted-foreground";
     }
-  }
+  };
 
   const getAccuracyColor = (accuracy) => {
-    if (accuracy >= 80) return "text-green-600"
-    if (accuracy >= 60) return "text-yellow-600"
-    return "text-red-600"
-  }
+    if (accuracy >= 80) return "text-green-600";
+    if (accuracy >= 60) return "text-yellow-600";
+    return "text-red-600";
+  };
 
-  const accuracy = sessionStats.total > 0 ? Math.round((sessionStats.correct / sessionStats.total) * 100) : 0
-  const progress = learningCards.length > 0 ? ((currentCardIndex + 1) / learningCards.length) * 100 : 0
+  const accuracy =
+    sessionStats.total > 0
+      ? Math.round((sessionStats.correct / sessionStats.total) * 100)
+      : 0;
+  const progress =
+    learningCards.length > 0
+      ? ((currentCardIndex + 1) / learningCards.length) * 100
+      : 0;
 
   if (isLoading) {
     return (
@@ -184,14 +210,14 @@ function FlashcardLearnPage() {
           <p className="text-muted-foreground">Loading flashcards...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (isSessionComplete || learningCards.length === 0) {
     // Check if the current learning session had any non-mastered cards
-    const hasUnmasteredCards = learningCards.some(card =>
-    !card.interval_display || !card.interval_display.includes("day")
-  )
+    const hasUnmasteredCards = learningCards.some(
+      (card) => !card.interval_display || !card.interval_display.includes("day")
+    );
 
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
@@ -206,7 +232,9 @@ function FlashcardLearnPage() {
               {/* Completion Message */}
               <div>
                 <h1 className="text-3xl font-bold text-foreground mb-2">
-                  {learningCards.length === 0 ? "No Cards Due!" : "Session Complete!"}
+                  {learningCards.length === 0
+                    ? "No Cards Due!"
+                    : "Session Complete!"}
                 </h1>
                 <p className="text-muted-foreground text-lg">
                   {learningCards.length === 0
@@ -224,21 +252,31 @@ function FlashcardLearnPage() {
                     <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-2">
                       <CheckCircle className="w-8 h-8 text-green-500" />
                     </div>
-                    <p className="text-2xl font-bold text-foreground">{sessionStats.correct}</p>
+                    <p className="text-2xl font-bold text-foreground">
+                      {sessionStats.correct}
+                    </p>
                     <p className="text-sm text-muted-foreground">Correct</p>
                   </div>
                   <div className="text-center">
                     <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-2">
                       <XCircle className="w-8 h-8 text-red-500" />
                     </div>
-                    <p className="text-2xl font-bold text-foreground">{sessionStats.incorrect}</p>
+                    <p className="text-2xl font-bold text-foreground">
+                      {sessionStats.incorrect}
+                    </p>
                     <p className="text-sm text-muted-foreground">Incorrect</p>
                   </div>
                   <div className="text-center">
                     <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-2">
                       <Target className="w-8 h-8 text-primary" />
                     </div>
-                    <p className={`text-2xl font-bold ${getAccuracyColor(accuracy)}`}>{accuracy}%</p>
+                    <p
+                      className={`text-2xl font-bold ${getAccuracyColor(
+                        accuracy
+                      )}`}
+                    >
+                      {accuracy}%
+                    </p>
                     <p className="text-sm text-muted-foreground">Accuracy</p>
                   </div>
                 </div>
@@ -251,35 +289,46 @@ function FlashcardLearnPage() {
                     {accuracy >= 80
                       ? "🎉 Excellent work! You're mastering this deck!"
                       : accuracy >= 60
-                        ? "👍 Good progress! Keep practicing to improve."
-                        : "💪 Keep going! Practice makes perfect."}
+                      ? "👍 Good progress! Keep practicing to improve."
+                      : "💪 Keep going! Practice makes perfect."}
                   </p>
                 </div>
               )}
 
-               {/* Action Buttons */}
+              {/* Action Buttons */}
               <div className="flex gap-3">
                 {/* Only show Study Again button if we had unmastered cards and reviewed some */}
                 {hasUnmasteredCards && sessionStats.total > 0 && (
-                  <Button variant="outline" onClick={handleReset} className="flex-1">
+                  <Button
+                    variant="outline"
+                    onClick={handleReset}
+                    className="flex-1"
+                  >
                     <RotateCcw className="w-4 h-4 mr-2" />
                     Study Again
                   </Button>
                 )}
-                <Button onClick={handleBackToDeck} className="flex-1 bg-primary hover:bg-primary/90">
+                <Button
+                  onClick={handleBackToDeck}
+                  className="flex-1 bg-primary hover:bg-primary/90"
+                >
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Back to Deck
                 </Button>
               </div>
 
-              <Button variant="ghost" onClick={handleBackToDecks} className="w-full">
+              <Button
+                variant="ghost"
+                onClick={handleBackToDecks}
+                className="w-full"
+              >
                 View All Decks
               </Button>
             </div>
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   if (!currentCard) {
@@ -293,7 +342,7 @@ function FlashcardLearnPage() {
           </Button>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -301,7 +350,11 @@ function FlashcardLearnPage() {
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <Button variant="outline" onClick={handleBackToDeck} className="hover:bg-primary/5">
+          <Button
+            variant="outline"
+            onClick={handleBackToDeck}
+            className="hover:bg-primary/5"
+          >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Deck
           </Button>
@@ -318,7 +371,9 @@ function FlashcardLearnPage() {
             <div className="space-y-4">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Progress</span>
-                <span className="font-medium">{Math.round(progress)}% Complete</span>
+                <span className="font-medium">
+                  {Math.round(progress)}% Complete
+                </span>
               </div>
               <Progress value={progress} className="h-3" />
               <div className="flex justify-between text-sm text-muted-foreground">
@@ -337,11 +392,15 @@ function FlashcardLearnPage() {
               {/* Card Header */}
               <div className="flex items-center justify-between">
                 {currentCard.is_learning && (
-                  <Badge className="bg-blue-500/20 text-blue-600 border-blue-500/30">Learning</Badge>
+                  <Badge className="bg-blue-500/20 text-blue-600 border-blue-500/30">
+                    Learning
+                  </Badge>
                 )}
                 <div className="flex items-center gap-2">
                   <Brain className="w-5 h-5 text-primary" />
-                  <span className="text-sm text-muted-foreground">Flashcard</span>
+                  <span className="text-sm text-muted-foreground">
+                    Flashcard
+                  </span>
                 </div>
               </div>
 
@@ -349,7 +408,9 @@ function FlashcardLearnPage() {
               <div className="text-center space-y-8">
                 {/* Question */}
                 <div className="space-y-4">
-                  <h2 className="text-2xl font-bold text-foreground">{currentCard.question}</h2>
+                  <h2 className="text-2xl font-bold text-foreground">
+                    {currentCard.question}
+                  </h2>
                 </div>
 
                 {/* Answer */}
@@ -359,7 +420,9 @@ function FlashcardLearnPage() {
                       <Eye className="w-5 h-5" />
                       <span className="font-medium">Answer</span>
                     </div>
-                    <p className="text-lg text-foreground leading-relaxed">{currentCard.answer}</p>
+                    <p className="text-lg text-foreground leading-relaxed">
+                      {currentCard.answer}
+                    </p>
                   </div>
                 )}
               </div>
@@ -377,7 +440,9 @@ function FlashcardLearnPage() {
                   </Button>
                 ) : (
                   <div className="space-y-4">
-                    <p className="text-center text-muted-foreground font-medium">How well did you know this?</p>
+                    <p className="text-center text-muted-foreground font-medium">
+                      How well did you know this?
+                    </p>
                     <div className="flex gap-3 justify-center">
                       <Button
                         onClick={handleAgain}
@@ -438,7 +503,7 @@ function FlashcardLearnPage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }
 
-export default FlashcardLearnPage
+export default FlashcardLearnPage;

@@ -1,17 +1,26 @@
-"use client"
+"use client";
 
-import { Outlet, useNavigate, useLocation } from "react-router-dom"
-import useAuthStore from "@/store/useAuthStore"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Timer, Calendar, CheckSquare, BarChart3, Brain, LogOut, ChevronRight, Sparkles } from "lucide-react"
-import logo from "@/assets/logo.png"
-import ThemeToggle from "@/components/ThemeToggle"
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import useAuthStore from "@/store/useAuthStore";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  Timer,
+  Calendar,
+  CheckSquare,
+  BarChart3,
+  Brain,
+  LogOut,
+  ChevronRight,
+  Sparkles,
+} from "lucide-react";
+import logo from "@/assets/logo.png";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const SidebarItem = ({ label, path, icon: Icon, isActive }) => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
     <div
@@ -50,17 +59,17 @@ const SidebarItem = ({ label, path, icon: Icon, isActive }) => {
       {/* Hover glow effect */}
       <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-primary/5 to-red-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
     </div>
-  )
-}
+  );
+};
 
 export default function DashboardLayout() {
-  const { user, logout } = useAuthStore()
-  const navigate = useNavigate()
-  const location = useLocation()
+  const { user, logout } = useAuthStore();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
-    logout()
-  }
+    logout();
+  };
 
   const navigationItems = [
     { label: "Pomodoro", path: "/dashboard/pomodoro", icon: Timer },
@@ -68,7 +77,7 @@ export default function DashboardLayout() {
     { label: "Todo List", path: "/dashboard/todo", icon: CheckSquare },
     { label: "Flash Cards", path: "/dashboard/flashcards", icon: Brain },
     { label: "Statistics", path: "/dashboard/stats", icon: BarChart3 },
-  ]
+  ];
 
   const getInitials = (name) => {
     return (
@@ -77,8 +86,8 @@ export default function DashboardLayout() {
         .map((n) => n[0])
         .join("")
         .toUpperCase() || "U"
-    )
-  }
+    );
+  };
 
   return (
     <div className="flex h-screen bg-gradient-to-br from-red-50 via-rose-100 to-pink-200 dark:bg-gradient-to-br dark:from-background dark:via-card dark:to-muted overflow-hidden">
@@ -99,7 +108,11 @@ export default function DashboardLayout() {
         {/* Logo Section - Fixed at top */}
         <div className="flex-shrink-0 p-8 pb-4">
           <div className="flex items-center gap-4 mb-4 p-4 rounded-2xl backdrop-blur-sm">
-            <img src={logo || "/placeholder.svg"} alt="Fokuso Logo" className="w-12 h-12 rounded-xl" />
+            <img
+              src={logo || "/placeholder.svg"}
+              alt="Fokuso Logo"
+              className="w-12 h-12 rounded-xl"
+            />
             <div>
               <h2 className="text-2xl font-bold bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">
                 Fokuso
@@ -150,7 +163,9 @@ export default function DashboardLayout() {
             </Button>
 
             <div className="text-center mt-4">
-              <p className="text-sm text-muted-foreground/70 font-medium">Stay focused, stay productive</p>
+              <p className="text-sm text-muted-foreground/70 font-medium">
+                Stay focused, stay productive
+              </p>
             </div>
           </div>
         </div>
@@ -163,14 +178,19 @@ export default function DashboardLayout() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">
-                {navigationItems.find((item) => item.path === location.pathname)?.label || "Dashboard"}
+                {navigationItems.find((item) => item.path === location.pathname)
+                  ?.label || "Dashboard"}
               </h1>
               <p className="text-muted-foreground/80 text-lg font-medium mt-1">
-                {location.pathname === "/dashboard/pomodoro" && "Focus with the Pomodoro Technique"}
-                {location.pathname === "/dashboard/calendar" && "Manage your schedule"}
+                {location.pathname === "/dashboard/pomodoro" &&
+                  "Focus with the Pomodoro Technique"}
+                {location.pathname === "/dashboard/calendar" &&
+                  "Manage your schedule"}
                 {location.pathname === "/dashboard/todo" && "Track your tasks"}
-                {location.pathname === "/dashboard/flashcards" && "Study with spaced repetition"}
-                {location.pathname === "/dashboard/stats" && "View your progress"}
+                {location.pathname === "/dashboard/flashcards" &&
+                  "Study with spaced repetition"}
+                {location.pathname === "/dashboard/stats" &&
+                  "View your progress"}
               </p>
             </div>
             <div className="flex items-center gap-4">
@@ -182,8 +202,12 @@ export default function DashboardLayout() {
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm text-muted-foreground/80 font-medium">Welcome back</div>
-                  <div className="font-bold text-foreground truncate text-lg">{user || "User"}</div>
+                  <div className="text-sm text-muted-foreground/80 font-medium">
+                    Welcome back
+                  </div>
+                  <div className="font-bold text-foreground truncate text-lg">
+                    {user || "User"}
+                  </div>
                 </div>
               </div>
 
@@ -203,5 +227,5 @@ export default function DashboardLayout() {
         </div>
       </main>
     </div>
-  )
+  );
 }

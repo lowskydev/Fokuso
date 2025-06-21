@@ -27,15 +27,18 @@ const useFlashcardStore = create(
 
           set({ isLoading: true, error: null });
           try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/flashcards/decks/`, {
-              headers: {
-                'Authorization': `Token ${token}`,
-                'Content-Type': 'application/json',
-              },
-            });
+            const response = await fetch(
+              `${import.meta.env.VITE_API_URL}/api/flashcards/decks/`,
+              {
+                headers: {
+                  Authorization: `Token ${token}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
 
             if (!response.ok) {
-              throw new Error('Failed to fetch decks');
+              throw new Error("Failed to fetch decks");
             }
 
             const decks = await response.json();
@@ -53,17 +56,20 @@ const useFlashcardStore = create(
 
           set({ isLoading: true, error: null });
           try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/flashcards/decks/`, {
-              method: 'POST',
-              headers: {
-                'Authorization': `Token ${token}`,
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(deckData),
-            });
+            const response = await fetch(
+              `${import.meta.env.VITE_API_URL}/api/flashcards/decks/`,
+              {
+                method: "POST",
+                headers: {
+                  Authorization: `Token ${token}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(deckData),
+              }
+            );
 
             if (!response.ok) {
-              throw new Error('Failed to create deck');
+              throw new Error("Failed to create deck");
             }
 
             const newDeck = await response.json();
@@ -86,22 +92,25 @@ const useFlashcardStore = create(
 
           set({ isLoading: true, error: null });
           try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/flashcards/decks/${deckId}/`, {
-              method: 'PATCH',
-              headers: {
-                'Authorization': `Token ${token}`,
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(deckData),
-            });
+            const response = await fetch(
+              `${import.meta.env.VITE_API_URL}/api/flashcards/decks/${deckId}/`,
+              {
+                method: "PATCH",
+                headers: {
+                  Authorization: `Token ${token}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(deckData),
+              }
+            );
 
             if (!response.ok) {
-              throw new Error('Failed to update deck');
+              throw new Error("Failed to update deck");
             }
 
             const updatedDeck = await response.json();
             set((state) => ({
-              decks: state.decks.map(deck =>
+              decks: state.decks.map((deck) =>
                 deck.id === deckId ? updatedDeck : deck
               ),
               isLoading: false,
@@ -121,19 +130,22 @@ const useFlashcardStore = create(
 
           set({ isLoading: true, error: null });
           try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/flashcards/decks/${deckId}/`, {
-              method: 'DELETE',
-              headers: {
-                'Authorization': `Token ${token}`,
-              },
-            });
+            const response = await fetch(
+              `${import.meta.env.VITE_API_URL}/api/flashcards/decks/${deckId}/`,
+              {
+                method: "DELETE",
+                headers: {
+                  Authorization: `Token ${token}`,
+                },
+              }
+            );
 
             if (!response.ok) {
-              throw new Error('Failed to delete deck');
+              throw new Error("Failed to delete deck");
             }
 
             set((state) => ({
-              decks: state.decks.filter(deck => deck.id !== deckId),
+              decks: state.decks.filter((deck) => deck.id !== deckId),
               isLoading: false,
             }));
           } catch (error) {
@@ -163,13 +175,13 @@ const useFlashcardStore = create(
 
             const response = await fetch(url, {
               headers: {
-                'Authorization': `Token ${token}`,
-                'Content-Type': 'application/json',
+                Authorization: `Token ${token}`,
+                "Content-Type": "application/json",
               },
             });
 
             if (!response.ok) {
-              throw new Error('Failed to fetch flashcards');
+              throw new Error("Failed to fetch flashcards");
             }
 
             const flashcards = await response.json();
@@ -187,17 +199,20 @@ const useFlashcardStore = create(
 
           set({ isLoading: true, error: null });
           try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/flashcards/`, {
-              method: 'POST',
-              headers: {
-                'Authorization': `Token ${token}`,
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(flashcardData),
-            });
+            const response = await fetch(
+              `${import.meta.env.VITE_API_URL}/api/flashcards/`,
+              {
+                method: "POST",
+                headers: {
+                  Authorization: `Token ${token}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(flashcardData),
+              }
+            );
 
             if (!response.ok) {
-              throw new Error('Failed to create flashcard');
+              throw new Error("Failed to create flashcard");
             }
 
             const newFlashcard = await response.json();
@@ -220,22 +235,25 @@ const useFlashcardStore = create(
 
           set({ isLoading: true, error: null });
           try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/flashcards/${flashcardId}/`, {
-              method: 'PATCH',
-              headers: {
-                'Authorization': `Token ${token}`,
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(flashcardData),
-            });
+            const response = await fetch(
+              `${import.meta.env.VITE_API_URL}/api/flashcards/${flashcardId}/`,
+              {
+                method: "PATCH",
+                headers: {
+                  Authorization: `Token ${token}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(flashcardData),
+              }
+            );
 
             if (!response.ok) {
-              throw new Error('Failed to update flashcard');
+              throw new Error("Failed to update flashcard");
             }
 
             const updatedFlashcard = await response.json();
             set((state) => ({
-              flashcards: state.flashcards.map(flashcard =>
+              flashcards: state.flashcards.map((flashcard) =>
                 flashcard.id === flashcardId ? updatedFlashcard : flashcard
               ),
               isLoading: false,
@@ -255,19 +273,24 @@ const useFlashcardStore = create(
 
           set({ isLoading: true, error: null });
           try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/flashcards/${flashcardId}/`, {
-              method: 'DELETE',
-              headers: {
-                'Authorization': `Token ${token}`,
-              },
-            });
+            const response = await fetch(
+              `${import.meta.env.VITE_API_URL}/api/flashcards/${flashcardId}/`,
+              {
+                method: "DELETE",
+                headers: {
+                  Authorization: `Token ${token}`,
+                },
+              }
+            );
 
             if (!response.ok) {
-              throw new Error('Failed to delete flashcard');
+              throw new Error("Failed to delete flashcard");
             }
 
             set((state) => ({
-              flashcards: state.flashcards.filter(flashcard => flashcard.id !== flashcardId),
+              flashcards: state.flashcards.filter(
+                (flashcard) => flashcard.id !== flashcardId
+              ),
               isLoading: false,
             }));
           } catch (error) {
@@ -284,24 +307,29 @@ const useFlashcardStore = create(
 
           set({ isLoading: true, error: null });
           try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/flashcards/${flashcardId}/review/`, {
-              method: 'POST',
-              headers: {
-                'Authorization': `Token ${token}`,
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({ grade }),
-            });
+            const response = await fetch(
+              `${
+                import.meta.env.VITE_API_URL
+              }/api/flashcards/${flashcardId}/review/`,
+              {
+                method: "POST",
+                headers: {
+                  Authorization: `Token ${token}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ grade }),
+              }
+            );
 
             if (!response.ok) {
-              throw new Error('Failed to review flashcard');
+              throw new Error("Failed to review flashcard");
             }
 
             const reviewResult = await response.json();
 
             // Update the flashcard with new review data
             set((state) => ({
-              flashcards: state.flashcards.map(flashcard =>
+              flashcards: state.flashcards.map((flashcard) =>
                 flashcard.id === flashcardId
                   ? {
                       ...flashcard,
@@ -333,18 +361,21 @@ const useFlashcardStore = create(
           if (!token) return;
 
           try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/flashcards/today-stats/`, {
-              headers: {
-                'Authorization': `Token ${token}`,
-                'Content-Type': 'application/json',
-              },
-            });
+            const response = await fetch(
+              `${import.meta.env.VITE_API_URL}/api/flashcards/today-stats/`,
+              {
+                headers: {
+                  Authorization: `Token ${token}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
 
             if (response.ok) {
               const stats = await response.json();
               set({
                 dailyStats: stats,
-                reviewsToday: stats.flashcards_reviewed
+                reviewsToday: stats.flashcards_reviewed,
               });
             }
           } catch (error) {
@@ -361,12 +392,17 @@ const useFlashcardStore = create(
           if (!token) return;
 
           try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/flashcards/daily-stats/?days=${days}`, {
-              headers: {
-                'Authorization': `Token ${token}`,
-                'Content-Type': 'application/json',
-              },
-            });
+            const response = await fetch(
+              `${
+                import.meta.env.VITE_API_URL
+              }/api/flashcards/daily-stats/?days=${days}`,
+              {
+                headers: {
+                  Authorization: `Token ${token}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
 
             if (response.ok) {
               const dailyStatsArray = await response.json();
@@ -385,24 +421,29 @@ const useFlashcardStore = create(
 
           set({ isLoading: true, error: null });
           try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/flashcards/${flashcardId}/review/`, {
-              method: 'POST',
-              headers: {
-                'Authorization': `Token ${token}`,
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({ grade }),
-            });
+            const response = await fetch(
+              `${
+                import.meta.env.VITE_API_URL
+              }/api/flashcards/${flashcardId}/review/`,
+              {
+                method: "POST",
+                headers: {
+                  Authorization: `Token ${token}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ grade }),
+              }
+            );
 
             if (!response.ok) {
-              throw new Error('Failed to review flashcard');
+              throw new Error("Failed to review flashcard");
             }
 
             const reviewResult = await response.json();
 
             // Update the flashcard with new review data
             set((state) => ({
-              flashcards: state.flashcards.map(flashcard =>
+              flashcards: state.flashcards.map((flashcard) =>
                 flashcard.id === flashcardId
                   ? {
                       ...flashcard,
@@ -416,7 +457,8 @@ const useFlashcardStore = create(
               ),
               isLoading: false,
               // Update today's review count
-              reviewsToday: reviewResult.reviews_today || state.reviewsToday + 1,
+              reviewsToday:
+                reviewResult.reviews_today || state.reviewsToday + 1,
             }));
 
             return reviewResult;
@@ -430,12 +472,13 @@ const useFlashcardStore = create(
         // Utility Actions
         clearError: () => set({ error: null }),
 
-        reset: () => set({
-          decks: [],
-          flashcards: [],
-          isLoading: false,
-          error: null,
-        }),
+        reset: () =>
+          set({
+            decks: [],
+            flashcards: [],
+            isLoading: false,
+            error: null,
+          }),
       }),
       {
         name: "flashcard-storage",

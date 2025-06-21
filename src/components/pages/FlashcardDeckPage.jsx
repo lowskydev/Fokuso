@@ -1,26 +1,44 @@
 // src/components/pages/FlashcardDeckPage.jsx
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useParams, useNavigate } from "react-router-dom"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
-import { EditDeckModal } from "@/components/flashcards/EditDeckModal"
-import { CreateFlashcardModal } from "@/components/flashcards/CreateFlashcardModal"
-import { ArrowLeft, Play, Edit, Trash2, Plus, Brain, Target, Clock, BarChart3, Search, Filter } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { toast } from "sonner"
-import useFlashcardStore from "@/store/useFlashcardStore"
-import { EditFlashcardModal } from "@/components/flashcards/EditFlashcardModal"
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { EditDeckModal } from "@/components/flashcards/EditDeckModal";
+import { CreateFlashcardModal } from "@/components/flashcards/CreateFlashcardModal";
+import {
+  ArrowLeft,
+  Play,
+  Edit,
+  Trash2,
+  Plus,
+  Brain,
+  Target,
+  Clock,
+  BarChart3,
+  Search,
+  Filter,
+} from "lucide-react";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { toast } from "sonner";
+import useFlashcardStore from "@/store/useFlashcardStore";
+import { EditFlashcardModal } from "@/components/flashcards/EditFlashcardModal";
 
 function FlashcardDeckPage() {
-  const { deckId } = useParams()
-  const navigate = useNavigate()
-  const [searchTerm, setSearchTerm] = useState("")
-  const [filter, setFilter] = useState("all")
+  const { deckId } = useParams();
+  const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filter, setFilter] = useState("all");
 
   const {
     decks,
@@ -35,63 +53,65 @@ function FlashcardDeckPage() {
     deleteFlashcard,
     updateFlashcard,
     clearError,
-  } = useFlashcardStore()
+  } = useFlashcardStore();
 
   // Get current deck
-  const deck = decks.find((d) => d.id === Number.parseInt(deckId))
-  const deckFlashcards = flashcards.filter((card) => card.deck === Number.parseInt(deckId))
+  const deck = decks.find((d) => d.id === Number.parseInt(deckId));
+  const deckFlashcards = flashcards.filter(
+    (card) => card.deck === Number.parseInt(deckId)
+  );
 
   useEffect(() => {
     // Fetch data if not already loaded
     if (decks.length === 0) {
-      fetchDecks()
+      fetchDecks();
     }
-    fetchFlashcards(deckId) // Fetch flashcards for this specific deck
-  }, [deckId, fetchDecks, fetchFlashcards])
+    fetchFlashcards(deckId); // Fetch flashcards for this specific deck
+  }, [deckId, fetchDecks, fetchFlashcards]);
 
   useEffect(() => {
     // Show error toast if there's an error
     if (error) {
-      toast.error(error)
-      clearError()
+      toast.error(error);
+      clearError();
     }
-  }, [error, clearError])
+  }, [error, clearError]);
 
   // Handle editing deck
   const handleEditDeck = async (updatedDeck) => {
     try {
-      await updateDeck(deck.id, { name: updatedDeck.name })
-      toast.success("Deck updated successfully!")
+      await updateDeck(deck.id, { name: updatedDeck.name });
+      toast.success("Deck updated successfully!");
     } catch (error) {
-      toast.error("Failed to update deck")
-      throw error
+      toast.error("Failed to update deck");
+      throw error;
     }
-  }
+  };
 
   // Handle deleting deck
   const handleDeleteDeck = async (deckId) => {
     try {
-      await deleteDeck(deckId)
-      toast.success("Deck deleted successfully!")
-      navigate("/dashboard/flashcards")
+      await deleteDeck(deckId);
+      toast.success("Deck deleted successfully!");
+      navigate("/dashboard/flashcards");
     } catch (error) {
-      toast.error("Failed to delete deck")
-      throw error
+      toast.error("Failed to delete deck");
+      throw error;
     }
-  }
+  };
 
   // Handle adding flashcard with the new modal
   const handleAddFlashcard = async (flashcardData) => {
     try {
-      await createFlashcard(flashcardData)
-      toast.success("Flashcard created successfully!")
+      await createFlashcard(flashcardData);
+      toast.success("Flashcard created successfully!");
       // Refresh flashcards for this deck
-      fetchFlashcards(deckId)
+      fetchFlashcards(deckId);
     } catch (error) {
-      toast.error("Failed to create flashcard")
-      throw error // Re-throw to let modal handle the error
+      toast.error("Failed to create flashcard");
+      throw error; // Re-throw to let modal handle the error
     }
-  }
+  };
 
   // Handle editing flashcard with the new modal
   const handleEditFlashcard = async (updatedFlashcard) => {
@@ -101,97 +121,115 @@ function FlashcardDeckPage() {
         answer: updatedFlashcard.answer,
         deck: updatedFlashcard.deck,
         tags: updatedFlashcard.tags,
-      })
-      toast.success("Flashcard updated successfully!")
+      });
+      toast.success("Flashcard updated successfully!");
       // Refresh flashcards for this deck
-      fetchFlashcards(deckId)
+      fetchFlashcards(deckId);
     } catch (error) {
-      toast.error("Failed to update flashcard")
-      throw error // Re-throw to let modal handle the error
+      toast.error("Failed to update flashcard");
+      throw error; // Re-throw to let modal handle the error
     }
-  }
+  };
 
   // Handle deleting flashcard (updated for modal)
   const handleDeleteFlashcard = async (flashcardId) => {
     try {
-      await deleteFlashcard(flashcardId)
-      toast.success("Flashcard deleted successfully!")
+      await deleteFlashcard(flashcardId);
+      toast.success("Flashcard deleted successfully!");
     } catch (error) {
-      toast.error("Failed to delete flashcard")
-      throw error // Re-throw to let modal handle the error
+      toast.error("Failed to delete flashcard");
+      throw error; // Re-throw to let modal handle the error
     }
-  }
+  };
 
   // Helper functions
   const isCardDueForReview = (nextReview) => {
-    return new Date(nextReview) <= new Date()
-  }
+    return new Date(nextReview) <= new Date();
+  };
 
   const isCardStudiedToday = (updatedAt) => {
-    const today = new Date().toDateString()
-    return new Date(updatedAt).toDateString() === today
-  }
+    const today = new Date().toDateString();
+    return new Date(updatedAt).toDateString() === today;
+  };
 
   const isCardMastered = (card) => {
-    return !card.is_learning && card.interval_display.includes("day")
-  }
+    return !card.is_learning && card.interval_display.includes("day");
+  };
 
   // Calculate stats dynamically based on actual flashcard data
-  const masteredCount = deckFlashcards.filter((card) => isCardMastered(card)).length
-  const learningCount = deckFlashcards.filter((card) => card.is_learning).length
-  const needsReview = deckFlashcards.filter((card) => isCardDueForReview(card.next_review)).length
+  const masteredCount = deckFlashcards.filter((card) =>
+    isCardMastered(card)
+  ).length;
+  const learningCount = deckFlashcards.filter(
+    (card) => card.is_learning
+  ).length;
+  const needsReview = deckFlashcards.filter((card) =>
+    isCardDueForReview(card.next_review)
+  ).length;
 
   const getCardStatus = (card) => {
-    const now = new Date()
-    const reviewDate = new Date(card.next_review)
+    const now = new Date();
+    const reviewDate = new Date(card.next_review);
 
     if (reviewDate <= now) {
-      return { status: "due", label: "Due for Review", color: "bg-red-500/20 text-red-600 border-red-500/30" }
+      return {
+        status: "due",
+        label: "Due for Review",
+        color: "bg-red-500/20 text-red-600 border-red-500/30",
+      };
     } else if (reviewDate.getTime() - now.getTime() < 24 * 60 * 60 * 1000) {
-      return { status: "soon", label: "Due Soon", color: "bg-yellow-500/20 text-yellow-600 border-yellow-500/30" }
+      return {
+        status: "soon",
+        label: "Due Soon",
+        color: "bg-yellow-500/20 text-yellow-600 border-yellow-500/30",
+      };
     } else {
-      return { status: "scheduled", label: "Scheduled", color: "bg-green-500/20 text-green-600 border-green-500/30" }
+      return {
+        status: "scheduled",
+        label: "Scheduled",
+        color: "bg-green-500/20 text-green-600 border-green-500/30",
+      };
     }
-  }
+  };
 
   const handleLearnClick = () => {
-    navigate(`/dashboard/flashcards/learn/${deckId}`)
-  }
+    navigate(`/dashboard/flashcards/learn/${deckId}`);
+  };
 
   const handleBackClick = () => {
-    navigate("/dashboard/flashcards")
-  }
+    navigate("/dashboard/flashcards");
+  };
 
   const formatDate = (dateString) => {
-    const date = new Date(dateString)
-    const today = new Date()
-    const yesterday = new Date(today)
-    yesterday.setDate(yesterday.getDate() - 1)
+    const date = new Date(dateString);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
 
     if (date.toDateString() === today.toDateString()) {
-      return "Today"
+      return "Today";
     } else if (date.toDateString() === yesterday.toDateString()) {
-      return "Yesterday"
+      return "Yesterday";
     } else {
-      return date.toLocaleDateString()
+      return date.toLocaleDateString();
     }
-  }
+  };
 
   // Filter flashcards
   const filteredCards = deckFlashcards.filter((card) => {
     const matchesSearch =
       searchTerm === "" ||
       card.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      card.answer.toLowerCase().includes(searchTerm.toLowerCase())
+      card.answer.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesFilter =
       filter === "all" ||
       (filter === "mastered" && isCardMastered(card)) ||
       (filter === "learning" && card.is_learning) ||
-      (filter === "difficult" && isCardDueForReview(card.next_review))
+      (filter === "difficult" && isCardDueForReview(card.next_review));
 
-    return matchesSearch && matchesFilter
-  })
+    return matchesSearch && matchesFilter;
+  });
 
   if (isLoading && !deck) {
     return (
@@ -203,7 +241,7 @@ function FlashcardDeckPage() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   if (!deck) {
@@ -217,7 +255,7 @@ function FlashcardDeckPage() {
           </Button>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -225,7 +263,11 @@ function FlashcardDeckPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Button variant="outline" onClick={handleBackClick} className="hover:bg-primary/5">
+          <Button
+            variant="outline"
+            onClick={handleBackClick}
+            className="hover:bg-primary/5"
+          >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Decks
           </Button>
@@ -236,8 +278,15 @@ function FlashcardDeckPage() {
           </div>
         </div>
         <div className="flex gap-3">
-          <EditDeckModal deck={deck} onEditDeck={handleEditDeck} onDeleteDeck={handleDeleteDeck} />
-          <Button onClick={handleLearnClick} className="bg-primary hover:bg-primary/90">
+          <EditDeckModal
+            deck={deck}
+            onEditDeck={handleEditDeck}
+            onDeleteDeck={handleDeleteDeck}
+          />
+          <Button
+            onClick={handleLearnClick}
+            className="bg-primary hover:bg-primary/90"
+          >
             <Play className="w-4 h-4 mr-2" />
             Start Learning
           </Button>
@@ -254,7 +303,9 @@ function FlashcardDeckPage() {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Total Cards</p>
-                <p className="text-2xl font-bold text-foreground">{deckFlashcards.length}</p>
+                <p className="text-2xl font-bold text-foreground">
+                  {deckFlashcards.length}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -268,7 +319,9 @@ function FlashcardDeckPage() {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Mastered</p>
-                <p className="text-2xl font-bold text-foreground">{masteredCount}</p>
+                <p className="text-2xl font-bold text-foreground">
+                  {masteredCount}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -282,7 +335,9 @@ function FlashcardDeckPage() {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Learning</p>
-                <p className="text-2xl font-bold text-foreground">{learningCount}</p>
+                <p className="text-2xl font-bold text-foreground">
+                  {learningCount}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -296,7 +351,9 @@ function FlashcardDeckPage() {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Needs Review</p>
-                <p className="text-2xl font-bold text-foreground">{needsReview}</p>
+                <p className="text-2xl font-bold text-foreground">
+                  {needsReview}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -322,7 +379,11 @@ function FlashcardDeckPage() {
               </span>
             </div>
             <Progress
-              value={deckFlashcards.length > 0 ? (masteredCount / deckFlashcards.length) * 100 : 0}
+              value={
+                deckFlashcards.length > 0
+                  ? (masteredCount / deckFlashcards.length) * 100
+                  : 0
+              }
               className="h-3"
             />
           </div>
@@ -389,7 +450,9 @@ function FlashcardDeckPage() {
                 <div className="w-16 h-16 bg-muted/50 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Brain className="w-8 h-8 text-muted-foreground" />
                 </div>
-                <p className="text-muted-foreground text-lg">No flashcards found</p>
+                <p className="text-muted-foreground text-lg">
+                  No flashcards found
+                </p>
                 <p className="text-muted-foreground/60">
                   {deckFlashcards.length === 0
                     ? "Add your first flashcard to get started"
@@ -411,7 +474,7 @@ function FlashcardDeckPage() {
               </div>
             ) : (
               filteredCards.map((card) => {
-                const cardStatus = getCardStatus(card)
+                const cardStatus = getCardStatus(card);
 
                 return (
                   <Card
@@ -420,8 +483,8 @@ function FlashcardDeckPage() {
                       cardStatus.status === "due"
                         ? "bg-red-50/50 dark:bg-red-950/20 border-red-200 dark:border-red-800"
                         : cardStatus.status === "soon"
-                          ? "bg-yellow-50/50 dark:bg-yellow-950/20 border-yellow-200 dark:border-yellow-800"
-                          : "bg-card border-border hover:bg-card/80"
+                        ? "bg-yellow-50/50 dark:bg-yellow-950/20 border-yellow-200 dark:border-yellow-800"
+                        : "bg-card border-border hover:bg-card/80"
                     }`}
                   >
                     <CardContent className="p-6">
@@ -429,8 +492,12 @@ function FlashcardDeckPage() {
                         {/* Card Header */}
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
-                            <h3 className="font-semibold text-lg text-foreground mb-2">{card.question}</h3>
-                            <p className="text-muted-foreground">{card.answer}</p>
+                            <h3 className="font-semibold text-lg text-foreground mb-2">
+                              {card.question}
+                            </h3>
+                            <p className="text-muted-foreground">
+                              {card.answer}
+                            </p>
                           </div>
                           <div className="flex gap-2 ml-4">
                             <EditFlashcardModal
@@ -439,7 +506,11 @@ function FlashcardDeckPage() {
                               onEditFlashcard={handleEditFlashcard}
                               onDeleteFlashcard={handleDeleteFlashcard}
                               trigger={
-                                <Button variant="ghost" size="sm" className="hover:bg-primary/10">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="hover:bg-primary/10"
+                                >
                                   <Edit className="w-4 h-4" />
                                 </Button>
                               }
@@ -459,15 +530,21 @@ function FlashcardDeckPage() {
                         {/* Card Stats */}
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-4">
-                            <Badge className={`${cardStatus.color} border`}>{cardStatus.label}</Badge>
+                            <Badge className={`${cardStatus.color} border`}>
+                              {cardStatus.label}
+                            </Badge>
                             {card.is_learning && (
-                              <Badge className="bg-blue-500/20 text-blue-600 border-blue-500/30">Learning</Badge>
+                              <Badge className="bg-blue-500/20 text-blue-600 border-blue-500/30">
+                                Learning
+                              </Badge>
                             )}
                           </div>
                           <div className="flex items-center gap-6 text-sm text-muted-foreground">
                             <div className="text-center">
                               <p className="font-medium text-foreground">
-                                {new Date(card.next_review).toLocaleDateString()}
+                                {new Date(
+                                  card.next_review
+                                ).toLocaleDateString()}
                               </p>
                               <p className="text-xs">Next Review</p>
                             </div>
@@ -476,14 +553,14 @@ function FlashcardDeckPage() {
                       </div>
                     </CardContent>
                   </Card>
-                )
+                );
               })
             )}
           </div>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
 
-export default FlashcardDeckPage
+export default FlashcardDeckPage;

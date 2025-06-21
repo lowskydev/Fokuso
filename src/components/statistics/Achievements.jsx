@@ -1,6 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Award, Trophy } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Award, Trophy } from "lucide-react";
 
 export function Achievements({ achievements }) {
   return (
@@ -25,14 +25,36 @@ export function Achievements({ achievements }) {
               }`}
             >
               <div className="flex items-start gap-3">
-                <div className={`p-2 rounded-lg ${achievement.earned ? "bg-yellow-500" : "bg-muted"}`}>
-                  <Trophy className={`w-5 h-5 ${achievement.earned ? "text-white" : "text-muted-foreground"}`} />
+                <div
+                  className={`p-2 rounded-lg ${
+                    achievement.earned ? "bg-yellow-500" : "bg-muted"
+                  }`}
+                >
+                  <Trophy
+                    className={`w-5 h-5 ${
+                      achievement.earned
+                        ? "text-white"
+                        : "text-muted-foreground"
+                    }`}
+                  />
                 </div>
                 <div className="flex-1">
-                  <h4 className={`font-semibold ${achievement.earned ? "text-foreground" : "text-muted-foreground"}`}>
+                  <h4
+                    className={`font-semibold ${
+                      achievement.earned
+                        ? "text-foreground"
+                        : "text-muted-foreground"
+                    }`}
+                  >
                     {achievement.title}
                   </h4>
-                  <p className={`text-sm ${achievement.earned ? "text-muted-foreground" : "text-muted-foreground/60"}`}>
+                  <p
+                    className={`text-sm ${
+                      achievement.earned
+                        ? "text-muted-foreground"
+                        : "text-muted-foreground/60"
+                    }`}
+                  >
                     {achievement.description}
                   </p>
                   {achievement.earned && (
@@ -50,5 +72,5 @@ export function Achievements({ achievements }) {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

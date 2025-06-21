@@ -1,74 +1,82 @@
-"use client"
+"use client";
 
-import { Label } from "@/components/ui/label"
-import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Link } from "react-router-dom"
-import { Eye, EyeOff, Mail, Lock, User, ArrowRight } from "lucide-react"
+import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
+import { Eye, EyeOff, Mail, Lock, User, ArrowRight } from "lucide-react";
 
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { toast } from "sonner"
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
-import { useEffect } from "react"
+import { useEffect } from "react";
 
 function RegisterPage() {
   useEffect(() => {
     // Scroll to top first, then prevent body scrolling
-    window.scrollTo(0, 0)
-    document.body.classList.add("auth-page")
+    window.scrollTo(0, 0);
+    document.body.classList.add("auth-page");
 
     return () => {
       // Cleanup when component unmounts
-      document.body.classList.remove("auth-page")
-    }
-  }, [])
+      document.body.classList.remove("auth-page");
+    };
+  }, []);
 
-  const [name, setName] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [showPassword, setShowPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const navigate = useNavigate()
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setIsLoading(true)
+    e.preventDefault();
+    setIsLoading(true);
 
     try {
-      const response = await fetch(import.meta.env.VITE_API_URL + "/api/user/create/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          email,
-          password,
-        }),
-      })
+      const response = await fetch(
+        import.meta.env.VITE_API_URL + "/api/user/create/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name,
+            email,
+            password,
+          }),
+        }
+      );
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (!response.ok) {
         const errorMessages = Object.entries(data)
-          .map(([field, messages]) => `${field.charAt(0).toUpperCase() + field.slice(1)}: ${messages.join(", ")}`)
-          .join("\n")
+          .map(
+            ([field, messages]) =>
+              `${
+                field.charAt(0).toUpperCase() + field.slice(1)
+              }: ${messages.join(", ")}`
+          )
+          .join("\n");
 
-        toast.error(errorMessages)
-        return
+        toast.error(errorMessages);
+        return;
       }
 
-      toast.success("Registration successful!")
-      navigate("/login")
+      toast.success("Registration successful!");
+      navigate("/login");
     } catch (err) {
-      toast.error("Something went wrong. Please try again.")
-      console.error(err)
+      toast.error("Something went wrong. Please try again.");
+      console.error(err);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 via-rose-100 to-pink-200 dark:bg-gradient-to-br dark:from-background dark:via-card dark:to-muted">
@@ -92,7 +100,9 @@ function RegisterPage() {
                 Account
               </span>
             </h1>
-            <p className="text-muted-foreground">Start your focus journey today</p>
+            <p className="text-muted-foreground">
+              Start your focus journey today
+            </p>
           </div>
 
           {/* Register Card */}
@@ -101,7 +111,10 @@ function RegisterPage() {
               <form className="space-y-3 md:space-y-4" onSubmit={handleSubmit}>
                 {/* Name Field */}
                 <div className="space-y-1">
-                  <Label htmlFor="name" className="text-card-foreground font-medium">
+                  <Label
+                    htmlFor="name"
+                    className="text-card-foreground font-medium"
+                  >
                     Full Name
                   </Label>
                   <div className="relative">
@@ -120,7 +133,10 @@ function RegisterPage() {
 
                 {/* Email Field */}
                 <div className="space-y-1">
-                  <Label htmlFor="email" className="text-card-foreground font-medium">
+                  <Label
+                    htmlFor="email"
+                    className="text-card-foreground font-medium"
+                  >
                     Email Address
                   </Label>
                   <div className="relative">
@@ -139,7 +155,10 @@ function RegisterPage() {
 
                 {/* Password Field */}
                 <div className="space-y-1">
-                  <Label htmlFor="password" className="text-card-foreground font-medium">
+                  <Label
+                    htmlFor="password"
+                    className="text-card-foreground font-medium"
+                  >
                     Password
                   </Label>
                   <div className="relative">
@@ -158,7 +177,11 @@ function RegisterPage() {
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                     >
-                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                      {showPassword ? (
+                        <EyeOff className="w-5 h-5" />
+                      ) : (
+                        <Eye className="w-5 h-5" />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -189,13 +212,17 @@ function RegisterPage() {
                   <div className="w-full border-t border-border"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-4 bg-card text-muted-foreground">Already have an account?</span>
+                  <span className="px-4 bg-card text-muted-foreground">
+                    Already have an account?
+                  </span>
                 </div>
               </div>
 
               {/* Sign In Link */}
               <div className="text-center">
-                <p className="text-muted-foreground mb-4">Welcome back to your focus journey</p>
+                <p className="text-muted-foreground mb-4">
+                  Welcome back to your focus journey
+                </p>
                 <Link to="/login">
                   <Button
                     variant="outline"
@@ -213,11 +240,17 @@ function RegisterPage() {
           <div className="text-center mt-4 md:mt-6">
             <p className="text-sm text-muted-foreground">
               By creating an account, you agree to our{" "}
-              <Link to="/terms" className="text-primary hover:text-primary/80 transition-colors">
+              <Link
+                to="/terms"
+                className="text-primary hover:text-primary/80 transition-colors"
+              >
                 Terms of Service
               </Link>{" "}
               and{" "}
-              <Link to="/privacy" className="text-primary hover:text-primary/80 transition-colors">
+              <Link
+                to="/privacy"
+                className="text-primary hover:text-primary/80 transition-colors"
+              >
                 Privacy Policy
               </Link>
             </p>
@@ -225,7 +258,7 @@ function RegisterPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default RegisterPage
+export default RegisterPage;

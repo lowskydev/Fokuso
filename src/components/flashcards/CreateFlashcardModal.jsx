@@ -1,22 +1,49 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
-import { Plus, Loader2, Save, Brain, BookOpen, Eye, EyeOff, Lightbulb, X } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import {
+  Plus,
+  Loader2,
+  Save,
+  Brain,
+  BookOpen,
+  Eye,
+  EyeOff,
+  Lightbulb,
+  X,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
-export function CreateFlashcardModal({ onCreateFlashcard, decks, currentDeckId = null, trigger }) {
-  const [open, setOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [errors, setErrors] = useState({})
-  const [showPreview, setShowPreview] = useState(false)
+export function CreateFlashcardModal({
+  onCreateFlashcard,
+  decks,
+  currentDeckId = null,
+  trigger,
+}) {
+  const [open, setOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [showPreview, setShowPreview] = useState(false);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -24,51 +51,51 @@ export function CreateFlashcardModal({ onCreateFlashcard, decks, currentDeckId =
     answer: "",
     deck: currentDeckId || "",
     tags: [],
-  })
+  });
 
-  const [tagInput, setTagInput] = useState("")
+  const [tagInput, setTagInput] = useState("");
 
   // Form validation
   const validateForm = () => {
-    const newErrors = {}
+    const newErrors = {};
 
     if (!formData.question.trim()) {
-      newErrors.question = "Question is required"
+      newErrors.question = "Question is required";
     }
 
     if (formData.question.length > 500) {
-      newErrors.question = "Question must be less than 500 characters"
+      newErrors.question = "Question must be less than 500 characters";
     }
 
     if (!formData.answer.trim()) {
-      newErrors.answer = "Answer is required"
+      newErrors.answer = "Answer is required";
     }
 
     if (formData.answer.length > 1000) {
-      newErrors.answer = "Answer must be less than 1000 characters"
+      newErrors.answer = "Answer must be less than 1000 characters";
     }
 
     if (!formData.deck) {
-      newErrors.deck = "Please select a deck"
+      newErrors.deck = "Please select a deck";
     }
 
     if (formData.tags.length > 10) {
-      newErrors.tags = "Maximum 10 tags allowed"
+      newErrors.tags = "Maximum 10 tags allowed";
     }
 
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!validateForm()) {
-      return
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
       // Prepare flashcard data
@@ -77,28 +104,28 @@ export function CreateFlashcardModal({ onCreateFlashcard, decks, currentDeckId =
         answer: formData.answer.trim(),
         deck: Number.parseInt(formData.deck),
         tags: formData.tags,
-      }
+      };
 
       // Call the parent component's create flashcard function
-      await onCreateFlashcard(flashcardData)
+      await onCreateFlashcard(flashcardData);
 
       // Reset form but keep the modal open for the next card
-      resetFormButKeepDeck()
+      resetFormButKeepDeck();
 
       // Focus on the question field for the next card
       setTimeout(() => {
-        const questionField = document.getElementById("question")
+        const questionField = document.getElementById("question");
         if (questionField) {
-          questionField.focus()
+          questionField.focus();
         }
-      }, 100)
+      }, 100);
     } catch (error) {
-      console.error("Error creating flashcard:", error)
-      setErrors({ submit: "Failed to create flashcard. Please try again." })
+      console.error("Error creating flashcard:", error);
+      setErrors({ submit: "Failed to create flashcard. Please try again." });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   // Reset form to initial state but keep deck and modal open
   const resetFormButKeepDeck = () => {
@@ -107,11 +134,11 @@ export function CreateFlashcardModal({ onCreateFlashcard, decks, currentDeckId =
       answer: "",
       deck: prev.deck, // Keep the selected deck
       tags: [],
-    }))
-    setTagInput("")
-    setErrors({})
-    setShowPreview(false)
-  }
+    }));
+    setTagInput("");
+    setErrors({});
+    setShowPreview(false);
+  };
 
   // Reset form completely and close modal
   const resetFormAndClose = () => {
@@ -120,12 +147,12 @@ export function CreateFlashcardModal({ onCreateFlashcard, decks, currentDeckId =
       answer: "",
       deck: currentDeckId || "",
       tags: [],
-    })
-    setTagInput("")
-    setErrors({})
-    setShowPreview(false)
-    setOpen(false)
-  }
+    });
+    setTagInput("");
+    setErrors({});
+    setShowPreview(false);
+    setOpen(false);
+  };
 
   // Reset form when modal opens
   const handleOpenChange = (newOpen) => {
@@ -135,57 +162,57 @@ export function CreateFlashcardModal({ onCreateFlashcard, decks, currentDeckId =
         answer: "",
         deck: currentDeckId || "",
         tags: [],
-      })
-      setTagInput("")
-      setErrors({})
-      setShowPreview(false)
+      });
+      setTagInput("");
+      setErrors({});
+      setShowPreview(false);
     }
-    setOpen(newOpen)
-  }
+    setOpen(newOpen);
+  };
 
   // Handle input changes
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
-    }))
+    }));
 
     // Clear field error when user starts typing
     if (errors[field]) {
       setErrors((prev) => ({
         ...prev,
         [field]: undefined,
-      }))
+      }));
     }
-  }
+  };
 
   // Handle tag addition
   const addTag = () => {
-    const tag = tagInput.trim().toLowerCase()
+    const tag = tagInput.trim().toLowerCase();
     if (tag && !formData.tags.includes(tag) && formData.tags.length < 10) {
       setFormData((prev) => ({
         ...prev,
         tags: [...prev.tags, tag],
-      }))
-      setTagInput("")
+      }));
+      setTagInput("");
     }
-  }
+  };
 
   // Handle tag removal
   const removeTag = (tagToRemove) => {
     setFormData((prev) => ({
       ...prev,
       tags: prev.tags.filter((tag) => tag !== tagToRemove),
-    }))
-  }
+    }));
+  };
 
   // Handle tag input key press
   const handleTagKeyPress = (e) => {
     if (e.key === "Enter" || e.key === ",") {
-      e.preventDefault()
-      addTag()
+      e.preventDefault();
+      addTag();
     }
-  }
+  };
 
   // Quick fill examples
   const quickExamples = [
@@ -204,7 +231,7 @@ export function CreateFlashcardModal({ onCreateFlashcard, decks, currentDeckId =
       answer: "4",
       tags: ["math", "basic"],
     },
-  ]
+  ];
 
   const fillExample = (example) => {
     setFormData((prev) => ({
@@ -212,10 +239,12 @@ export function CreateFlashcardModal({ onCreateFlashcard, decks, currentDeckId =
       question: example.question,
       answer: example.answer,
       tags: example.tags,
-    }))
-  }
+    }));
+  };
 
-  const selectedDeck = decks?.find((deck) => deck.id === Number.parseInt(formData.deck))
+  const selectedDeck = decks?.find(
+    (deck) => deck.id === Number.parseInt(formData.deck)
+  );
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -240,9 +269,16 @@ export function CreateFlashcardModal({ onCreateFlashcard, decks, currentDeckId =
         <form onSubmit={handleSubmit} className="space-y-6 py-4">
           {/* Deck Selection */}
           <div className="space-y-2">
-            <Label className="text-sm font-medium text-foreground">Select Deck *</Label>
-            <Select value={formData.deck.toString()} onValueChange={(value) => handleInputChange("deck", value)}>
-              <SelectTrigger className={cn("h-12", errors.deck && "border-red-500")}>
+            <Label className="text-sm font-medium text-foreground">
+              Select Deck *
+            </Label>
+            <Select
+              value={formData.deck.toString()}
+              onValueChange={(value) => handleInputChange("deck", value)}
+            >
+              <SelectTrigger
+                className={cn("h-12", errors.deck && "border-red-500")}
+              >
                 <SelectValue placeholder="Choose a deck for this flashcard" />
               </SelectTrigger>
               <SelectContent>
@@ -256,17 +292,27 @@ export function CreateFlashcardModal({ onCreateFlashcard, decks, currentDeckId =
                 ))}
               </SelectContent>
             </Select>
-            {errors.deck && <p className="text-sm text-red-600 dark:text-red-400">{errors.deck}</p>}
+            {errors.deck && (
+              <p className="text-sm text-red-600 dark:text-red-400">
+                {errors.deck}
+              </p>
+            )}
             {selectedDeck && (
               <p className="text-xs text-muted-foreground">
-                Adding to: <span className="font-medium text-foreground">{selectedDeck.name}</span>
+                Adding to:{" "}
+                <span className="font-medium text-foreground">
+                  {selectedDeck.name}
+                </span>
               </p>
             )}
           </div>
 
           {/* Question */}
           <div className="space-y-2">
-            <Label htmlFor="question" className="text-sm font-medium text-foreground">
+            <Label
+              htmlFor="question"
+              className="text-sm font-medium text-foreground"
+            >
               Question *
             </Label>
             <Textarea
@@ -276,18 +322,27 @@ export function CreateFlashcardModal({ onCreateFlashcard, decks, currentDeckId =
               onChange={(e) => handleInputChange("question", e.target.value)}
               className={cn(
                 "min-h-[100px] resize-none text-lg",
-                errors.question && "border-red-500 focus:border-red-500",
+                errors.question && "border-red-500 focus:border-red-500"
               )}
               maxLength={500}
               autoFocus
             />
-            {errors.question && <p className="text-sm text-red-600 dark:text-red-400">{errors.question}</p>}
-            <p className="text-xs text-muted-foreground">{formData.question.length}/500 characters</p>
+            {errors.question && (
+              <p className="text-sm text-red-600 dark:text-red-400">
+                {errors.question}
+              </p>
+            )}
+            <p className="text-xs text-muted-foreground">
+              {formData.question.length}/500 characters
+            </p>
           </div>
 
           {/* Answer */}
           <div className="space-y-2">
-            <Label htmlFor="answer" className="text-sm font-medium text-foreground">
+            <Label
+              htmlFor="answer"
+              className="text-sm font-medium text-foreground"
+            >
               Answer *
             </Label>
             <Textarea
@@ -297,27 +352,45 @@ export function CreateFlashcardModal({ onCreateFlashcard, decks, currentDeckId =
               onChange={(e) => handleInputChange("answer", e.target.value)}
               className={cn(
                 "min-h-[120px] resize-none text-lg",
-                errors.answer && "border-red-500 focus:border-red-500",
+                errors.answer && "border-red-500 focus:border-red-500"
               )}
               maxLength={1000}
             />
-            {errors.answer && <p className="text-sm text-red-600 dark:text-red-400">{errors.answer}</p>}
-            <p className="text-xs text-muted-foreground">{formData.answer.length}/1000 characters</p>
+            {errors.answer && (
+              <p className="text-sm text-red-600 dark:text-red-400">
+                {errors.answer}
+              </p>
+            )}
+            <p className="text-xs text-muted-foreground">
+              {formData.answer.length}/1000 characters
+            </p>
           </div>
 
           {/* Submit Error */}
           {errors.submit && (
             <div className="p-3 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg">
-              <p className="text-sm text-red-600 dark:text-red-400">{errors.submit}</p>
+              <p className="text-sm text-red-600 dark:text-red-400">
+                {errors.submit}
+              </p>
             </div>
           )}
 
           {/* Action Buttons */}
           <div className="flex gap-3 pt-4">
-            <Button type="button" variant="outline" onClick={resetFormAndClose} className="flex-1" disabled={isLoading}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={resetFormAndClose}
+              className="flex-1"
+              disabled={isLoading}
+            >
               Done
             </Button>
-            <Button type="submit" className="flex-1 bg-primary hover:bg-primary/90" disabled={isLoading}>
+            <Button
+              type="submit"
+              className="flex-1 bg-primary hover:bg-primary/90"
+              disabled={isLoading}
+            >
               {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -331,9 +404,8 @@ export function CreateFlashcardModal({ onCreateFlashcard, decks, currentDeckId =
               )}
             </Button>
           </div>
-
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 
 export function TimerPresets({ selectedPreset, onPresetSelect }) {
   const presets = [
@@ -40,13 +40,15 @@ export function TimerPresets({ selectedPreset, onPresetSelect }) {
       subtitle: "Based on natural energy cycles",
       color: "bg-purple-500",
     },
-  ]
+  ];
 
   return (
     <div className="space-y-4">
       <div>
         <h4 className="text-lg font-medium text-foreground">Timer Presets</h4>
-        <p className="text-sm text-muted-foreground">Quick setup with popular Pomodoro configurations</p>
+        <p className="text-sm text-muted-foreground">
+          Quick setup with popular Pomodoro configurations
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -64,21 +66,27 @@ export function TimerPresets({ selectedPreset, onPresetSelect }) {
             <div className="flex items-center gap-2">
               <div
                 className={`w-3 h-3 rounded-full ${
-                  selectedPreset === preset.id ? "bg-primary-foreground" : preset.color.replace("bg-", "bg-")
+                  selectedPreset === preset.id
+                    ? "bg-primary-foreground"
+                    : preset.color.replace("bg-", "bg-")
                 }`}
               ></div>
               <span className="font-semibold">{preset.name}</span>
             </div>
             <div
               className={`text-sm text-left ${
-                selectedPreset === preset.id ? "text-primary-foreground/80" : "text-muted-foreground"
+                selectedPreset === preset.id
+                  ? "text-primary-foreground/80"
+                  : "text-muted-foreground"
               }`}
             >
               {preset.description}
             </div>
             <div
               className={`text-xs text-left ${
-                selectedPreset === preset.id ? "text-primary-foreground/70" : "text-muted-foreground"
+                selectedPreset === preset.id
+                  ? "text-primary-foreground/70"
+                  : "text-muted-foreground"
               }`}
             >
               {preset.subtitle}
@@ -92,5 +100,5 @@ export function TimerPresets({ selectedPreset, onPresetSelect }) {
         ))}
       </div>
     </div>
-  )
+  );
 }

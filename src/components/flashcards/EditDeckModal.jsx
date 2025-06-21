@@ -1,11 +1,17 @@
 // src/components/flashcards/EditDeckModal.jsx
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,47 +22,47 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import { Separator } from "@/components/ui/separator"
-import { Edit, Loader2, Save, Trash2, AlertTriangle } from "lucide-react"
-import { cn } from "@/lib/utils"
+} from "@/components/ui/alert-dialog";
+import { Separator } from "@/components/ui/separator";
+import { Edit, Loader2, Save, Trash2, AlertTriangle } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export function EditDeckModal({ deck, onEditDeck, onDeleteDeck, trigger }) {
-  const [open, setOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [isDeleting, setIsDeleting] = useState(false)
-  const [errors, setErrors] = useState({})
+  const [open, setOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [errors, setErrors] = useState({});
 
   // Form state
   const [formData, setFormData] = useState({
     name: deck?.name || "",
-  })
+  });
 
   // Form validation
   const validateForm = () => {
-    const newErrors = {}
+    const newErrors = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = "Deck name is required"
+      newErrors.name = "Deck name is required";
     }
 
     if (formData.name.length > 100) {
-      newErrors.name = "Name must be less than 100 characters"
+      newErrors.name = "Name must be less than 100 characters";
     }
 
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!validateForm()) {
-      return
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
       // Prepare updated deck data
@@ -64,65 +70,65 @@ export function EditDeckModal({ deck, onEditDeck, onDeleteDeck, trigger }) {
         ...deck,
         name: formData.name.trim(),
         updated_at: new Date().toISOString(),
-      }
+      };
 
       // Call the parent component's edit deck function
-      await onEditDeck(updatedDeck)
+      await onEditDeck(updatedDeck);
 
       // Close modal
-      setOpen(false)
+      setOpen(false);
     } catch (error) {
-      console.error("Error updating deck:", error)
-      setErrors({ submit: "Failed to update deck. Please try again." })
+      console.error("Error updating deck:", error);
+      setErrors({ submit: "Failed to update deck. Please try again." });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   // Handle deck deletion
   const handleDelete = async () => {
-    setIsDeleting(true)
+    setIsDeleting(true);
 
     try {
       // Call the parent component's delete deck function
-      await onDeleteDeck(deck.id)
+      await onDeleteDeck(deck.id);
 
       // Close modal
-      setOpen(false)
+      setOpen(false);
     } catch (error) {
-      console.error("Error deleting deck:", error)
-      setErrors({ submit: "Failed to delete deck. Please try again." })
+      console.error("Error deleting deck:", error);
+      setErrors({ submit: "Failed to delete deck. Please try again." });
     } finally {
-      setIsDeleting(false)
+      setIsDeleting(false);
     }
-  }
+  };
 
   // Reset form when modal opens
   const handleOpenChange = (newOpen) => {
     if (newOpen) {
       setFormData({
         name: deck?.name || "",
-      })
-      setErrors({})
+      });
+      setErrors({});
     }
-    setOpen(newOpen)
-  }
+    setOpen(newOpen);
+  };
 
   // Handle input changes
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
-    }))
+    }));
 
     // Clear field error when user starts typing
     if (errors[field]) {
       setErrors((prev) => ({
         ...prev,
         [field]: undefined,
-      }))
+      }));
     }
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -147,7 +153,10 @@ export function EditDeckModal({ deck, onEditDeck, onDeleteDeck, trigger }) {
         <form onSubmit={handleSubmit} className="space-y-6 py-4">
           {/* Deck Name */}
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-sm font-medium text-foreground">
+            <Label
+              htmlFor="name"
+              className="text-sm font-medium text-foreground"
+            >
               Deck Name *
             </Label>
             <Input
@@ -155,11 +164,20 @@ export function EditDeckModal({ deck, onEditDeck, onDeleteDeck, trigger }) {
               placeholder="Enter deck name..."
               value={formData.name}
               onChange={(e) => handleInputChange("name", e.target.value)}
-              className={cn("h-12 text-lg", errors.name && "border-red-500 focus:border-red-500")}
+              className={cn(
+                "h-12 text-lg",
+                errors.name && "border-red-500 focus:border-red-500"
+              )}
               maxLength={100}
             />
-            {errors.name && <p className="text-sm text-red-600 dark:text-red-400">{errors.name}</p>}
-            <p className="text-xs text-muted-foreground">{formData.name.length}/100 characters</p>
+            {errors.name && (
+              <p className="text-sm text-red-600 dark:text-red-400">
+                {errors.name}
+              </p>
+            )}
+            <p className="text-xs text-muted-foreground">
+              {formData.name.length}/100 characters
+            </p>
           </div>
 
           {/* Deck Info */}
@@ -169,13 +187,17 @@ export function EditDeckModal({ deck, onEditDeck, onDeleteDeck, trigger }) {
               <div>
                 <p className="text-muted-foreground">Created</p>
                 <p className="font-medium text-foreground">
-                  {deck?.created_at ? new Date(deck.created_at).toLocaleDateString() : "Unknown"}
+                  {deck?.created_at
+                    ? new Date(deck.created_at).toLocaleDateString()
+                    : "Unknown"}
                 </p>
               </div>
               <div>
                 <p className="text-muted-foreground">Last Updated</p>
                 <p className="font-medium text-foreground">
-                  {deck?.updated_at ? new Date(deck.updated_at).toLocaleDateString() : "Unknown"}
+                  {deck?.updated_at
+                    ? new Date(deck.updated_at).toLocaleDateString()
+                    : "Unknown"}
                 </p>
               </div>
             </div>
@@ -184,7 +206,9 @@ export function EditDeckModal({ deck, onEditDeck, onDeleteDeck, trigger }) {
           {/* Submit Error */}
           {errors.submit && (
             <div className="p-3 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg">
-              <p className="text-sm text-red-600 dark:text-red-400">{errors.submit}</p>
+              <p className="text-sm text-red-600 dark:text-red-400">
+                {errors.submit}
+              </p>
             </div>
           )}
 
@@ -199,7 +223,11 @@ export function EditDeckModal({ deck, onEditDeck, onDeleteDeck, trigger }) {
             >
               Cancel
             </Button>
-            <Button type="submit" className="flex-1 bg-primary hover:bg-primary/90" disabled={isLoading || isDeleting}>
+            <Button
+              type="submit"
+              className="flex-1 bg-primary hover:bg-primary/90"
+              disabled={isLoading || isDeleting}
+            >
               {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -220,16 +248,20 @@ export function EditDeckModal({ deck, onEditDeck, onDeleteDeck, trigger }) {
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-red-500" />
-              <h4 className="font-medium text-red-600 dark:text-red-400">Danger Zone</h4>
+              <h4 className="font-medium text-red-600 dark:text-red-400">
+                Danger Zone
+              </h4>
             </div>
 
             <div className="p-4 bg-red-50/50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg">
               <div className="space-y-3">
                 <div>
-                  <h5 className="font-medium text-red-700 dark:text-red-400">Delete this deck</h5>
+                  <h5 className="font-medium text-red-700 dark:text-red-400">
+                    Delete this deck
+                  </h5>
                   <p className="text-sm text-red-600 dark:text-red-500">
-                    Once you delete a deck, there is no going back. This will permanently delete all flashcards in this
-                    deck.
+                    Once you delete a deck, there is no going back. This will
+                    permanently delete all flashcards in this deck.
                   </p>
                 </div>
 
@@ -261,8 +293,12 @@ export function EditDeckModal({ deck, onEditDeck, onDeleteDeck, trigger }) {
                         Are you absolutely sure?
                       </AlertDialogTitle>
                       <AlertDialogDescription className="text-muted-foreground">
-                        This action cannot be undone. This will permanently delete the deck{" "}
-                        <span className="font-semibold text-foreground">"{deck?.name}"</span> and all of its flashcards.
+                        This action cannot be undone. This will permanently
+                        delete the deck{" "}
+                        <span className="font-semibold text-foreground">
+                          "{deck?.name}"
+                        </span>{" "}
+                        and all of its flashcards.
                         <br />
                         <br />
                         <span className="text-red-600 dark:text-red-400 font-medium">
@@ -271,7 +307,9 @@ export function EditDeckModal({ deck, onEditDeck, onDeleteDeck, trigger }) {
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+                      <AlertDialogCancel disabled={isDeleting}>
+                        Cancel
+                      </AlertDialogCancel>
                       <AlertDialogAction
                         onClick={handleDelete}
                         disabled={isDeleting}
@@ -298,5 +336,5 @@ export function EditDeckModal({ deck, onEditDeck, onDeleteDeck, trigger }) {
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
