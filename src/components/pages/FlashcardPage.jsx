@@ -1,14 +1,16 @@
 // src/components/pages/FlashcardPage.jsx
 "use client"
 
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { useNavigate } from "react-router-dom"
-import { Brain, BookOpen, Clock, Target, TrendingUp, Plus, Play, BarChart3, Calendar, Zap } from "lucide-react"
+import { Brain, BookOpen, Target, TrendingUp, Plus, Play, BarChart3, Calendar, Zap } from "lucide-react"
 import useFlashcardStore from "@/store/useFlashcardStore"
 import { toast } from "sonner"
+// Import the new CreateDeckModal component at the top
+import { CreateDeckModal } from "@/components/flashcards/CreateDeckModal"
 
 function FlashcardsPage() {
   const navigate = useNavigate()
@@ -24,11 +26,11 @@ function FlashcardsPage() {
     fetchFlashcards,
     fetchTodayStats,
     createDeck,
-    clearError
+    clearError,
   } = useFlashcardStore()
 
   // Local state for creating decks
-  const [isCreatingDeck, setIsCreatingDeck] = useState(false)
+  // const [isCreatingDeck, setIsCreatingDeck] = useState(false)
 
   useEffect(() => {
     // Fetch decks, flashcards, and today's stats when component mounts
@@ -53,18 +55,14 @@ function FlashcardsPage() {
 
   const overallProgress = totalCards > 0 ? Math.round((totalMastered / totalCards) * 100) : 0
 
-  const handleCreateDeck = async () => {
-    const deckName = prompt("Enter deck name:")
-    if (!deckName?.trim()) return
-
-    setIsCreatingDeck(true)
+  // Update the handleCreateDeck function to work with the modal
+  const handleCreateDeck = async (deckData) => {
     try {
-      await createDeck({ name: deckName.trim() })
+      await createDeck(deckData)
       toast.success("Deck created successfully!")
     } catch (error) {
       toast.error("Failed to create deck")
-    } finally {
-      setIsCreatingDeck(false)
+      throw error // Re-throw to let modal handle the error
     }
   }
 
@@ -87,16 +85,17 @@ function FlashcardsPage() {
     // 2. It was updated today (meaning it was reviewed today and graduated)
     const today = new Date().toDateString()
     const masteredToday = deckCards.filter((card) => {
-      const wasMasteredToday = card.interval_display &&
-                              card.interval_display.includes("day") &&
-                              card.updated_at &&
-                              new Date(card.updated_at).toDateString() === today
+      const wasMasteredToday =
+        card.interval_display &&
+        card.interval_display.includes("day") &&
+        card.updated_at &&
+        new Date(card.updated_at).toDateString() === today
       return wasMasteredToday
     }).length
 
     // Total mastered cards (regardless of when they were mastered)
-    const masteredCards = deckCards.filter((card) =>
-      card.interval_display && card.interval_display.includes("day")
+    const masteredCards = deckCards.filter(
+      (card) => card.interval_display && card.interval_display.includes("day"),
     ).length
 
     const progress = cardCount > 0 ? Math.round((masteredCards / cardCount) * 100) : 0
@@ -132,23 +131,8 @@ function FlashcardsPage() {
           </h1>
           <p className="text-muted-foreground text-lg mt-2">Master knowledge through spaced repetition</p>
         </div>
-        <Button
-          onClick={handleCreateDeck}
-          disabled={isCreatingDeck}
-          className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-        >
-          {isCreatingDeck ? (
-            <>
-              <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin mr-2"></div>
-              Creating...
-            </>
-          ) : (
-            <>
-              <Plus className="w-5 h-5 mr-2" />
-              Create Deck
-            </>
-          )}
-        </Button>
+        {/* In the header section, replace the existing Create Deck button with: */}
+        <CreateDeckModal onCreateDeck={handleCreateDeck} />
       </div>
 
       {/* Overall Stats */}
@@ -190,9 +174,9 @@ function FlashcardsPage() {
               <div>
                 {/* Display accuracy percentage. if no dailyStats just display 100% */}
                 <p className="text-sm text-muted-foreground">Accuracy</p>
-                <p className="text-2xl font-bold text-foreground">{dailyStats
-                    ? `${dailyStats.accuracy_percentage}%`
-                    : "100%"}</p>
+                <p className="text-2xl font-bold text-foreground">
+                  {dailyStats ? `${dailyStats.accuracy_percentage}%` : "100%"}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -257,7 +241,7 @@ function FlashcardsPage() {
               </div>
               <p className="text-muted-foreground text-lg">No flashcard decks yet</p>
               <p className="text-muted-foreground/60 mb-4">Create your first deck to get started</p>
-              <Button onClick={handleCreateDeck} disabled={isCreatingDeck}>
+              <Button onClick={handleCreateDeck} disabled={false}>
                 <Plus className="w-4 h-4 mr-2" />
                 Create Your First Deck
               </Button>
