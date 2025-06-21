@@ -41,22 +41,25 @@ function FlashcardLearnPage() {
   }, [deckId, fetchDecks, fetchFlashcards])
 
   useEffect(() => {
-    // Filter flashcards for this deck that are due for review
-    const deckFlashcards = flashcards.filter((card) => {
-      if (card.deck !== Number.parseInt(deckId)) return false
+  // Filter flashcards for this deck that are not mastered
+  const deckFlashcards = flashcards.filter((card) => {
+    if (card.deck !== Number.parseInt(deckId)) return false
 
-      // Include cards that are due for review or in learning phase
-      const isDue = new Date(card.next_review) <= new Date()
-      return isDue || card.is_learning
-    })
+    // Include cards that are due for review, in learning phase, or not yet mastered
+    const isDue = new Date(card.next_review) <= new Date()
+    const isLearning = card.is_learning
+    const isNotMastered = !card.interval_display || !card.interval_display.includes("day") || card.interval_display === "1 day"
 
-    setLearningCards(deckFlashcards)
+    return isDue || isLearning || isNotMastered
+  })
 
-    if (deckFlashcards.length === 0 && flashcards.length > 0) {
-      // No cards due for review
-      setIsSessionComplete(true)
-    }
-  }, [flashcards, deckId])
+  setLearningCards(deckFlashcards)
+
+  if (deckFlashcards.length === 0 && flashcards.length > 0) {
+    // No cards available for learning
+    setIsSessionComplete(true)
+  }
+}, [flashcards, deckId])
 
   useEffect(() => {
     // Show error toast if there's an error
