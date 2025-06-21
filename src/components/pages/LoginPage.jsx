@@ -4,9 +4,8 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { Link } from "react-router-dom"
-import { Eye, EyeOff, Mail, Lock, ArrowRight, Sparkles } from "lucide-react"
+import { Eye, EyeOff, Mail, Lock, ArrowRight } from "lucide-react"
 
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
@@ -103,13 +102,6 @@ function LoginPage() {
         <div className="w-full max-w-md">
           {/* Header */}
           <div className="text-center mb-4">
-            <Badge
-              variant="secondary"
-              className="mb-4 px-4 py-2 text-sm font-medium bg-primary/10 text-primary border-primary/20"
-            >
-              <Sparkles className="w-4 h-4 mr-2" />
-              Welcome Back
-            </Badge>
             <h1 className="text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
               Sign In to
               <span className="block bg-gradient-to-r from-primary to-red-500 bg-clip-text text-transparent">
