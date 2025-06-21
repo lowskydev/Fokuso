@@ -18,11 +18,11 @@ function RegisterPage() {
   useEffect(() => {
     // Scroll to top first, then prevent body scrolling
     window.scrollTo(0, 0)
-    document.body.classList.add('auth-page')
+    document.body.classList.add("auth-page")
 
     return () => {
       // Cleanup when component unmounts
-      document.body.classList.remove('auth-page')
+      document.body.classList.remove("auth-page")
     }
   }, [])
 
@@ -72,7 +72,7 @@ function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen max-h-screen bg-gradient-to-br from-red-50 via-rose-100 to-pink-200 dark:bg-gradient-to-br dark:from-background dark:via-card dark:to-muted overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-red-50 via-rose-100 to-pink-200 dark:bg-gradient-to-br dark:from-background dark:via-card dark:to-muted">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-primary/20 to-red-500/20 rounded-full blur-3xl animate-pulse"></div>
@@ -83,10 +83,10 @@ function RegisterPage() {
       {/* Additional gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-transparent via-primary/5 to-primary/10 pointer-events-none"></div>
 
-      <div className="relative z-10 flex items-center justify-center h-screen px-4 py-12 overflow-hidden">
+      <div className="relative z-10 flex items-center justify-center min-h-screen px-4 py-8">
         <div className="w-full max-w-md">
           {/* Header */}
-          <div className="text-center mb-8">
+          <div className="text-center mb-4">
             <Badge
               variant="secondary"
               className="mb-4 px-4 py-2 text-sm font-medium bg-primary/10 text-primary border-primary/20"
@@ -94,7 +94,7 @@ function RegisterPage() {
               <Sparkles className="w-4 h-4 mr-2" />
               Join Fokuso
             </Badge>
-            <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
+            <h1 className="text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
               Create Your
               <span className="block bg-gradient-to-r from-primary to-red-500 bg-clip-text text-transparent">
                 Account
@@ -105,10 +105,10 @@ function RegisterPage() {
 
           {/* Register Card */}
           <Card className="bg-card/80 backdrop-blur-md border-border shadow-2xl hover:shadow-3xl transition-all duration-300">
-            <CardContent className="p-8">
-              <form className="space-y-6" onSubmit={handleSubmit}>
+            <CardContent className="p-4 md:p-6">
+              <form className="space-y-3 md:space-y-4" onSubmit={handleSubmit}>
                 {/* Name Field */}
-                <div className="space-y-2">
+                <div className="space-y-1">
                   <Label htmlFor="name" className="text-card-foreground font-medium">
                     Full Name
                   </Label>
@@ -121,13 +121,13 @@ function RegisterPage() {
                       required
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="pl-10 h-12 bg-background/50 border-border focus:border-primary focus:ring-primary/20 transition-all duration-300"
+                      className="pl-10 h-9 md:h-10 bg-background/50 border-border focus:border-primary focus:ring-primary/20 transition-all duration-300"
                     />
                   </div>
                 </div>
 
                 {/* Email Field */}
-                <div className="space-y-2">
+                <div className="space-y-1">
                   <Label htmlFor="email" className="text-card-foreground font-medium">
                     Email Address
                   </Label>
@@ -140,13 +140,13 @@ function RegisterPage() {
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="pl-10 h-12 bg-background/50 border-border focus:border-primary focus:ring-primary/20 transition-all duration-300"
+                      className="pl-10 h-9 md:h-10 bg-background/50 border-border focus:border-primary focus:ring-primary/20 transition-all duration-300"
                     />
                   </div>
                 </div>
 
                 {/* Password Field */}
-                <div className="space-y-2">
+                <div className="space-y-1">
                   <Label htmlFor="password" className="text-card-foreground font-medium">
                     Password
                   </Label>
@@ -159,7 +159,7 @@ function RegisterPage() {
                       required
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="pl-10 pr-10 h-12 bg-background/50 border-border focus:border-primary focus:ring-primary/20 transition-all duration-300"
+                      className="pl-10 pr-10 h-9 md:h-10 bg-background/50 border-border focus:border-primary focus:ring-primary/20 transition-all duration-300"
                     />
                     <button
                       type="button"
@@ -175,7 +175,7 @@ function RegisterPage() {
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] group"
+                  className="w-full h-9 md:h-10 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] group"
                 >
                   {isLoading ? (
                     <div className="flex items-center">
@@ -192,7 +192,7 @@ function RegisterPage() {
               </form>
 
               {/* Divider */}
-              <div className="relative my-8">
+              <div className="relative my-4 md:my-6">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-border"></div>
                 </div>
@@ -207,7 +207,7 @@ function RegisterPage() {
                 <Link to="/login">
                   <Button
                     variant="outline"
-                    className="w-full h-12 border-border hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 group"
+                    className="w-full h-9 md:h-10 border-border hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 group"
                   >
                     Sign In Instead
                     <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -218,7 +218,7 @@ function RegisterPage() {
           </Card>
 
           {/* Footer */}
-          <div className="text-center mt-8">
+          <div className="text-center mt-4 md:mt-6">
             <p className="text-sm text-muted-foreground">
               By creating an account, you agree to our{" "}
               <Link to="/terms" className="text-primary hover:text-primary/80 transition-colors">
