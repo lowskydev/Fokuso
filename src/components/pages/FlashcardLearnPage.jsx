@@ -108,9 +108,6 @@ function FlashcardLearnPage() {
       } else if (e.code === "Digit3" && showAnswer && !isSessionComplete) {
         e.preventDefault();
         handleEasy();
-      } else if (e.code === "KeyR" && !isSessionComplete) {
-        e.preventDefault();
-        handleReset();
       }
     };
 
