@@ -343,7 +343,6 @@ function FlashcardLearnPage() {
                 <div className="flex items-center gap-2">
                   <Brain className="w-5 h-5 text-primary" />
                   <span className="text-sm text-muted-foreground">Flashcard</span>
-                  <span className="text-sm text-muted-foreground">Flashcard</span>
                </div>
              </div>
 
@@ -391,7 +390,6 @@ function FlashcardLearnPage() {
                    >
                      <RotateCcw className="w-4 h-4 mr-2" />
                      Again
-                     <span className="block text-xs opacity-75 mt-1">Study more</span>
                    </Button>
                    <Button
                      onClick={handleGood}
@@ -401,7 +399,6 @@ function FlashcardLearnPage() {
                    >
                      <CheckCircle className="w-4 h-4 mr-2" />
                      Good
-                     <span className="block text-xs opacity-75 mt-1">Normal interval</span>
                    </Button>
                    <Button
                      onClick={handleEasy}
@@ -410,7 +407,6 @@ function FlashcardLearnPage() {
                    >
                      <Target className="w-4 h-4 mr-2" />
                      Easy
-                     <span className="block text-xs opacity-75 mt-1">Longer interval</span>
                    </Button>
                  </div>
                </div>

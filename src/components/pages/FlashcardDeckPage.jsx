@@ -122,14 +122,13 @@ function FlashcardDeckPage() {
  }
 
  const isCardMastered = (card) => {
-   return !card.is_learning && card.repetition > 2
+   return !card.is_learning && card.interval_display.includes("day")
  }
 
  // Calculate stats dynamically based on actual flashcard data
  const masteredCount = deckFlashcards.filter(card => isCardMastered(card)).length
  const learningCount = deckFlashcards.filter(card => card.is_learning).length
  const needsReview = deckFlashcards.filter(card => isCardDueForReview(card.next_review)).length
- const studiedToday = deckFlashcards.filter(card => isCardStudiedToday(card.updated_at)).length
 
  const getCardStatus = (card) => {
    const now = new Date()

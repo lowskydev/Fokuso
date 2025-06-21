@@ -5,10 +5,23 @@ import { TodayProgress } from "@/components/statistics/TodayProgress"
 import { WeeklyOverview } from "@/components/statistics/WeeklyOverview"
 import { DetailedStats } from "@/components/statistics/DetailedStats"
 import { Achievements } from "@/components/statistics/Achievements"
+import useFlashcardStore from "@/store/useFlashcardStore"
+
+import { useEffect } from "react"
+
 
 
 function StatisticsPage() {
   // Dummy data - will be replaced with real database queries later
+
+  const { reviewsToday, dailyStats, fetchTodayStats, fetchDailyStats } = useFlashcardStore()
+
+  useEffect(() => {
+    fetchTodayStats()
+    fetchDailyStats(7) // Get last 7 days
+  }, [fetchTodayStats, fetchDailyStats])
+
+
   const stats = {
     totalSessions: 247,
     totalFocusTime: 6175, // in minutes
@@ -93,6 +106,7 @@ function StatisticsPage() {
       earned: stats.totalSessions >= 500,
     },
   ]
+
 
 return (
     <div className="space-y-8 pb-8">

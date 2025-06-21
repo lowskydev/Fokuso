@@ -18,8 +18,11 @@ function FlashcardsPage() {
     flashcards,
     isLoading,
     error,
+    reviewsToday,
+    dailyStats,
     fetchDecks,
     fetchFlashcards,
+    fetchTodayStats,
     createDeck,
     clearError
   } = useFlashcardStore()
@@ -28,10 +31,11 @@ function FlashcardsPage() {
   const [isCreatingDeck, setIsCreatingDeck] = useState(false)
 
   useEffect(() => {
-    // Fetch decks and flashcards when component mounts
+    // Fetch decks, flashcards, and today's stats when component mounts
     fetchDecks()
     fetchFlashcards()
-  }, [fetchDecks, fetchFlashcards])
+    fetchTodayStats()
+  }, [fetchDecks, fetchFlashcards, fetchTodayStats])
 
   useEffect(() => {
     // Show error toast if there's an error
@@ -43,14 +47,8 @@ function FlashcardsPage() {
 
   // Calculate stats from real data
   const totalCards = flashcards.length
-  const totalStudiedToday = flashcards.filter((card) => {
-    const today = new Date().toDateString()
-    return card.updated_at && new Date(card.updated_at).toDateString() === today
-  }).length
-
   const totalMastered = flashcards.filter((card) => {
-    // Consider a card "mastered" if it's not in learning phase and has been reviewed multiple times
-    return !card.is_learning && card.repetition > 2
+    return card.interval_display && card.interval_display.includes("day")
   }).length
 
   const overallProgress = totalCards > 0 ? Math.round((totalMastered / totalCards) * 100) : 0
@@ -82,16 +80,30 @@ function FlashcardsPage() {
   const getDeckStats = (deckId) => {
     const deckCards = flashcards.filter((card) => card.deck === deckId)
     const cardCount = deckCards.length
-    const studiedToday = deckCards.filter((card) => {
-      const today = new Date().toDateString()
-      return card.updated_at && new Date(card.updated_at).toDateString() === today
+
+    // Count cards mastered today from this deck
+    // A card is considered "mastered today" if:
+    // 1. It has interval_display that includes "day" (meaning it's graduated from learning)
+    // 2. It was updated today (meaning it was reviewed today and graduated)
+    const today = new Date().toDateString()
+    const masteredToday = deckCards.filter((card) => {
+      const wasMasteredToday = card.interval_display &&
+                              card.interval_display.includes("day") &&
+                              card.updated_at &&
+                              new Date(card.updated_at).toDateString() === today
+      return wasMasteredToday
     }).length
-    const masteredCards = deckCards.filter((card) => !card.is_learning && card.repetition > 2).length
+
+    // Total mastered cards (regardless of when they were mastered)
+    const masteredCards = deckCards.filter((card) =>
+      card.interval_display && card.interval_display.includes("day")
+    ).length
+
     const progress = cardCount > 0 ? Math.round((masteredCards / cardCount) * 100) : 0
 
     return {
       cardCount,
-      studiedToday,
+      masteredToday, // This is the new "today" count for each deck
       masteredCards,
       progress,
     }
@@ -162,8 +174,8 @@ function FlashcardsPage() {
                 <Zap className="w-5 h-5 text-blue-500" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Studied Today</p>
-                <p className="text-2xl font-bold text-foreground">{totalStudiedToday}</p>
+                <p className="text-sm text-muted-foreground">Reviewed Today</p>
+                <p className="text-2xl font-bold text-foreground">{reviewsToday}</p>
               </div>
             </div>
           </CardContent>
@@ -176,8 +188,11 @@ function FlashcardsPage() {
                 <Target className="w-5 h-5 text-green-500" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Mastered</p>
-                <p className="text-2xl font-bold text-foreground">{totalMastered}</p>
+                {/* Display accuracy percentage. if no dailyStats just display 100% */}
+                <p className="text-sm text-muted-foreground">Accuracy</p>
+                <p className="text-2xl font-bold text-foreground">{dailyStats
+                    ? `${dailyStats.accuracy_percentage}%`
+                    : "100%"}</p>
               </div>
             </div>
           </CardContent>
@@ -198,7 +213,7 @@ function FlashcardsPage() {
         </Card>
       </div>
 
-      {/* Study Progress */}
+      {/* Study Progress - Updated to use reviews today */}
       <Card className="bg-card/80 backdrop-blur-sm border-border shadow-xl">
         <CardHeader>
           <CardTitle className="flex items-center gap-3 text-2xl">
@@ -212,13 +227,13 @@ function FlashcardsPage() {
           <div className="space-y-4">
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Daily Goal Progress</span>
-              <span className="font-medium">{totalStudiedToday}/50 cards</span>
+              <span className="font-medium">{reviewsToday}/50 cards</span>
             </div>
-            <Progress value={(totalStudiedToday / 50) * 100} className="h-3" />
+            <Progress value={(reviewsToday / 50) * 100} className="h-3" />
             <p className="text-sm text-muted-foreground">
-              {totalStudiedToday >= 50
+              {reviewsToday >= 50
                 ? "🎉 Great job! You've reached your daily goal!"
-                : `${50 - totalStudiedToday} more cards to reach your daily goal`}
+                : `${50 - reviewsToday} more cards to reach your daily goal`}
             </p>
           </div>
         </CardContent>
@@ -298,18 +313,6 @@ function FlashcardsPage() {
                           <div className="flex justify-between text-xs text-muted-foreground">
                             <span>{stats.masteredCards} mastered</span>
                             <span>{stats.cardCount} total</span>
-                          </div>
-                        </div>
-
-                        {/* Stats */}
-                        <div className="grid grid-cols-2 gap-4 pt-2">
-                          <div className="text-center">
-                            <p className="text-lg font-bold text-foreground">{stats.studiedToday}</p>
-                            <p className="text-xs text-muted-foreground">Today</p>
-                          </div>
-                          <div className="text-center">
-                            <p className="text-lg font-bold text-foreground">{stats.cardCount}</p>
-                            <p className="text-xs text-muted-foreground">Cards</p>
                           </div>
                         </div>
 
