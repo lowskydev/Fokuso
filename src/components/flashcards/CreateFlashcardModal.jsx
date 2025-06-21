@@ -82,9 +82,16 @@ export function CreateFlashcardModal({ onCreateFlashcard, decks, currentDeckId =
       // Call the parent component's create flashcard function
       await onCreateFlashcard(flashcardData)
 
-      // Reset form and close modal
-      resetForm()
-      setOpen(false)
+      // Reset form but keep the modal open for the next card
+      resetFormButKeepDeck()
+
+      // Focus on the question field for the next card
+      setTimeout(() => {
+        const questionField = document.getElementById("question")
+        if (questionField) {
+          questionField.focus()
+        }
+      }, 100)
     } catch (error) {
       console.error("Error creating flashcard:", error)
       setErrors({ submit: "Failed to create flashcard. Please try again." })
@@ -93,8 +100,21 @@ export function CreateFlashcardModal({ onCreateFlashcard, decks, currentDeckId =
     }
   }
 
-  // Reset form to initial state
-  const resetForm = () => {
+  // Reset form to initial state but keep deck and modal open
+  const resetFormButKeepDeck = () => {
+    setFormData((prev) => ({
+      question: "",
+      answer: "",
+      deck: prev.deck, // Keep the selected deck
+      tags: [],
+    }))
+    setTagInput("")
+    setErrors({})
+    setShowPreview(false)
+  }
+
+  // Reset form completely and close modal
+  const resetFormAndClose = () => {
     setFormData({
       question: "",
       answer: "",
@@ -104,12 +124,21 @@ export function CreateFlashcardModal({ onCreateFlashcard, decks, currentDeckId =
     setTagInput("")
     setErrors({})
     setShowPreview(false)
+    setOpen(false)
   }
 
   // Reset form when modal opens
   const handleOpenChange = (newOpen) => {
     if (newOpen) {
-      resetForm()
+      setFormData({
+        question: "",
+        answer: "",
+        deck: currentDeckId || "",
+        tags: [],
+      })
+      setTagInput("")
+      setErrors({})
+      setShowPreview(false)
     }
     setOpen(newOpen)
   }
@@ -276,7 +305,6 @@ export function CreateFlashcardModal({ onCreateFlashcard, decks, currentDeckId =
             <p className="text-xs text-muted-foreground">{formData.answer.length}/1000 characters</p>
           </div>
 
-
           {/* Submit Error */}
           {errors.submit && (
             <div className="p-3 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg">
@@ -286,14 +314,8 @@ export function CreateFlashcardModal({ onCreateFlashcard, decks, currentDeckId =
 
           {/* Action Buttons */}
           <div className="flex gap-3 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setOpen(false)}
-              className="flex-1"
-              disabled={isLoading}
-            >
-              Cancel
+            <Button type="button" variant="outline" onClick={resetFormAndClose} className="flex-1" disabled={isLoading}>
+              Done
             </Button>
             <Button type="submit" className="flex-1 bg-primary hover:bg-primary/90" disabled={isLoading}>
               {isLoading ? (
@@ -304,11 +326,12 @@ export function CreateFlashcardModal({ onCreateFlashcard, decks, currentDeckId =
               ) : (
                 <>
                   <Save className="w-4 h-4 mr-2" />
-                  Create Flashcard
+                  Add & Continue
                 </>
               )}
             </Button>
           </div>
+
         </form>
       </DialogContent>
     </Dialog>

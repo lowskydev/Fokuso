@@ -325,20 +325,6 @@ function FlashcardDeckPage() {
               value={deckFlashcards.length > 0 ? (masteredCount / deckFlashcards.length) * 100 : 0}
               className="h-3"
             />
-            <div className="grid grid-cols-3 gap-4 text-center">
-              <div>
-                <p className="text-2xl font-bold text-green-600">{masteredCount}</p>
-                <p className="text-sm text-muted-foreground">Mastered</p>
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-yellow-600">{learningCount}</p>
-                <p className="text-sm text-muted-foreground">Learning</p>
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-red-600">{needsReview}</p>
-                <p className="text-sm text-muted-foreground">Needs Review</p>
-              </div>
-            </div>
           </div>
         </CardContent>
       </Card>

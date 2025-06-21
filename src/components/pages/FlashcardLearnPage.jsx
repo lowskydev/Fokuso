@@ -15,16 +15,8 @@ function FlashcardLearnPage() {
   const { deckId } = useParams()
   const navigate = useNavigate()
 
-  const {
-    decks,
-    flashcards,
-    isLoading,
-    error,
-    fetchDecks,
-    fetchFlashcards,
-    reviewFlashcard,
-    clearError
-  } = useFlashcardStore()
+  const { decks, flashcards, isLoading, error, fetchDecks, fetchFlashcards, reviewFlashcard, clearError } =
+    useFlashcardStore()
 
   // Learning session state
   const [currentCardIndex, setCurrentCardIndex] = useState(0)
@@ -38,7 +30,7 @@ function FlashcardLearnPage() {
   const [learningCards, setLearningCards] = useState([])
 
   // Get current deck
-  const deck = decks.find(d => d.id === parseInt(deckId))
+  const deck = decks.find((d) => d.id === Number.parseInt(deckId))
 
   useEffect(() => {
     // Fetch data if not already loaded
@@ -50,8 +42,8 @@ function FlashcardLearnPage() {
 
   useEffect(() => {
     // Filter flashcards for this deck that are due for review
-    const deckFlashcards = flashcards.filter(card => {
-      if (card.deck !== parseInt(deckId)) return false
+    const deckFlashcards = flashcards.filter((card) => {
+      if (card.deck !== Number.parseInt(deckId)) return false
 
       // Include cards that are due for review or in learning phase
       const isDue = new Date(card.next_review) <= new Date()
@@ -208,8 +200,7 @@ function FlashcardLearnPage() {
                 <p className="text-muted-foreground text-lg">
                   {learningCards.length === 0
                     ? "All your cards are up to date. Great job!"
-                    : "Great job on completing your study session"
-                  }
+                    : "Great job on completing your study session"}
                 </p>
               </div>
 
@@ -336,111 +327,108 @@ function FlashcardLearnPage() {
               {/* Card Header */}
               <div className="flex items-center justify-between">
                 {currentCard.is_learning && (
-                  <Badge className="bg-blue-500/20 text-blue-600 border-blue-500/30">
-                    Learning
-                  </Badge>
+                  <Badge className="bg-blue-500/20 text-blue-600 border-blue-500/30">Learning</Badge>
                 )}
                 <div className="flex items-center gap-2">
                   <Brain className="w-5 h-5 text-primary" />
                   <span className="text-sm text-muted-foreground">Flashcard</span>
-               </div>
-             </div>
+                </div>
+              </div>
 
-             {/* Card Content */}
-             <div className="text-center space-y-8">
-               {/* Question */}
-               <div className="space-y-4">
-                 <h2 className="text-2xl font-bold text-foreground">{currentCard.question}</h2>
-                 {!showAnswer && (
-                   <p className="text-muted-foreground">Think about your answer, then reveal it below</p>
-                 )}
-               </div>
+              {/* Card Content */}
+              <div className="text-center space-y-8">
+                {/* Question */}
+                <div className="space-y-4">
+                  <h2 className="text-2xl font-bold text-foreground">{currentCard.question}</h2>
+                </div>
 
-               {/* Answer */}
-               {showAnswer && (
-                 <div className="space-y-4 p-6 bg-muted/30 rounded-xl border-2 border-dashed border-border">
-                   <div className="flex items-center justify-center gap-2 text-primary">
-                     <Eye className="w-5 h-5" />
-                     <span className="font-medium">Answer</span>
-                   </div>
-                   <p className="text-lg text-foreground leading-relaxed">{currentCard.answer}</p>
-                 </div>
-               )}
-             </div>
+                {/* Answer */}
+                {showAnswer && (
+                  <div className="space-y-4 p-6 bg-muted/30 rounded-xl border-2 border-dashed border-border">
+                    <div className="flex items-center justify-center gap-2 text-primary">
+                      <Eye className="w-5 h-5" />
+                      <span className="font-medium">Answer</span>
+                    </div>
+                    <p className="text-lg text-foreground leading-relaxed">{currentCard.answer}</p>
+                  </div>
+                )}
+              </div>
 
-             {/* Action Buttons */}
-             {!showAnswer ? (
-               <Button
-                 onClick={handleShowAnswer}
-                 size="lg"
-                 className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-               >
-                 <Eye className="w-5 h-5 mr-2" />
-                 Show Answer
-               </Button>
-             ) : (
-               <div className="space-y-4">
-                 <p className="text-center text-muted-foreground font-medium">How well did you know this?</p>
-                 <div className="flex gap-3 justify-center">
-                   <Button
-                     onClick={handleAgain}
-                     variant="outline"
-                     size="lg"
-                     className="px-6 py-4 text-base font-semibold border-red-200 hover:bg-red-50 hover:text-red-600 dark:border-red-800 dark:hover:bg-red-950/20 dark:hover:text-red-400 min-w-[120px]"
-                   >
-                     <RotateCcw className="w-4 h-4 mr-2" />
-                     Again
-                   </Button>
-                   <Button
-                     onClick={handleGood}
-                     variant="outline"
-                     size="lg"
-                     className="px-6 py-4 text-base font-semibold border-yellow-200 hover:bg-yellow-50 hover:text-yellow-600 dark:border-yellow-800 dark:hover:bg-yellow-950/20 dark:hover:text-yellow-400 min-w-[120px]"
-                   >
-                     <CheckCircle className="w-4 h-4 mr-2" />
-                     Good
-                   </Button>
-                   <Button
-                     onClick={handleEasy}
-                     size="lg"
-                     className="px-6 py-4 text-base font-semibold bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 min-w-[120px]"
-                   >
-                     <Target className="w-4 h-4 mr-2" />
-                     Easy
-                   </Button>
-                 </div>
-               </div>
-             )}
-           </div>
-         </CardContent>
-       </Card>
+              {/* Action Buttons */}
+              <div className="flex justify-center mt-24">
+                {!showAnswer ? (
+                  <Button
+                    onClick={handleShowAnswer}
+                    size="lg"
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                  >
+                    <Eye className="w-5 h-5 mr-2" />
+                    Show Answer
+                  </Button>
+                ) : (
+                  <div className="space-y-4">
+                    <p className="text-center text-muted-foreground font-medium">How well did you know this?</p>
+                    <div className="flex gap-3 justify-center">
+                      <Button
+                        onClick={handleAgain}
+                        variant="outline"
+                        size="lg"
+                        className="px-6 py-4 text-base font-semibold border-red-200 hover:bg-red-50 hover:text-red-600 dark:border-red-800 dark:hover:bg-red-950/20 dark:hover:text-red-400 min-w-[120px]"
+                      >
+                        <RotateCcw className="w-4 h-4 mr-2" />
+                        Again
+                      </Button>
+                      <Button
+                        onClick={handleGood}
+                        variant="outline"
+                        size="lg"
+                        className="px-6 py-4 text-base font-semibold border-yellow-200 hover:bg-yellow-50 hover:text-yellow-600 dark:border-yellow-800 dark:hover:bg-yellow-950/20 dark:hover:text-yellow-400 min-w-[120px]"
+                      >
+                        <CheckCircle className="w-4 h-4 mr-2" />
+                        Good
+                      </Button>
+                      <Button
+                        onClick={handleEasy}
+                        size="lg"
+                        className="px-6 py-4 text-base font-semibold bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 min-w-[120px]"
+                      >
+                        <Target className="w-4 h-4 mr-2" />
+                        Easy
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-       {/* Keyboard Shortcuts */}
-       <Card className="bg-muted/30 border-border">
-         <CardContent className="p-4">
-           <div className="flex justify-center gap-8 text-sm text-muted-foreground">
-             <div className="flex items-center gap-2">
-               <kbd className="px-2 py-1 bg-muted rounded text-xs">Space</kbd>
-               <span>Show Answer</span>
-             </div>
-             <div className="flex items-center gap-2">
-               <kbd className="px-2 py-1 bg-muted rounded text-xs">1</kbd>
-               <span>Again</span>
-             </div>
-             <div className="flex items-center gap-2">
-               <kbd className="px-2 py-1 bg-muted rounded text-xs">2</kbd>
-               <span>Good</span>
-             </div>
-             <div className="flex items-center gap-2">
-               <kbd className="px-2 py-1 bg-muted rounded text-xs">3</kbd>
-               <span>Easy</span>
-             </div>
-           </div>
-         </CardContent>
-       </Card>
-     </div>
-   </div>
- )
+        {/* Keyboard Shortcuts */}
+        <Card className="bg-muted/30 border-border">
+          <CardContent className="p-4">
+            <div className="flex justify-center gap-8 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <kbd className="px-2 py-1 bg-muted rounded text-xs">Space</kbd>
+                <span>Show Answer</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <kbd className="px-2 py-1 bg-muted rounded text-xs">1</kbd>
+                <span>Again</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <kbd className="px-2 py-1 bg-muted rounded text-xs">2</kbd>
+                <span>Good</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <kbd className="px-2 py-1 bg-muted rounded text-xs">3</kbd>
+                <span>Easy</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  )
 }
 
 export default FlashcardLearnPage
