@@ -336,32 +336,6 @@ function FlashcardsPage() {
           )}
         </CardContent>
       </Card>
-
-      {/* Quick Actions - only show if there are decks */}
-      {decks.length > 0 && (
-        <Card className="bg-gradient-to-r from-primary/10 to-blue-500/10 border-primary/20 shadow-xl">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-xl font-bold text-foreground">Ready to learn?</h3>
-                <p className="text-muted-foreground">
-                  You have {decks.filter((d) => getDeckStats(d.id).studiedToday === 0).length} decks waiting for review
-                </p>
-              </div>
-              <div className="flex gap-3">
-                <Button variant="outline" className="hover:bg-primary/5">
-                  <Clock className="w-4 h-4 mr-2" />
-                  Quick Review
-                </Button>
-                <Button className="bg-primary hover:bg-primary/90">
-                  <Brain className="w-4 h-4 mr-2" />
-                  Study All
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
     </div>
   )
 }
