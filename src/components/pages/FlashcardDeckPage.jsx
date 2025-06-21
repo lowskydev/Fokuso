@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "sonner"
 import useFlashcardStore from "@/store/useFlashcardStore"
+import { EditFlashcardModal } from "@/components/flashcards/EditFlashcardModal"
 
 function FlashcardDeckPage() {
   const { deckId } = useParams()
@@ -32,6 +33,7 @@ function FlashcardDeckPage() {
     deleteDeck,
     createFlashcard,
     deleteFlashcard,
+    updateFlashcard,
     clearError,
   } = useFlashcardStore()
 
@@ -91,15 +93,32 @@ function FlashcardDeckPage() {
     }
   }
 
-  // Handle deleting flashcard
-  const handleDeleteFlashcard = async (flashcardId) => {
-    if (!confirm("Are you sure you want to delete this flashcard?")) return
+  // Handle editing flashcard with the new modal
+  const handleEditFlashcard = async (updatedFlashcard) => {
+    try {
+      await updateFlashcard(updatedFlashcard.id, {
+        question: updatedFlashcard.question,
+        answer: updatedFlashcard.answer,
+        deck: updatedFlashcard.deck,
+        tags: updatedFlashcard.tags,
+      })
+      toast.success("Flashcard updated successfully!")
+      // Refresh flashcards for this deck
+      fetchFlashcards(deckId)
+    } catch (error) {
+      toast.error("Failed to update flashcard")
+      throw error // Re-throw to let modal handle the error
+    }
+  }
 
+  // Handle deleting flashcard (updated for modal)
+  const handleDeleteFlashcard = async (flashcardId) => {
     try {
       await deleteFlashcard(flashcardId)
       toast.success("Flashcard deleted successfully!")
     } catch (error) {
       toast.error("Failed to delete flashcard")
+      throw error // Re-throw to let modal handle the error
     }
   }
 
@@ -428,17 +447,26 @@ function FlashcardDeckPage() {
                             <p className="text-muted-foreground">{card.answer}</p>
                           </div>
                           <div className="flex gap-2 ml-4">
-                            <Button variant="ghost" size="sm" className="hover:bg-primary/10">
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                            <Button
+                            <EditFlashcardModal
+                              flashcard={card}
+                              decks={decks}
+                              onEditFlashcard={handleEditFlashcard}
+                              onDeleteFlashcard={handleDeleteFlashcard}
+                              trigger={
+                                <Button variant="ghost" size="sm" className="hover:bg-primary/10">
+                                  <Edit className="w-4 h-4" />
+                                </Button>
+                              }
+                            />
+                            {/* Uncomment if you want to enable delete functionality without confirming and shit*/}
+                            {/* <Button
                               variant="ghost"
                               size="sm"
                               className="hover:bg-red-50 hover:text-red-600"
                               onClick={() => handleDeleteFlashcard(card.id)}
                             >
                               <Trash2 className="w-4 h-4" />
-                            </Button>
+                            </Button> */}
                           </div>
                         </div>
 
@@ -456,10 +484,6 @@ function FlashcardDeckPage() {
                                 {new Date(card.next_review).toLocaleDateString()}
                               </p>
                               <p className="text-xs">Next Review</p>
-                            </div>
-                            <div className="text-center">
-                              <p className="font-medium text-foreground">{card.repetition}</p>
-                              <p className="text-xs">Reviews</p>
                             </div>
                           </div>
                         </div>
