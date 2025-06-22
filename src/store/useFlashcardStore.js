@@ -352,6 +352,60 @@ const useFlashcardStore = create(
           }
         },
 
+        reviewFlashcardBackground: async (flashcardId, grade) => {
+          const token = localStorage.getItem("auth-storage")
+            ? JSON.parse(localStorage.getItem("auth-storage")).state.token
+            : null;
+
+          // Note: NO loading state changes here
+          try {
+            const response = await fetch(
+              `${
+                import.meta.env.VITE_API_URL
+              }/api/flashcards/${flashcardId}/review/`,
+              {
+                method: "POST",
+                headers: {
+                  Authorization: `Token ${token}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ grade }),
+              }
+            );
+
+            if (!response.ok) {
+              throw new Error("Failed to review flashcard");
+            }
+
+            const reviewResult = await response.json();
+
+            // Update the flashcard with new review data (but no loading state)
+            set((state) => ({
+              flashcards: state.flashcards.map((flashcard) =>
+                flashcard.id === flashcardId
+                  ? {
+                      ...flashcard,
+                      next_review: reviewResult.new_next_review,
+                      interval: reviewResult.new_interval,
+                      ease_factor: reviewResult.new_ease_factor,
+                      repetition: reviewResult.new_repetition,
+                      is_learning: reviewResult.is_learning,
+                    }
+                  : flashcard
+              ),
+              // Update today's review count
+              reviewsToday:
+                reviewResult.reviews_today || state.reviewsToday + 1,
+            }));
+
+            return reviewResult;
+          } catch (error) {
+            console.error("Error reviewing flashcard:", error);
+            set({ error: error.message });
+            throw error;
+          }
+        },
+
         // Fetch today's review stats
         fetchTodayStats: async () => {
           const token = localStorage.getItem("auth-storage")

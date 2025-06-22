@@ -32,6 +32,7 @@ function FlashcardLearnPage() {
     fetchDecks,
     fetchFlashcards,
     reviewFlashcard,
+    reviewFlashcardBackground,
     clearError,
   } = useFlashcardStore();
 
@@ -57,12 +58,14 @@ function FlashcardLearnPage() {
     fetchFlashcards(deckId);
   }, [deckId, fetchDecks, fetchFlashcards]);
 
+  const [isRefreshingAfterCompletion, setIsRefreshingAfterCompletion] =
+    useState(false);
+
   useEffect(() => {
-    // Filter flashcards for this deck that are not mastered
+    // Filter flashcards for this deck that are due for review
     const deckFlashcards = flashcards.filter((card) => {
       if (card.deck !== Number.parseInt(deckId)) return false;
 
-      // Include cards that are due for review, in learning phase, or not yet mastered
       const isDue = new Date(card.next_review) <= new Date();
       const isLearning = card.is_learning;
       const isNotMastered =
@@ -75,11 +78,16 @@ function FlashcardLearnPage() {
 
     setLearningCards(deckFlashcards);
 
-    if (deckFlashcards.length === 0 && flashcards.length > 0) {
-      // No cards available for learning
+    // Only auto-complete if we're not already in the completion flow
+    if (
+      deckFlashcards.length === 0 &&
+      flashcards.length > 0 &&
+      !isRefreshingAfterCompletion &&
+      !isSessionComplete
+    ) {
       setIsSessionComplete(true);
     }
-  }, [flashcards, deckId]);
+  }, [flashcards, deckId, isRefreshingAfterCompletion, isSessionComplete]); // Add dependencies
 
   useEffect(() => {
     // Show error toast if there's an error
@@ -122,21 +130,42 @@ function FlashcardLearnPage() {
   const handleReview = async (grade) => {
     if (!currentCard) return;
 
-    try {
-      await reviewFlashcard(currentCard.id, grade);
+    // Check if this is the last card BEFORE doing anything else
+    const isLastCard = currentCardIndex >= learningCards.length - 1;
 
-      // Update session stats
-      const isCorrect = grade > 1;
-      setSessionStats((prev) => ({
-        ...prev,
-        correct: isCorrect ? prev.correct + 1 : prev.correct,
-        incorrect: grade === 1 ? prev.incorrect + 1 : prev.incorrect,
-        total: prev.total + 1,
-      }));
+    // Update session stats immediately (optimistic update)
+    const isCorrect = grade > 1;
+    setSessionStats((prev) => ({
+      ...prev,
+      correct: isCorrect ? prev.correct + 1 : prev.correct,
+      incorrect: grade === 1 ? prev.incorrect + 1 : prev.incorrect,
+      total: prev.total + 1,
+    }));
 
-      nextCard();
-    } catch (error) {
-      toast.error("Failed to review flashcard");
+    if (isLastCard) {
+      // For the last card, handle completion directly here
+      setIsRefreshingAfterCompletion(true);
+
+      try {
+        await reviewFlashcard(currentCard.id, grade);
+        await fetchFlashcards(deckId);
+        setIsRefreshingAfterCompletion(false);
+        setIsSessionComplete(true);
+      } catch (error) {
+        console.error("Review failed:", error);
+        toast.error("Failed to review flashcard");
+        setIsRefreshingAfterCompletion(false);
+      }
+    } else {
+      // For non-last cards, proceed normally
+      reviewFlashcardBackground(currentCard.id, grade).catch((error) => {
+        console.error("Background review failed:", error);
+        toast.error("Failed to save review, but continuing session");
+      });
+
+      // Move to next card immediately
+      setCurrentCardIndex(currentCardIndex + 1);
+      setShowAnswer(false);
     }
   };
 
@@ -144,13 +173,17 @@ function FlashcardLearnPage() {
   const handleGood = () => handleReview(2);
   const handleEasy = () => handleReview(3);
 
+  // Add a state to track if we're refreshing after completion
+
   const nextCard = () => {
     if (currentCardIndex < learningCards.length - 1) {
       setCurrentCardIndex(currentCardIndex + 1);
       setShowAnswer(false);
     } else {
-      // Session completed - refresh flashcards to get updated state
+      // Session completed - the refreshing state should already be set in handleReview
+      // Just do the refresh and completion
       fetchFlashcards(deckId).then(() => {
+        setIsRefreshingAfterCompletion(false);
         setIsSessionComplete(true);
       });
     }
