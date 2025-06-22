@@ -278,10 +278,11 @@ function FlashcardsPage() {
                 const colors = [
                   "bg-blue-500",
                   "bg-green-500",
-                  "bg-purple-500",
+                  "bg-yellow-500",
+
                   "bg-orange-500",
                   "bg-red-500",
-                  "bg-yellow-500",
+                  "bg-purple-500",
                 ];
                 const color = colors[index % colors.length]; // Cycle through colors based on index
 
