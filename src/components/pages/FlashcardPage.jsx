@@ -273,19 +273,17 @@ function FlashcardsPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {decks.map((deck) => {
+              {decks.map((deck, index) => {
                 const stats = getDeckStats(deck.id);
                 const colors = [
                   "bg-blue-500",
-                  "bg-cyan-500",
                   "bg-green-500",
                   "bg-purple-500",
                   "bg-orange-500",
                   "bg-red-500",
-                  "bg-indigo-500",
-                  "bg-pink-500",
+                  "bg-yellow-500",
                 ];
-                const color = colors[(deck.id - 1) % colors.length];
+                const color = colors[index % colors.length]; // Cycle through colors based on index
 
                 return (
                   <Card
@@ -299,7 +297,7 @@ function FlashcardsPage() {
                         <div className="flex items-start justify-between">
                           <div className={`p-3 rounded-xl ${color}/20`}>
                             <Brain
-                              className={`w-6 h-6 text-white`}
+                              className={`w-6 h-6 text-black dark:text-white`}
                               style={{ filter: "brightness(0.8)" }}
                             />
                           </div>
