@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { AddTaskModal } from "@/components/todo/AddTaskModal";
+import { EditTaskModal } from "@/components/todo/EditTaskModal";
 import {
   CheckCircle2,
   Circle,
@@ -26,6 +27,7 @@ import {
   Target,
   TrendingUp,
   Trash2,
+  Edit,
   Heart,
   DollarSign,
   MoreHorizontal,
@@ -94,6 +96,16 @@ function TodoPage() {
       toast.success("Task deleted successfully!");
     } catch (error) {
       toast.error("Failed to delete task");
+    }
+  };
+
+  const handleUpdateTask = async (id, taskData) => {
+    try {
+      await updateTodo(id, taskData);
+      toast.success("Task updated successfully!");
+    } catch (error) {
+      toast.error("Failed to update task");
+      throw error; // Re-throw to let modal handle the error
     }
   };
 
@@ -407,15 +419,31 @@ function TodoPage() {
                               </p>
                             )}
                           </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDeleteTodo(todo.id)}
-                            className="text-muted-foreground hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20"
-                            disabled={isLoading}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
+                          <div className="flex items-center gap-1">
+                            <EditTaskModal
+                              todo={todo}
+                              onUpdateTask={handleUpdateTask}
+                              trigger={
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="text-muted-foreground hover:text-primary hover:bg-primary/10"
+                                  disabled={isLoading}
+                                >
+                                  <Edit className="w-4 h-4" />
+                                </Button>
+                              }
+                            />
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDeleteTodo(todo.id)}
+                              className="text-muted-foreground hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20"
+                              disabled={isLoading}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
                         </div>
 
                         <div className="flex flex-wrap items-center gap-2">
