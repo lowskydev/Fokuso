@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,174 +26,75 @@ import {
   Target,
   TrendingUp,
   Trash2,
+  Heart,
+  DollarSign,
+  MoreHorizontal,
+  GraduationCap,
+  User,
+  Briefcase,
 } from "lucide-react";
+import useTodoStore from "@/store/useTodoStore";
+import { toast } from "sonner";
 
 function TodoPage() {
   const [filter, setFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
 
-  const [todos, setTodos] = useState([
-    {
-      id: 1,
-      title: "Finish Fokuso",
-      description:
-        "We need to really get this done while we still have the momentum",
-      completed: false,
-      priority: "high",
-      category: "work",
-      dueDate: "2025-06-27",
-      createdAt: "2025-06-15",
-      tags: ["fokuso", "software", "urgent", "cs"],
-    },
-    {
-      id: 2,
-      title: "Review pull requests",
-      description: "Check and approve pending PRs from team members",
-      completed: true,
-      priority: "medium",
-      category: "work",
-      dueDate: "2025-06-20",
-      createdAt: "2025-06-14",
-      tags: ["code-review", "team"],
-    },
-    {
-      id: 3,
-      title: "Plan weekend study session",
-      description: "Organize materials for JavaScript advanced concepts",
-      completed: false,
-      priority: "low",
-      category: "personal",
-      dueDate: "2025-06-25",
-      createdAt: "2025-06-16",
-      tags: ["study", "javascript", "weekend"],
-    },
-    {
-      id: 4,
-      title: "Fix authentication bug",
-      description: "Resolve login issues reported by users",
-      completed: false,
-      priority: "high",
-      category: "work",
-      dueDate: "2025-06-21",
-      createdAt: "2025-06-17",
-      tags: ["bug", "auth", "critical"],
-    },
-    {
-      id: 5,
-      title: "Update portfolio website",
-      description: "Add recent projects and refresh design",
-      completed: false,
-      priority: "medium",
-      category: "personal",
-      dueDate: "2025-06-30",
-      createdAt: "2025-06-10",
-      tags: ["portfolio", "design", "projects"],
-    },
-    {
-      id: 6,
-      title: "Prepare presentation slides",
-      description: "Create slides for next week's team meeting",
-      completed: true,
-      priority: "medium",
-      category: "work",
-      dueDate: "2025-06-19",
-      createdAt: "2025-06-12",
-      tags: ["presentation", "meeting"],
-    },
-    {
-      id: 7,
-      title: "Learn TypeScript generics",
-      description: "Deep dive into advanced TypeScript concepts",
-      completed: false,
-      priority: "low",
-      category: "learning",
-      dueDate: "2025-06-01",
-      createdAt: "2025-06-18",
-      tags: ["typescript", "learning", "generics"],
-    },
-    {
-      id: 8,
-      title: "Organize desk workspace",
-      description: "Clean and reorganize home office setup",
-      completed: true,
-      priority: "low",
-      category: "personal",
-      dueDate: "2025-06-18",
-      createdAt: "2025-06-15",
-      tags: ["organization", "workspace"],
-    },
-    {
-      id: 9,
-      title: "Database optimization",
-      description: "Improve query performance for user dashboard",
-      completed: false,
-      priority: "high",
-      category: "work",
-      dueDate: "2025-06-23",
-      createdAt: "2025-06-16",
-      tags: ["database", "performance", "optimization"],
-    },
-    {
-      id: 10,
-      title: "Read 'Clean Code' chapter 5",
-      description: "Continue reading and take notes",
-      completed: false,
-      priority: "medium",
-      category: "learning",
-      dueDate: "2025-06-26",
-      createdAt: "2025-06-13",
-      tags: ["reading", "clean-code", "books"],
-    },
-  ]);
+  const {
+    todos,
+    tags,
+    isLoading,
+    error,
+    fetchTodos,
+    createTodo,
+    updateTodo,
+    toggleTodo,
+    deleteTodo,
+    fetchTags,
+    clearError,
+  } = useTodoStore();
 
-  // Handle adding new task (this is where you'll integrate with your backend)
+  useEffect(() => {
+    // Fetch todos when component mounts
+    fetchTodos();
+    fetchTags();
+  }, [fetchTodos, fetchTags]);
+
+  useEffect(() => {
+    // Show error toast if there's an error
+    if (error) {
+      toast.error(error);
+      clearError();
+    }
+  }, [error, clearError]);
+
+  // Handle adding new task
   const handleAddTask = async (taskData) => {
     try {
-      // TODO: Replace with actual API call
-      // const response = await fetch('/api/tasks', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Authorization': `Bearer ${token}`,
-      //   },
-      //   body: JSON.stringify(taskData),
-      // });
-      //
-      // if (!response.ok) {
-      //   throw new Error('Failed to create task');
-      // }
-      //
-      // const newTask = await response.json();
-
-      // For now, simulate API call with timeout
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Create new task with generated ID (in real app, this comes from backend)
-      const newTask = {
-        id: Date.now(),
-        ...taskData,
-      };
-
-      // Add to local state (in real app, you might refetch or use the returned task)
-      setTodos((prev) => [newTask, ...prev]);
-
-      console.log("Task added successfully:", newTask);
+      await createTodo(taskData);
+      toast.success("Task created successfully!");
     } catch (error) {
-      console.error("Error adding task:", error);
+      toast.error("Failed to create task");
       throw error; // Re-throw to let modal handle the error
     }
   };
 
-  const toggleTodo = (id) => {
-    setTodos(
-      todos.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
-      )
-    );
+  const handleToggleTodo = async (id) => {
+    try {
+      await toggleTodo(id);
+      toast.success("Task updated successfully!");
+    } catch (error) {
+      toast.error("Failed to update task");
+    }
   };
 
-  const deleteTodo = (id) => {
-    setTodos(todos.filter((todo) => todo.id !== id));
+  const handleDeleteTodo = async (id) => {
+    try {
+      await deleteTodo(id);
+      toast.success("Task deleted successfully!");
+    } catch (error) {
+      toast.error("Failed to delete task");
+    }
   };
 
   const getPriorityColor = (priority) => {
@@ -215,27 +116,53 @@ function TodoPage() {
         return "bg-blue-500/20 text-blue-600 border-blue-500/30";
       case "personal":
         return "bg-purple-500/20 text-purple-600 border-purple-500/30";
-      case "learning":
+      case "health":
         return "bg-green-500/20 text-green-600 border-green-500/30";
+      case "finance":
+        return "bg-emerald-500/20 text-emerald-600 border-emerald-500/30";
+      case "education":
+        return "bg-indigo-500/20 text-indigo-600 border-indigo-500/30";
+      case "other":
+        return "bg-gray-500/20 text-gray-600 border-gray-500/30";
       default:
         return "bg-muted text-muted-foreground";
+    }
+  };
+
+  const getCategoryIcon = (category) => {
+    switch (category) {
+      case "work":
+        return Briefcase;
+      case "personal":
+        return User;
+      case "health":
+        return Heart;
+      case "finance":
+        return DollarSign;
+      case "education":
+        return GraduationCap;
+      case "other":
+        return MoreHorizontal;
+      default:
+        return Circle;
     }
   };
 
   const getPriorityIcon = (priority) => {
     switch (priority) {
       case "high":
-        return <AlertTriangle className="w-4 h-4" />;
+        return AlertTriangle;
       case "medium":
-        return <Flag className="w-4 h-4" />;
+        return Flag;
       case "low":
-        return <Circle className="w-4 h-4" />;
+        return Circle;
       default:
-        return <Circle className="w-4 h-4" />;
+        return Circle;
     }
   };
 
   const isOverdue = (dueDate) => {
+    if (!dueDate) return false;
     return (
       new Date(dueDate) < new Date() &&
       new Date(dueDate).toDateString() !== new Date().toDateString()
@@ -243,6 +170,7 @@ function TodoPage() {
   };
 
   const isDueToday = (dueDate) => {
+    if (!dueDate) return false;
     return new Date(dueDate).toDateString() === new Date().toDateString();
   };
 
@@ -252,7 +180,7 @@ function TodoPage() {
       (filter === "active" && !todo.completed) ||
       (filter === "completed" && todo.completed) ||
       (filter === "high" && todo.priority === "high") ||
-      (filter === "overdue" && isOverdue(todo.dueDate) && !todo.completed);
+      (filter === "overdue" && isOverdue(todo.due_date) && !todo.completed);
 
     const matchesSearch =
       searchTerm === "" ||
@@ -273,10 +201,23 @@ function TodoPage() {
     (todo) => todo.priority === "high" && !todo.completed
   ).length;
   const overdueTasks = todos.filter(
-    (todo) => isOverdue(todo.dueDate) && !todo.completed
+    (todo) => isOverdue(todo.due_date) && !todo.completed
   ).length;
   const completionRate =
     totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+  if (isLoading && todos.length === 0) {
+    return (
+      <div className="space-y-8 pb-8">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading your tasks...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 pb-8">
@@ -415,125 +356,131 @@ function TodoPage() {
                 </p>
               </div>
             ) : (
-              filteredTodos.map((todo) => (
-                <div
-                  key={todo.id}
-                  className={`p-4 rounded-xl border transition-all duration-300 hover:shadow-lg ${
-                    todo.completed
-                      ? "bg-muted/30 border-border opacity-75"
-                      : isOverdue(todo.dueDate)
-                      ? "bg-red-50/50 dark:bg-red-950/20 border-red-200 dark:border-red-800"
-                      : isDueToday(todo.dueDate)
-                      ? "bg-yellow-50/50 dark:bg-yellow-950/20 border-yellow-200 dark:border-yellow-800"
-                      : "bg-card border-border hover:bg-card/80"
-                  }`}
-                >
-                  <div className="flex items-start gap-4">
-                    <Checkbox
-                      checked={todo.completed}
-                      onCheckedChange={() => toggleTodo(todo.id)}
-                      className="mt-1 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-                    />
+              filteredTodos.map((todo) => {
+                const CategoryIcon = getCategoryIcon(todo.category);
+                const PriorityIcon = getPriorityIcon(todo.priority);
 
-                    <div className="flex-1 space-y-2">
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex-1">
-                          <h3
-                            className={`font-semibold text-lg ${
-                              todo.completed
-                                ? "line-through text-muted-foreground"
-                                : "text-foreground"
-                            }`}
-                          >
-                            {todo.title}
-                          </h3>
-                          {todo.description && (
-                            <p
-                              className={`text-sm mt-1 ${
+                return (
+                  <div
+                    key={todo.id}
+                    className={`p-4 rounded-xl border transition-all duration-300 hover:shadow-lg ${
+                      todo.completed
+                        ? "bg-muted/30 border-border opacity-75"
+                        : isOverdue(todo.due_date)
+                        ? "bg-red-50/50 dark:bg-red-950/20 border-red-200 dark:border-red-800"
+                        : isDueToday(todo.due_date)
+                        ? "bg-yellow-50/50 dark:bg-yellow-950/20 border-yellow-200 dark:border-yellow-800"
+                        : "bg-card border-border hover:bg-card/80"
+                    }`}
+                  >
+                    <div className="flex items-start gap-4">
+                      <Checkbox
+                        checked={todo.completed}
+                        onCheckedChange={() => handleToggleTodo(todo.id)}
+                        className="mt-1 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                        disabled={isLoading}
+                      />
+
+                      <div className="flex-1 space-y-2">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex-1">
+                            <h3
+                              className={`font-semibold text-lg ${
                                 todo.completed
-                                  ? "text-muted-foreground/60"
-                                  : "text-muted-foreground"
+                                  ? "line-through text-muted-foreground"
+                                  : "text-foreground"
                               }`}
                             >
-                              {todo.description}
-                            </p>
+                              {todo.title}
+                            </h3>
+                            {todo.description && (
+                              <p
+                                className={`text-sm mt-1 ${
+                                  todo.completed
+                                    ? "text-muted-foreground/60"
+                                    : "text-muted-foreground"
+                                }`}
+                              >
+                                {todo.description}
+                              </p>
+                            )}
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDeleteTodo(todo.id)}
+                            className="text-muted-foreground hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20"
+                            disabled={isLoading}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-2">
+                          <Badge
+                            className={`${getPriorityColor(
+                              todo.priority
+                            )} border`}
+                          >
+                            <PriorityIcon className="w-3 h-3 mr-1" />
+                            <span className="capitalize">{todo.priority}</span>
+                          </Badge>
+
+                          <Badge
+                            className={`${getCategoryColor(
+                              todo.category
+                            )} border`}
+                          >
+                            <CategoryIcon className="w-3 h-3 mr-1" />
+                            <span className="capitalize">{todo.category}</span>
+                          </Badge>
+
+                          {todo.due_date && (
+                            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                              <Calendar className="w-4 h-4" />
+                              <span
+                                className={
+                                  isOverdue(todo.due_date) && !todo.completed
+                                    ? "text-red-600 dark:text-red-400 font-medium"
+                                    : isDueToday(todo.due_date)
+                                    ? "text-yellow-600 dark:text-yellow-400 font-medium"
+                                    : ""
+                                }
+                              >
+                                {new Date(todo.due_date).toLocaleDateString()}
+                              </span>
+                              {isOverdue(todo.due_date) && !todo.completed && (
+                                <Badge className="bg-red-500/20 text-red-600 border-red-500/30 ml-2">
+                                  Overdue
+                                </Badge>
+                              )}
+                              {isDueToday(todo.due_date) && !todo.completed && (
+                                <Badge className="bg-yellow-500/20 text-yellow-600 border-yellow-500/30 ml-2">
+                                  Due Today
+                                </Badge>
+                              )}
+                            </div>
                           )}
                         </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => deleteTodo(todo.id)}
-                          className="text-muted-foreground hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
 
-                      <div className="flex flex-wrap items-center gap-2">
-                        <Badge
-                          className={`${getPriorityColor(
-                            todo.priority
-                          )} border`}
-                        >
-                          {getPriorityIcon(todo.priority)}
-                          <span className="ml-1 capitalize">
-                            {todo.priority}
-                          </span>
-                        </Badge>
-
-                        <Badge
-                          className={`${getCategoryColor(
-                            todo.category
-                          )} border`}
-                        >
-                          <span className="capitalize">{todo.category}</span>
-                        </Badge>
-
-                        {todo.dueDate && (
-                          <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                            <Calendar className="w-4 h-4" />
-                            <span
-                              className={
-                                isOverdue(todo.dueDate) && !todo.completed
-                                  ? "text-red-600 dark:text-red-400 font-medium"
-                                  : isDueToday(todo.dueDate)
-                                  ? "text-yellow-600 dark:text-yellow-400 font-medium"
-                                  : ""
-                              }
-                            >
-                              {new Date(todo.dueDate).toLocaleDateString()}
-                            </span>
-                            {isOverdue(todo.dueDate) && !todo.completed && (
-                              <Badge className="bg-red-500/20 text-red-600 border-red-500/30 ml-2">
-                                Overdue
+                        {todo.tags && todo.tags.length > 0 && (
+                          <div className="flex flex-wrap gap-1">
+                            {todo.tags.map((tag, index) => (
+                              <Badge
+                                key={index}
+                                variant="secondary"
+                                className="text-xs"
+                              >
+                                #{tag}
                               </Badge>
-                            )}
-                            {isDueToday(todo.dueDate) && !todo.completed && (
-                              <Badge className="bg-yellow-500/20 text-yellow-600 border-yellow-500/30 ml-2">
-                                Due Today
-                              </Badge>
-                            )}
+                            ))}
                           </div>
                         )}
                       </div>
-
-                      {todo.tags.length > 0 && (
-                        <div className="flex flex-wrap gap-1">
-                          {todo.tags.map((tag, index) => (
-                            <Badge
-                              key={index}
-                              variant="secondary"
-                              className="text-xs"
-                            >
-                              #{tag}
-                            </Badge>
-                          ))}
-                        </div>
-                      )}
                     </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         </CardContent>
