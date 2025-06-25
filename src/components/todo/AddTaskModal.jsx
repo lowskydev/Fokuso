@@ -39,6 +39,9 @@ import {
   Briefcase,
   User,
   GraduationCap,
+  Heart,
+  DollarSign,
+  MoreHorizontal,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -54,7 +57,7 @@ export function AddTaskModal({ onAddTask, trigger }) {
     priority: "medium",
     category: "personal",
     dueDate: null,
-    tags: [],
+    tagNames: [], // Changed from tags to tagNames to match API
   });
 
   const [tagInput, setTagInput] = useState("");
@@ -82,8 +85,8 @@ export function AddTaskModal({ onAddTask, trigger }) {
       newErrors.dueDate = "Due date cannot be in the past";
     }
 
-    if (formData.tags.length > 10) {
-      newErrors.tags = "Maximum 10 tags allowed";
+    if (formData.tagNames.length > 10) {
+      newErrors.tagNames = "Maximum 10 tags allowed";
     }
 
     setErrors(newErrors);
@@ -107,12 +110,10 @@ export function AddTaskModal({ onAddTask, trigger }) {
         description: formData.description.trim(),
         priority: formData.priority,
         category: formData.category,
-        dueDate: formData.dueDate
+        due_date: formData.dueDate
           ? formData.dueDate.toISOString().split("T")[0]
           : null,
-        tags: formData.tags,
-        completed: false,
-        createdAt: new Date().toISOString().split("T")[0],
+        tag_names: formData.tagNames, // API expects tag_names
       };
 
       // Call the parent component's add task function
@@ -137,7 +138,7 @@ export function AddTaskModal({ onAddTask, trigger }) {
       priority: "medium",
       category: "personal",
       dueDate: null,
-      tags: [],
+      tagNames: [],
     });
     setTagInput("");
     setErrors({});
@@ -162,10 +163,14 @@ export function AddTaskModal({ onAddTask, trigger }) {
   // Handle tag addition
   const addTag = () => {
     const tag = tagInput.trim().toLowerCase();
-    if (tag && !formData.tags.includes(tag) && formData.tags.length < 10) {
+    if (
+      tag &&
+      !formData.tagNames.includes(tag) &&
+      formData.tagNames.length < 10
+    ) {
       setFormData((prev) => ({
         ...prev,
-        tags: [...prev.tags, tag],
+        tagNames: [...prev.tagNames, tag],
       }));
       setTagInput("");
     }
@@ -175,7 +180,7 @@ export function AddTaskModal({ onAddTask, trigger }) {
   const removeTag = (tagToRemove) => {
     setFormData((prev) => ({
       ...prev,
-      tags: prev.tags.filter((tag) => tag !== tagToRemove),
+      tagNames: prev.tagNames.filter((tag) => tag !== tagToRemove),
     }));
   };
 
@@ -209,7 +214,7 @@ export function AddTaskModal({ onAddTask, trigger }) {
     },
   ];
 
-  // Category options
+  // Category options - updated to match API choices
   const categoryOptions = [
     { value: "work", label: "Work", icon: Briefcase, color: "text-blue-600" },
     {
@@ -219,10 +224,28 @@ export function AddTaskModal({ onAddTask, trigger }) {
       color: "text-purple-600",
     },
     {
-      value: "learning",
-      label: "Learning",
-      icon: GraduationCap,
+      value: "health",
+      label: "Health",
+      icon: Heart,
       color: "text-green-600",
+    },
+    {
+      value: "finance",
+      label: "Finance",
+      icon: DollarSign,
+      color: "text-emerald-600",
+    },
+    {
+      value: "education",
+      label: "Education",
+      icon: GraduationCap,
+      color: "text-indigo-600",
+    },
+    {
+      value: "other",
+      label: "Other",
+      icon: MoreHorizontal,
+      color: "text-gray-600",
     },
   ];
 
@@ -426,23 +449,23 @@ export function AddTaskModal({ onAddTask, trigger }) {
                     onChange={(e) => setTagInput(e.target.value)}
                     onKeyPress={handleTagKeyPress}
                     className="pl-10"
-                    disabled={formData.tags.length >= 10}
+                    disabled={formData.tagNames.length >= 10}
                   />
                 </div>
                 <Button
                   type="button"
                   variant="outline"
                   onClick={addTag}
-                  disabled={!tagInput.trim() || formData.tags.length >= 10}
+                  disabled={!tagInput.trim() || formData.tagNames.length >= 10}
                 >
                   Add
                 </Button>
               </div>
 
               {/* Display Tags */}
-              {formData.tags.length > 0 && (
+              {formData.tagNames.length > 0 && (
                 <div className="flex flex-wrap gap-2">
-                  {formData.tags.map((tag, index) => (
+                  {formData.tagNames.map((tag, index) => (
                     <Badge
                       key={index}
                       variant="secondary"
@@ -462,12 +485,12 @@ export function AddTaskModal({ onAddTask, trigger }) {
               )}
 
               <p className="text-xs text-muted-foreground">
-                {formData.tags.length}/10 tags{" "}
-                {formData.tags.length >= 10 && "(Maximum reached)"}
+                {formData.tagNames.length}/10 tags{" "}
+                {formData.tagNames.length >= 10 && "(Maximum reached)"}
               </p>
-              {errors.tags && (
+              {errors.tagNames && (
                 <p className="text-sm text-red-600 dark:text-red-400">
-                  {errors.tags}
+                  {errors.tagNames}
                 </p>
               )}
             </div>
