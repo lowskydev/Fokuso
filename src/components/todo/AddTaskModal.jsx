@@ -50,6 +50,17 @@ export function AddTaskModal({ onAddTask, trigger }) {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
+  // Helper function to format date without timezone issues
+  const formatDateForAPI = (date) => {
+    if (!date) return null;
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  };
+
   // Form state
   const [formData, setFormData] = useState({
     title: "",
@@ -110,10 +121,8 @@ export function AddTaskModal({ onAddTask, trigger }) {
         description: formData.description.trim(),
         priority: formData.priority,
         category: formData.category,
-        due_date: formData.dueDate
-          ? formData.dueDate.toISOString().split("T")[0]
-          : null,
-        tag_names: formData.tagNames, // API expects tag_names
+        due_date: formatDateForAPI(formData.dueDate), // Use the helper function
+        tag_names: formData.tagNames,
       };
 
       // Call the parent component's add task function
