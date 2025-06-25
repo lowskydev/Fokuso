@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AddEventModal } from "@/components/calendar/AddEventModal";
+import { EditEventModal } from "@/components/calendar/EditEventModal";
 import {
   ChevronLeft,
   ChevronRight,
@@ -17,6 +18,8 @@ import { toast } from "sonner";
 
 function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [editModalOpen, setEditModalOpen] = useState(false);
 
   // Get calendar store data and functions
   const { events, isLoading, error, fetchEvents, clearError } =
@@ -125,6 +128,15 @@ function CalendarPage() {
       default:
         return "bg-muted text-muted-foreground";
     }
+  };
+
+  // Handle event click
+  const handleEventClick = (event, dateKey) => {
+    setSelectedEvent({
+      ...event,
+      date: dateKey,
+    });
+    setEditModalOpen(true);
   };
 
   // Calculate monthly stats from actual events data
@@ -308,8 +320,11 @@ function CalendarPage() {
                           key={event.id}
                           className={`text-xs p-1 rounded border ${getEventTypeColor(
                             event.type
-                          )} cursor-pointer hover:scale-105 transition-transform`}
+                          )} cursor-pointer hover:scale-105 transition-transform hover:shadow-md`}
                           title={`${event.title} - ${event.time} to ${event.endTime} (${event.duration}min)`}
+                          onClick={() =>
+                            handleEventClick(event, formatDateKey(day))
+                          }
                         >
                           <div className="font-medium truncate">
                             {event.title}
@@ -376,6 +391,13 @@ function CalendarPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Edit Event Modal */}
+      <EditEventModal
+        event={selectedEvent}
+        open={editModalOpen}
+        onOpenChange={setEditModalOpen}
+      />
     </div>
   );
 }
