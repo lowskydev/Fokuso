@@ -216,13 +216,19 @@ export function AddTaskModal({ onAddTask, trigger }) {
 
   // Category options - updated to match API choices
   const categoryOptions = [
-    { value: "work", label: "Work", icon: Briefcase, color: "text-blue-600" },
     {
       value: "personal",
       label: "Personal",
       icon: User,
       color: "text-purple-600",
     },
+    {
+      value: "education",
+      label: "Education",
+      icon: GraduationCap,
+      color: "text-indigo-600",
+    },
+    { value: "work", label: "Work", icon: Briefcase, color: "text-blue-600" },
     {
       value: "health",
       label: "Health",
@@ -234,12 +240,6 @@ export function AddTaskModal({ onAddTask, trigger }) {
       label: "Finance",
       icon: DollarSign,
       color: "text-emerald-600",
-    },
-    {
-      value: "education",
-      label: "Education",
-      icon: GraduationCap,
-      color: "text-indigo-600",
     },
     {
       value: "other",
