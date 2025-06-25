@@ -187,7 +187,9 @@ function TodoPage() {
       todo.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       todo.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
       todo.tags.some((tag) =>
-        tag.toLowerCase().includes(searchTerm.toLowerCase())
+        typeof tag === "string"
+          ? tag.toLowerCase().includes(searchTerm.toLowerCase())
+          : tag.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
 
     return matchesFilter && matchesSearch;
@@ -467,11 +469,11 @@ function TodoPage() {
                           <div className="flex flex-wrap gap-1">
                             {todo.tags.map((tag, index) => (
                               <Badge
-                                key={index}
+                                key={typeof tag === "object" ? tag.id : index}
                                 variant="secondary"
                                 className="text-xs"
                               >
-                                #{tag}
+                                #{typeof tag === "string" ? tag : tag.name}
                               </Badge>
                             ))}
                           </div>
