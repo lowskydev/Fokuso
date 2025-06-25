@@ -1,6 +1,7 @@
+// src/components/pages/CalendarPage.jsx (updated)
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AddEventModal } from "@/components/calendar/AddEventModal";
@@ -11,264 +12,42 @@ import {
   Clock,
   Target,
 } from "lucide-react";
+import useCalendarStore from "@/store/useCalendarStore";
+import { toast } from "sonner";
 
 function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
 
-  // Dummy calendar data
-  const [events, setEvents] = useState({
-    "2025-06-01": [
-      {
-        id: 1,
-        title: "Walk bongo",
-        time: "09:00",
-        endTime: "09:25",
-        type: "other",
-        duration: 25,
-      },
-      {
-        id: 2,
-        title: "Project Review",
-        time: "14:00",
-        endTime: "15:00",
-        type: "meeting",
-        duration: 60,
-      },
-    ],
-    "2025-06-03": [
-      {
-        id: 3,
-        title: "Deep Work Block",
-        time: "10:00",
-        endTime: "11:30",
-        type: "focus",
-        duration: 90,
-      },
-      {
-        id: 4,
-        title: "Study Session",
-        time: "16:00",
-        endTime: "16:45",
-        type: "study",
-        duration: 45,
-      },
-    ],
-    "2025-06-05": [
-      {
-        id: 5,
-        title: "Focus Sprint",
-        time: "08:30",
-        endTime: "08:55",
-        type: "focus",
-        duration: 25,
-      },
-      {
-        id: 6,
-        title: "Learning Time",
-        time: "13:00",
-        endTime: "13:30",
-        type: "study",
-        duration: 30,
-      },
-      {
-        id: 7,
-        title: "Team Sync",
-        time: "15:30",
-        endTime: "16:00",
-        type: "meeting",
-        duration: 30,
-      },
-    ],
-    "2025-06-08": [
-      {
-        id: 8,
-        title: "Extended Focus",
-        time: "09:00",
-        endTime: "09:50",
-        type: "focus",
-        duration: 50,
-      },
-    ],
-    "2025-06-10": [
-      {
-        id: 9,
-        title: "Quick Focus",
-        time: "11:00",
-        endTime: "11:15",
-        type: "focus",
-        duration: 15,
-      },
-      {
-        id: 10,
-        title: "Afternoon Study",
-        time: "14:30",
-        endTime: "15:30",
-        type: "study",
-        duration: 60,
-      },
-    ],
-    "2025-06-12": [
-      {
-        id: 11,
-        title: "Morning Routine",
-        time: "07:00",
-        endTime: "07:25",
-        type: "focus",
-        duration: 25,
-      },
-      {
-        id: 12,
-        title: "Project Work",
-        time: "10:00",
-        endTime: "11:30",
-        type: "focus",
-        duration: 90,
-      },
-    ],
-    "2025-06-15": [
-      {
-        id: 13,
-        title: "Focus Block",
-        time: "09:30",
-        endTime: "10:15",
-        type: "focus",
-        duration: 45,
-      },
-      {
-        id: 14,
-        title: "Review Session",
-        time: "16:00",
-        endTime: "16:30",
-        type: "study",
-        duration: 30,
-      },
-    ],
-    "2025-06-18": [
-      {
-        id: 15,
-        title: "Deep break",
-        time: "08:00",
-        endTime: "10:00",
-        type: "break",
-        duration: 120,
-      },
-    ],
-    "2025-06-20": [
-      {
-        id: 16,
-        title: "Focus Session",
-        time: "10:00",
-        endTime: "10:25",
-        type: "focus",
-        duration: 25,
-      },
-      {
-        id: 17,
-        title: "Learning Block",
-        time: "14:00",
-        endTime: "15:30",
-        type: "study",
-        duration: 90,
-      },
-      {
-        id: 18,
-        title: "Planning Meeting",
-        time: "16:30",
-        endTime: "17:15",
-        type: "meeting",
-        duration: 45,
-      },
-    ],
-    "2025-06-22": [
-      {
-        id: 19,
-        title: "Weekend Focus",
-        time: "09:00",
-        endTime: "10:00",
-        type: "focus",
-        duration: 60,
-      },
-    ],
-    "2025-06-25": [
-      {
-        id: 20,
-        title: "Holiday Planning",
-        time: "10:00",
-        endTime: "10:30",
-        type: "study",
-        duration: 30,
-      },
-    ],
-    "2025-06-28": [
-      {
-        id: 21,
-        title: "Year-end Review",
-        time: "09:00",
-        endTime: "10:30",
-        type: "focus",
-        duration: 90,
-      },
-      {
-        id: 22,
-        title: "Goal Setting",
-        time: "15:00",
-        endTime: "16:00",
-        type: "study",
-        duration: 60,
-      },
-    ],
-  });
+  // Get calendar store data and functions
+  const { events, isLoading, error, fetchEvents, clearError } =
+    useCalendarStore();
 
-  // Handle adding new event (this is where you'll integrate with your backend)
-  const handleAddEvent = async (eventData) => {
-    try {
-      // TODO: Replace with actual API call
-      // const response = await fetch('/api/events', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Authorization': `Bearer ${token}`,
-      //   },
-      //   body: JSON.stringify(eventData),
-      // });
-      //
-      // if (!response.ok) {
-      //   throw new Error('Failed to create event');
-      // }
-      //
-      // const newEvent = await response.json();
-
-      // For now, simulate API call with timeout
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Create new event with generated ID (in real app, this comes from backend)
-      const newEvent = {
-        id: Date.now(),
-        title: eventData.title,
-        time: eventData.startTime || "All Day",
-        endTime: eventData.endTime || "All Day",
-        type: eventData.type,
-        duration: eventData.duration,
-        description: eventData.description,
-        isAllDay: eventData.isAllDay,
-        isRecurring: eventData.isRecurring,
-        recurringType: eventData.recurringType,
-        recurringEnd: eventData.recurringEnd,
-      };
-
-      // Add to local state (in real app, you might refetch or use the returned event)
-      const dateKey = eventData.date;
-      setEvents((prev) => ({
-        ...prev,
-        [dateKey]: [...(prev[dateKey] || []), newEvent],
-      }));
-
-      console.log("Event added successfully:", newEvent);
-    } catch (error) {
-      console.error("Error adding event:", error);
-      throw error; // Re-throw to let modal handle the error
+  // Show error toast if there's an error
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      clearError();
     }
-  };
+  }, [error, clearError]);
+
+  // Fetch events when component mounts or when month changes
+  useEffect(() => {
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
+
+    // Calculate start and end dates for the month
+    const startDate = new Date(currentYear, currentMonth, 1)
+      .toISOString()
+      .split("T")[0];
+    const endDate = new Date(currentYear, currentMonth + 1, 0)
+      .toISOString()
+      .split("T")[0];
+
+    fetchEvents({
+      start_date: startDate,
+      end_date: endDate,
+    });
+  }, [currentDate, fetchEvents]);
 
   const monthNames = [
     "January",
@@ -348,13 +127,39 @@ function CalendarPage() {
     }
   };
 
-  // Calculate monthly stats
-  const monthlyEvents = Object.values(events).flat();
-  const focusSessions = monthlyEvents.filter((e) => e.type === "focus").length;
-  const totalFocusTime = monthlyEvents
+  // Calculate monthly stats from actual events data
+  const allEventsThisMonth = Object.entries(events)
+    .filter(([dateKey]) => {
+      const eventDate = new Date(dateKey);
+      return (
+        eventDate.getMonth() === currentMonth &&
+        eventDate.getFullYear() === currentYear
+      );
+    })
+    .flatMap(([_, dayEvents]) => dayEvents);
+
+  const focusSessions = allEventsThisMonth.filter(
+    (e) => e.type === "focus"
+  ).length;
+  const totalFocusTime = allEventsThisMonth
     .filter((e) => e.type === "focus")
-    .reduce((sum, e) => sum + e.duration, 0);
-  const studySessions = monthlyEvents.filter((e) => e.type === "study").length;
+    .reduce((sum, e) => sum + (e.duration || 0), 0);
+  const studySessions = allEventsThisMonth.filter(
+    (e) => e.type === "study"
+  ).length;
+
+  if (isLoading && Object.keys(events).length === 0) {
+    return (
+      <div className="space-y-8 pb-8">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading your calendar...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 pb-8">
@@ -368,7 +173,7 @@ function CalendarPage() {
             Plan and track your focus sessions
           </p>
         </div>
-        <AddEventModal onAddEvent={handleAddEvent} />
+        <AddEventModal />
       </div>
 
       {/* Monthly Stats */}
@@ -437,6 +242,7 @@ function CalendarPage() {
                 size="sm"
                 onClick={() => navigateMonth(-1)}
                 className="hover:bg-primary/5"
+                disabled={isLoading}
               >
                 <ChevronLeft className="w-4 h-4" />
               </Button>
@@ -445,6 +251,7 @@ function CalendarPage() {
                 size="sm"
                 onClick={() => setCurrentDate(new Date())}
                 className="hover:bg-primary/5"
+                disabled={isLoading}
               >
                 Today
               </Button>
@@ -453,6 +260,7 @@ function CalendarPage() {
                 size="sm"
                 onClick={() => navigateMonth(1)}
                 className="hover:bg-primary/5"
+                disabled={isLoading}
               >
                 <ChevronRight className="w-4 h-4" />
               </Button>
@@ -495,7 +303,7 @@ function CalendarPage() {
                       {day}
                     </div>
                     <div className="space-y-1">
-                      {events[formatDateKey(day)]?.map((event) => (
+                      {(events[formatDateKey(day)] || []).map((event) => (
                         <div
                           key={event.id}
                           className={`text-xs p-1 rounded border ${getEventTypeColor(
@@ -517,10 +325,22 @@ function CalendarPage() {
               </div>
             ))}
           </div>
+
+          {/* Loading overlay */}
+          {isLoading && (
+            <div className="absolute inset-0 bg-background/50 backdrop-blur-sm flex items-center justify-center rounded-lg">
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                <span className="text-sm text-muted-foreground">
+                  Loading events...
+                </span>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
-      {/* Legend */}
+      {/* Legend remains the same */}
       <Card className="bg-card/80 backdrop-blur-sm border-border shadow-xl">
         <CardHeader>
           <CardTitle className="text-lg font-bold text-foreground">

@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogContent,
@@ -25,8 +24,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Switch } from "@/components/ui/switch";
-import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
 import {
   Plus,
@@ -36,7 +33,6 @@ import {
   BookOpen,
   Users,
   Loader2,
-  Repeat,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -53,15 +49,10 @@ export function AddEventModal({ trigger, selectedDate = null }) {
   // Form state remains the same
   const [formData, setFormData] = useState({
     title: "",
-    description: "",
     date: selectedDate || new Date(),
     startTime: "09:00",
     endTime: "10:00",
     type: "focus",
-    isAllDay: false,
-    isRecurring: false,
-    recurringType: "weekly",
-    recurringEnd: null,
   });
 
   // Form validation
@@ -76,29 +67,15 @@ export function AddEventModal({ trigger, selectedDate = null }) {
       newErrors.title = "Title must be less than 100 characters";
     }
 
-    if (formData.description.length > 500) {
-      newErrors.description = "Description must be less than 500 characters";
-    }
-
     if (!formData.date) {
       newErrors.date = "Event date is required";
     }
 
-    if (!formData.isAllDay) {
-      const startTime = new Date(`2000-01-01T${formData.startTime}:00`);
-      const endTime = new Date(`2000-01-01T${formData.endTime}:00`);
+    const startTime = new Date(`2000-01-01T${formData.startTime}:00`);
+    const endTime = new Date(`2000-01-01T${formData.endTime}:00`);
 
-      if (endTime <= startTime) {
-        newErrors.endTime = "End time must be after start time";
-      }
-    }
-
-    if (
-      formData.isRecurring &&
-      formData.recurringEnd &&
-      formData.recurringEnd <= formData.date
-    ) {
-      newErrors.recurringEnd = "Recurring end date must be after event date";
+    if (endTime <= startTime) {
+      newErrors.endTime = "End time must be after start time";
     }
 
     setErrors(newErrors);
@@ -120,12 +97,10 @@ export function AddEventModal({ trigger, selectedDate = null }) {
       // Prepare event data for backend
       const eventData = {
         title: formData.title.trim(),
-        description: formData.description.trim(),
         date: formData.date.toISOString().split("T")[0],
-        start_time: formData.isAllDay ? null : formData.startTime,
-        end_time: formData.isAllDay ? null : formData.endTime,
+        start_time: formData.startTime,
+        end_time: formData.endTime,
         event_type: formData.type,
-        // Note: Backend doesn't support recurring events yet, so we'll skip those fields
       };
 
       // Call the store function to create event
@@ -148,15 +123,10 @@ export function AddEventModal({ trigger, selectedDate = null }) {
   const resetForm = () => {
     setFormData({
       title: "",
-      description: "",
       date: selectedDate || new Date(),
       startTime: "09:00",
       endTime: "10:00",
       type: "focus",
-      isAllDay: false,
-      isRecurring: false,
-      recurringType: "weekly",
-      recurringEnd: null,
     });
     setErrors({});
   };
@@ -209,13 +179,6 @@ export function AddEventModal({ trigger, selectedDate = null }) {
       icon: Plus,
       color: "bg-purple-500/20 text-purple-600 border-purple-500/30",
     },
-  ];
-
-  // Recurring options
-  const recurringOptions = [
-    { value: "daily", label: "Daily" },
-    { value: "weekly", label: "Weekly" },
-    { value: "monthly", label: "Monthly" },
   ];
 
   // Generate time options
@@ -290,35 +253,6 @@ export function AddEventModal({ trigger, selectedDate = null }) {
             </p>
           </div>
 
-          {/* Event Description */}
-          <div className="space-y-2">
-            <Label
-              htmlFor="description"
-              className="text-sm font-medium text-foreground"
-            >
-              Description
-            </Label>
-            <Textarea
-              id="description"
-              placeholder="Add event description (optional)..."
-              value={formData.description}
-              onChange={(e) => handleInputChange("description", e.target.value)}
-              className={cn(
-                "min-h-[100px] resize-none",
-                errors.description && "border-red-500 focus:border-red-500"
-              )}
-              maxLength={500}
-            />
-            {errors.description && (
-              <p className="text-sm text-red-600 dark:text-red-400">
-                {errors.description}
-              </p>
-            )}
-            <p className="text-xs text-muted-foreground">
-              {formData.description.length}/500 characters
-            </p>
-          </div>
-
           {/* Event Type */}
           <div className="space-y-2">
             <Label className="text-sm font-medium text-foreground">
@@ -347,20 +281,9 @@ export function AddEventModal({ trigger, selectedDate = null }) {
 
           {/* Date and Time */}
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <Label className="text-sm font-medium text-foreground">
-                Date & Time
-              </Label>
-              <div className="flex items-center gap-2">
-                <Switch
-                  checked={formData.isAllDay}
-                  onCheckedChange={(checked) =>
-                    handleInputChange("isAllDay", checked)
-                  }
-                />
-                <Label className="text-sm text-muted-foreground">All day</Label>
-              </div>
-            </div>
+            <Label className="text-sm font-medium text-foreground">
+              Date & Time
+            </Label>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Date Selection */}
@@ -402,169 +325,58 @@ export function AddEventModal({ trigger, selectedDate = null }) {
               </div>
 
               {/* Start Time */}
-              {!formData.isAllDay && (
-                <div className="space-y-2">
-                  <Label className="text-xs text-muted-foreground">
-                    Start Time
-                  </Label>
-                  <Select
-                    value={formData.startTime}
-                    onValueChange={(value) =>
-                      handleInputChange("startTime", value)
-                    }
-                  >
-                    <SelectTrigger className="h-12">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-[200px]">
-                      {timeOptions.map((time) => (
-                        <SelectItem key={time.value} value={time.value}>
-                          {time.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
+              <div className="space-y-2">
+                <Label className="text-xs text-muted-foreground">
+                  Start Time
+                </Label>
+                <Select
+                  value={formData.startTime}
+                  onValueChange={(value) =>
+                    handleInputChange("startTime", value)
+                  }
+                >
+                  <SelectTrigger className="h-12">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-[200px]">
+                    {timeOptions.map((time) => (
+                      <SelectItem key={time.value} value={time.value}>
+                        {time.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
               {/* End Time */}
-              {!formData.isAllDay && (
-                <div className="space-y-2">
-                  <Label className="text-xs text-muted-foreground">
-                    End Time
-                  </Label>
-                  <Select
-                    value={formData.endTime}
-                    onValueChange={(value) =>
-                      handleInputChange("endTime", value)
-                    }
-                  >
-                    <SelectTrigger
-                      className={cn("h-12", errors.endTime && "border-red-500")}
-                    >
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-[200px]">
-                      {timeOptions.map((time) => (
-                        <SelectItem key={time.value} value={time.value}>
-                          {time.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {errors.endTime && (
-                    <p className="text-xs text-red-600 dark:text-red-400">
-                      {errors.endTime}
-                    </p>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-
-          <Separator />
-
-          {/* Recurring Settings */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Repeat className="w-4 h-4 text-muted-foreground" />
-                <Label className="text-sm font-medium text-foreground">
-                  Recurring Event
+              <div className="space-y-2">
+                <Label className="text-xs text-muted-foreground">
+                  End Time
                 </Label>
+                <Select
+                  value={formData.endTime}
+                  onValueChange={(value) => handleInputChange("endTime", value)}
+                >
+                  <SelectTrigger
+                    className={cn("h-12", errors.endTime && "border-red-500")}
+                  >
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-[200px]">
+                    {timeOptions.map((time) => (
+                      <SelectItem key={time.value} value={time.value}>
+                        {time.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.endTime && (
+                  <p className="text-xs text-red-600 dark:text-red-400">
+                    {errors.endTime}
+                  </p>
+                )}
               </div>
-              <Switch
-                checked={formData.isRecurring}
-                onCheckedChange={(checked) =>
-                  handleInputChange("isRecurring", checked)
-                }
-              />
             </div>
-
-            {formData.isRecurring && (
-              <div className="ml-6 space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label className="text-xs text-muted-foreground">
-                      Repeat
-                    </Label>
-                    <Select
-                      value={formData.recurringType}
-                      onValueChange={(value) =>
-                        handleInputChange("recurringType", value)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {recurringOptions.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label className="text-xs text-muted-foreground">
-                      End Date
-                    </Label>
-                    <Popover modal={true}>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "w-full justify-start text-left font-normal",
-                            !formData.recurringEnd && "text-muted-foreground",
-                            errors.recurringEnd && "border-red-500"
-                          )}
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {formData.recurringEnd
-                            ? format(formData.recurringEnd, "PPP")
-                            : "Select end date"}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent
-                        className="w-auto p-0 z-[60]"
-                        align="start"
-                      >
-                        <Calendar
-                          mode="single"
-                          selected={formData.recurringEnd}
-                          onSelect={(date) =>
-                            handleInputChange("recurringEnd", date)
-                          }
-                          disabled={(date) => date <= formData.date}
-                          initialFocus
-                        />
-                        {formData.recurringEnd && (
-                          <div className="p-3 border-t">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() =>
-                                handleInputChange("recurringEnd", null)
-                              }
-                              className="w-full"
-                            >
-                              Clear Date
-                            </Button>
-                          </div>
-                        )}
-                      </PopoverContent>
-                    </Popover>
-                    {errors.recurringEnd && (
-                      <p className="text-xs text-red-600 dark:text-red-400">
-                        {errors.recurringEnd}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
 
           {/* Submit Error */}
