@@ -124,7 +124,12 @@ export function EditEventModal({ event, open, onOpenChange }) {
 
       const eventData = {
         title: formData.title.trim(),
-        date: formData.date.toISOString().split("T")[0],
+        date: `${formData.date.getFullYear()}-${String(
+          formData.date.getMonth() + 1
+        ).padStart(2, "0")}-${String(formData.date.getDate()).padStart(
+          2,
+          "0"
+        )}`,
         start_time: formData.startTime,
         end_time: formData.endTime,
         event_type: formData.type,

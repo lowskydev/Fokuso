@@ -181,25 +181,60 @@ const useCalendarStore = create(
 
             const updatedEvent = await response.json();
 
-            // Update the event in local state
+            // Update the event in local state with proper date handling
             set((state) => {
               const newEvents = { ...state.events };
+              let oldDateKey = null;
+              let eventFound = false;
 
-              // Find and update the event in all date keys
+              // Find the event's current date key
               Object.keys(newEvents).forEach((dateKey) => {
-                newEvents[dateKey] = newEvents[dateKey].map((event) =>
-                  event.id === eventId
-                    ? {
-                        id: updatedEvent.id,
-                        title: updatedEvent.title,
-                        time: updatedEvent.time,
-                        endTime: updatedEvent.endTime,
-                        type: updatedEvent.type,
-                        duration: updatedEvent.duration,
-                      }
-                    : event
+                const eventIndex = newEvents[dateKey].findIndex(
+                  (event) => event.id === eventId
                 );
+                if (eventIndex !== -1) {
+                  oldDateKey = dateKey;
+                  eventFound = true;
+                }
               });
+
+              if (eventFound && oldDateKey) {
+                const newDateKey = eventData.date;
+
+                // Create the updated event object
+                const updatedEventObj = {
+                  id: updatedEvent.id,
+                  title: updatedEvent.title,
+                  time: updatedEvent.time,
+                  endTime: updatedEvent.endTime,
+                  type: updatedEvent.type,
+                  duration: updatedEvent.duration,
+                };
+
+                // If date changed, move event to new date
+                if (oldDateKey !== newDateKey) {
+                  // Remove from old date
+                  newEvents[oldDateKey] = newEvents[oldDateKey].filter(
+                    (event) => event.id !== eventId
+                  );
+
+                  // Clean up empty date keys
+                  if (newEvents[oldDateKey].length === 0) {
+                    delete newEvents[oldDateKey];
+                  }
+
+                  // Add to new date
+                  if (!newEvents[newDateKey]) {
+                    newEvents[newDateKey] = [];
+                  }
+                  newEvents[newDateKey].push(updatedEventObj);
+                } else {
+                  // Same date, just update in place
+                  newEvents[oldDateKey] = newEvents[oldDateKey].map((event) =>
+                    event.id === eventId ? updatedEventObj : event
+                  );
+                }
+              }
 
               return {
                 events: newEvents,
