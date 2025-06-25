@@ -40,12 +40,17 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export function AddEventModal({ onAddEvent, trigger, selectedDate = null }) {
+import useCalendarStore from "@/store/useCalendarStore";
+import { toast } from "sonner";
+
+export function AddEventModal({ trigger, selectedDate = null }) {
   const [open, setOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
-  // Form state
+  // Get calendar store functions
+  const { createEvent, isLoading, error, clearError } = useCalendarStore();
+
+  // Form state remains the same
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -100,7 +105,7 @@ export function AddEventModal({ onAddEvent, trigger, selectedDate = null }) {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Handle form submission
+  // Updated handle submit function
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -108,47 +113,34 @@ export function AddEventModal({ onAddEvent, trigger, selectedDate = null }) {
       return;
     }
 
-    setIsLoading(true);
-
     try {
-      // Calculate duration
-      let duration = 60; // default 1 hour
-      if (!formData.isAllDay) {
-        const startTime = new Date(`2000-01-01T${formData.startTime}:00`);
-        const endTime = new Date(`2000-01-01T${formData.endTime}:00`);
-        duration = Math.round((endTime - startTime) / (1000 * 60)); // duration in minutes
-      }
+      // Clear any previous errors
+      clearError();
 
       // Prepare event data for backend
       const eventData = {
         title: formData.title.trim(),
         description: formData.description.trim(),
         date: formData.date.toISOString().split("T")[0],
-        startTime: formData.isAllDay ? null : formData.startTime,
-        endTime: formData.isAllDay ? null : formData.endTime,
-        duration: duration,
-        type: formData.type,
-        isAllDay: formData.isAllDay,
-        isRecurring: formData.isRecurring,
-        recurringType: formData.isRecurring ? formData.recurringType : null,
-        recurringEnd:
-          formData.isRecurring && formData.recurringEnd
-            ? formData.recurringEnd.toISOString().split("T")[0]
-            : null,
-        createdAt: new Date().toISOString(),
+        start_time: formData.isAllDay ? null : formData.startTime,
+        end_time: formData.isAllDay ? null : formData.endTime,
+        event_type: formData.type,
+        // Note: Backend doesn't support recurring events yet, so we'll skip those fields
       };
 
-      // Call the parent component's add event function
-      await onAddEvent(eventData);
+      // Call the store function to create event
+      await createEvent(eventData);
+
+      // Show success message
+      toast.success("Event created successfully!");
 
       // Reset form and close modal
       resetForm();
       setOpen(false);
     } catch (error) {
       console.error("Error adding event:", error);
+      toast.error("Failed to create event. Please try again.");
       setErrors({ submit: "Failed to add event. Please try again." });
-    } finally {
-      setIsLoading(false);
     }
   };
 
