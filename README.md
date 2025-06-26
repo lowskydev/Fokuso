@@ -11,6 +11,7 @@
   <img src="src/assets/logo.png" alt="Fokuso Logo" width="120" height="120">
 </div>
 
+**🔗 [Backend Repository](https://github.com/lowskydev/Fokuso-API)**
 
 [✨ Features](#-features) • [🚀 Quick Start](#-quick-start) • [🛠️ Tech Stack](#%EF%B8%8F-tech-stack) • [📁 Project Structure](#-project-structure) • [🤝 Contributing](#-contributing)
 
@@ -22,7 +23,7 @@
 
 ![Fokuso Dashboard](src/assets/Stats_Page.png)
 
-Fokuso is a comprehensive productivity platform designed to enhance your learning experience through scientifically-proven techniques. Built with modern web technologies, it combines the power of the Pomodoro Technique, spaced repetition learning, and intelligent task management to help you achieve peak focus and productivity.
+Fokuso is a comprehensive productivity platform designed to enhance your learning experience through scientifically-proven techniques. Built with modern web technologies and powered by a [robust Django REST API backend](https://github.com/lowskydev/Fokuso-API), it combines the power of the Pomodoro Technique, spaced repetition learning, and intelligent task management to help you achieve peak focus and productivity.
 
 Whether you're a student, professional, or lifelong learner, Fokuso provides the tools you need to:
 
