@@ -1,8 +1,25 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Trophy, Target, Zap } from "lucide-react";
+import usePomodoroStatsStore from "@/store/usePomodoroStatsStore";
 
 export function TimerStats({ completedSessions, isBreak, isRunning }) {
+  const { userStats, getTodaySessionsCount, getTodayFocusTime } =
+    usePomodoroStatsStore();
+
   const getSessionType = () => (isBreak ? "Break Time" : "Focus Session");
+
+  // Use real data when available, fallback to local storage
+  const todaySessionsCount = getTodaySessionsCount() || 0;
+  const todayFocusTime = getTodayFocusTime() || 0;
+
+  const formatTime = (minutes) => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    if (hours > 0) {
+      return `${hours}h ${mins}m`;
+    }
+    return `${mins}m`;
+  };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -13,11 +30,9 @@ export function TimerStats({ completedSessions, isBreak, isRunning }) {
               <Trophy className="w-5 h-5 text-primary" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">
-                Sessions Completed
-              </p>
+              <p className="text-sm text-muted-foreground">Sessions Today</p>
               <p className="text-2xl font-bold text-foreground">
-                {completedSessions}
+                {todaySessionsCount}
               </p>
             </div>
           </div>
@@ -31,9 +46,9 @@ export function TimerStats({ completedSessions, isBreak, isRunning }) {
               <Target className="w-5 h-5 text-primary" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Current Session</p>
+              <p className="text-sm text-muted-foreground">Today's Focus</p>
               <p className="text-2xl font-bold text-foreground">
-                {getSessionType()}
+                {formatTime(todayFocusTime)}
               </p>
             </div>
           </div>
@@ -55,7 +70,7 @@ export function TimerStats({ completedSessions, isBreak, isRunning }) {
                   }`}
                 ></div>
                 <p className="text-2xl font-bold text-foreground">
-                  {isRunning ? "Active" : "Paused"}
+                  {isRunning ? getSessionType() : "Ready"}
                 </p>
               </div>
             </div>

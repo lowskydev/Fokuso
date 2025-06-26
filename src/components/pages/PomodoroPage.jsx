@@ -7,10 +7,15 @@ import { TimerStats } from "@/components/pomodoro/TimerStats";
 import { TimerDisplay } from "@/components/pomodoro/TimerDisplay";
 import { TimerControls } from "@/components/pomodoro/TimerControls";
 import { SettingsDialog } from "@/components/pomodoro/SettingsDialog";
+import usePomodoroStatsStore from "@/store/usePomodoroStatsStore"; // Add this import
+import { toast } from "sonner"; // Add this import
 
 function PomodoroPage() {
   const defaultStudy = 1500; // 25 min
   const defaultBreak = 300; // 5 min
+
+  // Add the stats store
+  const { recordSession, fetchAllData } = usePomodoroStatsStore();
 
   const [studyDuration, setStudyDuration] = useState(
     Number.parseInt(localStorage.getItem("studyDuration") || defaultStudy, 10)
@@ -34,6 +39,11 @@ function PomodoroPage() {
   );
   const [selectedPreset, setSelectedPreset] = useState(null);
 
+  // Fetch stats when component mounts
+  useEffect(() => {
+    fetchAllData();
+  }, [fetchAllData]);
+
   // Play notification sound
   const playNotification = useCallback(() => {
     if (soundEnabled) {
@@ -52,17 +62,26 @@ function PomodoroPage() {
     setBreakTimeLeft(breakDuration);
   }, [studyDuration, breakDuration]);
 
+  // Updated timer effect to record sessions
   useEffect(() => {
     let timer;
     if (isRunning) {
-      timer = setInterval(() => {
+      timer = setInterval(async () => {
         if (!isBreak && timeLeft > 0) {
           setTimeLeft((prev) => prev - 1);
         } else if (isBreak && breakTimeLeft > 0) {
           setBreakTimeLeft((prev) => prev - 1);
         } else {
           if (!isBreak) {
-            // Study session completed
+            // Focus session completed - record it
+            try {
+              await recordSession("focus", Math.floor(studyDuration / 60));
+              toast.success("Focus session completed! 🎉");
+            } catch (error) {
+              console.error("Failed to record focus session:", error);
+              toast.error("Failed to save session");
+            }
+
             setIsBreak(true);
             setBreakTimeLeft(breakDuration);
             setCompletedSessions((prev) => {
@@ -72,7 +91,14 @@ function PomodoroPage() {
             });
             playNotification();
           } else {
-            // Break completed
+            // Break completed - record it
+            try {
+              await recordSession("break", Math.floor(breakDuration / 60));
+              toast.success("Break time over! Ready to focus? 💪");
+            } catch (error) {
+              console.error("Failed to record break session:", error);
+            }
+
             setIsBreak(false);
             setTimeLeft(studyDuration);
             playNotification();
@@ -89,7 +115,11 @@ function PomodoroPage() {
     studyDuration,
     breakDuration,
     playNotification,
+    recordSession,
   ]);
+
+  // Rest of your existing code remains the same...
+  // (all the keyboard shortcuts, duration changes, etc.)
 
   // Keyboard shortcuts
   useEffect(() => {

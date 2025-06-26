@@ -6,128 +6,164 @@ import { WeeklyOverview } from "@/components/statistics/WeeklyOverview";
 import { DetailedStats } from "@/components/statistics/DetailedStats";
 import { Achievements } from "@/components/statistics/Achievements";
 import useFlashcardStore from "@/store/useFlashcardStore";
+import usePomodoroStatsStore from "@/store/usePomodoroStatsStore"; // Add this import
 
 import { useEffect } from "react";
-import usePomodoroStatsStore from "../../store/usePomodoroStatsStore";
 
 function StatisticsPage() {
-  // Dummy data - will be replaced with real database queries later
-
+  // Get flashcard data
   const { reviewsToday, dailyStats, fetchTodayStats, fetchDailyStats } =
     useFlashcardStore();
 
+  // Get Pomodoro data
   const {
-    stats: pomodoroStats,
-    fetchStats,
-    fetchStatsIfNeeded,
+    userStats,
+    weeklyData,
+    hourlyData,
+    fetchAllData,
+    getTodaySessionsCount,
+    getTodayFocusTime,
     isLoading,
-    error
   } = usePomodoroStatsStore();
 
   useEffect(() => {
+    // Fetch both flashcard and Pomodoro data
     fetchTodayStats();
     fetchDailyStats(7); // Get last 7 days
+    fetchAllData(); // Fetch all Pomodoro stats
+  }, [fetchTodayStats, fetchDailyStats, fetchAllData]);
 
-    //Fetch pomodoro stats
-    fetchStatsIfNeeded();
-  }, [fetchTodayStats, fetchDailyStats, fetchStatsIfNeeded]);
+  // Combine real data from both sources
+  const combinedStats = {
+    // Pomodoro stats from API
+    totalSessions: userStats.totalSessions,
+    totalFocusTime: userStats.totalFocusTime,
+    todayFocusTime: userStats.todayFocusTime,
+    currentStreak: userStats.currentStreak,
+    longestStreak: userStats.longestStreak,
+    averageSessionLength: userStats.averageSessionLength,
+    thisWeekSessions: userStats.thisWeekSessions,
+    thisMonthSessions: userStats.thisMonthSessions,
+    totalBreakTime: userStats.totalBreakTime,
 
-  const stats = {
-    totalSessions: pomodoroStats.totalSessions,
-    totalFocusTime: pomodoroStats.totalFocusTime, // in minutes
-    todayFocusTime: pomodoroStats.todayFocusTime, // in minutes
-    currentStreak: pomodoroStats.currentStreak,
-    longestStreak: pomodoroStats.longestStreak,
-    averageSessionLength: pomodoroStats.averageSessionLength,
-    thisWeekSessions: pomodoroStats.thisWeekSessions,
-    thisMonthSessions: pomodoroStats.thisMonthSessions,
-    totalBreakTime: pomodoroStats.totalBreakTime, // in minutes
-
-    // Flashcard data
-    flashcardsReviewedToday: 24,
-    totalFlashcards: 156,
-    correctAnswers: 18,
-    incorrectAnswers: 6,
-    cardsToReview: 12,
+    // Flashcard data from existing store
+    flashcardsReviewedToday: reviewsToday,
+    totalFlashcards: 156, // This could come from flashcard store
+    correctAnswers: dailyStats?.correct_reviews || 0,
+    incorrectAnswers: dailyStats?.incorrect_reviews || 0,
+    cardsToReview: 12, // This could be calculated from due flashcards
+    averageAccuracy: dailyStats?.accuracy_percentage || 100,
   };
 
-  // Hourly data for today's progress graph
-  // At which hour the user has completed how many sessions (not cumulative)
-  const hourlyData = [
-    { hour: "6", sessions: 0 },
-    { hour: "7", sessions: 0 },
-    { hour: "8", sessions: 1 },
-    { hour: "9", sessions: 2 },
-    { hour: "10", sessions: 3 },
-    { hour: "11", sessions: 3 },
-    { hour: "12", sessions: 4 },
-    { hour: "13", sessions: 4 },
-    { hour: "14", sessions: 5 },
-    { hour: "15", sessions: 5 },
-    { hour: "16", sessions: 5 },
-    { hour: "17", sessions: 5 },
-    { hour: "18", sessions: 5 },
-    { hour: "19", sessions: 5 },
-    { hour: "20", sessions: 5 },
-    { hour: "21", sessions: 5 },
-    { hour: "22", sessions: 7 },
-  ];
+  // Use real hourly data from API or fallback to empty array
+  const realHourlyData =
+    hourlyData.length > 0
+      ? hourlyData
+      : [
+          { hour: "6", sessions: 0 },
+          { hour: "7", sessions: 0 },
+          { hour: "8", sessions: 0 },
+          { hour: "9", sessions: 0 },
+          { hour: "10", sessions: 0 },
+          { hour: "11", sessions: 0 },
+          { hour: "12", sessions: 0 },
+          { hour: "13", sessions: 0 },
+          { hour: "14", sessions: 0 },
+          { hour: "15", sessions: 0 },
+          { hour: "16", sessions: 0 },
+          { hour: "17", sessions: 0 },
+          { hour: "18", sessions: 0 },
+          { hour: "19", sessions: 0 },
+          { hour: "20", sessions: 0 },
+          { hour: "21", sessions: 0 },
+          { hour: "22", sessions: 0 },
+        ];
 
-  const weeklyData = [
-    { day: "Mon", sessions: 4, focusTime: 100 },
-    { day: "Tue", sessions: 3, focusTime: 75 },
-    { day: "Wed", sessions: 5, focusTime: 125 },
-    { day: "Thu", sessions: 2, focusTime: 50 },
-    { day: "Fri", sessions: 3, focusTime: 75 },
-    { day: "Sat", sessions: 0, focusTime: 0 },
-    { day: "Sun", sessions: 7, focusTime: 175 },
-  ];
+  // Use real weekly data from API or fallback
+  const realWeeklyData =
+    weeklyData.length > 0
+      ? weeklyData
+      : [
+          { day: "Mon", sessions: 0, focusTime: 0 },
+          { day: "Tue", sessions: 0, focusTime: 0 },
+          { day: "Wed", sessions: 0, focusTime: 0 },
+          { day: "Thu", sessions: 0, focusTime: 0 },
+          { day: "Fri", sessions: 0, focusTime: 0 },
+          { day: "Sat", sessions: 0, focusTime: 0 },
+          { day: "Sun", sessions: 0, focusTime: 0 },
+        ];
 
-  // Dynamic achievements based on actual data
+  // Dynamic achievements based on real data
   const achievements = [
     {
       title: "First Timer",
       description: "Complete your first Pomodoro session",
-      earned: stats.totalSessions >= 1,
+      earned: combinedStats.totalSessions >= 1,
     },
     {
       title: "Consistency King",
       description: "7-day streak achieved",
-      earned: stats.currentStreak >= 7,
+      earned: combinedStats.currentStreak >= 7,
     },
     {
       title: "Focus Master",
       description: "Complete 100 sessions",
-      earned: stats.totalSessions >= 100,
+      earned: combinedStats.totalSessions >= 100,
     },
     {
       title: "Marathon Runner",
       description: "Focus for 10 hours in a day",
-      earned: stats.todayFocusTime >= 600,
+      earned: combinedStats.todayFocusTime >= 600,
     },
     {
       title: "Week Warrior",
       description: "Complete 50 sessions in a week",
-      earned: stats.thisWeekSessions >= 50,
+      earned: combinedStats.thisWeekSessions >= 50,
     },
     {
       title: "Century Club",
       description: "Complete 500 total sessions",
-      earned: stats.totalSessions >= 500,
+      earned: combinedStats.totalSessions >= 500,
+    },
+    {
+      title: "Flashcard Novice",
+      description: "Review 10 flashcards in a day",
+      earned: combinedStats.flashcardsReviewedToday >= 10,
+    },
+    {
+      title: "Perfect Score",
+      description: "Achieve 100% accuracy in flashcard review",
+      earned:
+        combinedStats.averageAccuracy === 100 &&
+        combinedStats.flashcardsReviewedToday > 0,
     },
   ];
+
+  // Show loading state
+  if (isLoading && combinedStats.totalSessions === 0) {
+    return (
+      <div className="space-y-8 pb-8">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading your progress...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 pb-8">
       <StatsHeader />
-      <StatsOverview stats={stats} />
+      <StatsOverview stats={combinedStats} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <TodayProgress stats={stats} hourlyData={hourlyData} />
-        <WeeklyOverview weeklyData={weeklyData} />
+        <TodayProgress stats={combinedStats} hourlyData={realHourlyData} />
+        <WeeklyOverview weeklyData={realWeeklyData} />
       </div>
 
-      <DetailedStats stats={stats} />
+      <DetailedStats stats={combinedStats} />
       <Achievements achievements={achievements} />
     </div>
   );

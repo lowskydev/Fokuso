@@ -3,18 +3,32 @@ import { Zap, Coffee, Brain } from "lucide-react";
 
 export function DetailedStats({ stats }) {
   const formatHours = (minutes) => {
+    if (!minutes || minutes === 0) return "0";
     return (minutes / 60).toFixed(1);
+  };
+
+  const formatMinutes = (minutes) => {
+    if (!minutes || minutes === 0) return "0";
+    return Math.round(minutes);
   };
 
   // Calculate derived statistics from the stats data
   const focusBreakRatio =
     stats.totalBreakTime > 0
       ? Math.round(stats.totalFocusTime / stats.totalBreakTime)
+      : stats.totalFocusTime > 0
+      ? "∞"
       : 0;
+
   const averageBreakLength =
-    stats.totalSessions > 0
+    stats.totalSessions > 0 && stats.totalBreakTime > 0
       ? Math.round(stats.totalBreakTime / stats.totalSessions)
       : 0;
+
+  const accuracy =
+    stats.flashcardsReviewedToday > 0
+      ? Math.round((stats.correctAnswers / stats.flashcardsReviewedToday) * 100)
+      : stats.averageAccuracy || 100;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -29,23 +43,25 @@ export function DetailedStats({ stats }) {
           <div className="flex justify-between">
             <span className="text-muted-foreground">Average Session</span>
             <span className="font-semibold">
-              {stats.averageSessionLength} min
+              {formatMinutes(stats.averageSessionLength)} min
             </span>
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">Longest Streak</span>
-            <span className="font-semibold">{stats.longestStreak} days</span>
+            <span className="font-semibold">
+              {stats.longestStreak || 0} days
+            </span>
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">This Week</span>
             <span className="font-semibold">
-              {stats.thisWeekSessions} sessions
+              {stats.thisWeekSessions || 0} sessions
             </span>
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">This Month</span>
             <span className="font-semibold">
-              {stats.thisMonthSessions} sessions
+              {stats.thisMonthSessions || 0} sessions
             </span>
           </div>
         </CardContent>
@@ -88,7 +104,7 @@ export function DetailedStats({ stats }) {
         <CardContent className="space-y-4">
           <div className="text-center">
             <p className="text-3xl font-bold text-foreground">
-              {stats.flashcardsReviewedToday}
+              {stats.flashcardsReviewedToday || 0}
             </p>
             <p className="text-sm text-muted-foreground">Cards Reviewed</p>
           </div>
@@ -96,13 +112,13 @@ export function DetailedStats({ stats }) {
             <div className="flex justify-between">
               <span className="text-muted-foreground">Correct Answers</span>
               <span className="font-semibold text-green-600 dark:text-green-400">
-                {stats.correctAnswers}
+                {stats.correctAnswers || 0}
               </span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Incorrect Answers</span>
               <span className="font-semibold text-red-600 dark:text-red-400">
-                {stats.incorrectAnswers}
+                {stats.incorrectAnswers || 0}
               </span>
             </div>
           </div>
@@ -113,9 +129,9 @@ export function DetailedStats({ stats }) {
                 : "All caught up! 🎉"}
             </p>
             <p className="text-xs text-purple-600 dark:text-purple-500">
-              {stats.averageAccuracy >= 80
+              {accuracy >= 80
                 ? "Excellent retention!"
-                : stats.averageAccuracy >= 60
+                : accuracy >= 60
                 ? "Good progress!"
                 : "Keep practicing!"}
             </p>

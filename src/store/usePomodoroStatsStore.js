@@ -1,141 +1,344 @@
 import { create } from "zustand";
+import { persist, devtools } from "zustand/middleware";
 
-const usePomodoroStatsStore = create((set, get) => ({
-  // State
-  stats: {
-    totalSessions: 0,
-    totalFocusTime: 0,
-    todayFocusTime: 0,
-    currentStreak: 0,
-    longestStreak: 0,
-    averageSessionLength: 0,
-    thisWeekSessions: 0,
-    thisMonthSessions: 0,
-    totalBreakTime: 0,
-  },
-  isLoading: false,
-  error: null,
-  lastFetched: null,
-
-  // Actions
-  fetchStats: async () => {
-    set({ isLoading: true, error: null });
-    
-    try {
-      const token = localStorage.getItem("authToken");
-      if (!token) {
-        throw new Error("No authentication token found");
-      }
-
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/stats/user-stats/`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Token ${token}`,
+const usePomodoroStatsStore = create(
+  devtools(
+    persist(
+      (set, get) => ({
+        // State
+        userStats: {
+          totalSessions: 0,
+          totalFocusTime: 0,
+          todayFocusTime: 0,
+          currentStreak: 0,
+          longestStreak: 0,
+          averageSessionLength: 0,
+          thisWeekSessions: 0,
+          thisMonthSessions: 0,
+          totalBreakTime: 0,
         },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch stats: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      
-      set({
-        stats: {
-          totalSessions: data.totalSessions || 0,
-          totalFocusTime: data.totalFocusTime || 0,
-          todayFocusTime: data.todayFocusTime || 0,
-          currentStreak: data.currentStreak || 0,
-          longestStreak: data.longestStreak || 0,
-          averageSessionLength: data.averageSessionLength || 0,
-          thisWeekSessions: data.thisWeekSessions || 0,
-          thisMonthSessions: data.thisMonthSessions || 0,
-          totalBreakTime: data.totalBreakTime || 0,
-        },
+        weeklyData: [],
+        hourlyData: [],
+        sessions: [],
         isLoading: false,
-        lastFetched: new Date().toISOString(),
-      });
-    } catch (error) {
-      console.error("Error fetching pomodoro stats:", error);
-      set({
-        error: error.message,
-        isLoading: false,
-      });
-    }
-  },
+        error: null,
 
-  // Create a new focus session
-  createSession: async (sessionData) => {
-    try {
-      const token = localStorage.getItem("authToken");
-      if (!token) {
-        throw new Error("No authentication token found");
-      }
+        // Session Management
+        createSession: async (sessionData) => {
+          const token = localStorage.getItem("auth-storage")
+            ? JSON.parse(localStorage.getItem("auth-storage")).state.token
+            : null;
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/stats/session/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Token ${token}`,
+          if (!token) {
+            set({ error: "No authentication token found" });
+            return;
+          }
+
+          set({ isLoading: true, error: null });
+          try {
+            const response = await fetch(
+              `${import.meta.env.VITE_API_URL}/api/stats/session/`,
+              {
+                method: "POST",
+                headers: {
+                  Authorization: `Token ${token}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(sessionData),
+              }
+            );
+
+            if (!response.ok) {
+              throw new Error("Failed to create session");
+            }
+
+            const newSession = await response.json();
+
+            // Add the new session to local state
+            set((state) => ({
+              sessions: [newSession, ...state.sessions],
+              isLoading: false,
+            }));
+
+            // Refresh stats after creating a session
+            get().fetchUserStats();
+            get().fetchTodayHourlyData();
+
+            return newSession;
+          } catch (error) {
+            console.error("Error creating session:", error);
+            set({ error: error.message, isLoading: false });
+            throw error;
+          }
         },
-        body: JSON.stringify(sessionData),
-      });
 
-      if (!response.ok) {
-        throw new Error(`Failed to create session: ${response.statusText}`);
+        // Fetch User Stats
+        fetchUserStats: async () => {
+          const token = localStorage.getItem("auth-storage")
+            ? JSON.parse(localStorage.getItem("auth-storage")).state.token
+            : null;
+
+          if (!token) {
+            set({ error: "No authentication token found" });
+            return;
+          }
+
+          set({ isLoading: true, error: null });
+          try {
+            const response = await fetch(
+              `${import.meta.env.VITE_API_URL}/api/stats/user-stats/`,
+              {
+                headers: {
+                  Authorization: `Token ${token}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+
+            if (!response.ok) {
+              throw new Error("Failed to fetch user stats");
+            }
+
+            const userStats = await response.json();
+            set({ userStats, isLoading: false });
+          } catch (error) {
+            console.error("Error fetching user stats:", error);
+            set({ error: error.message, isLoading: false });
+          }
+        },
+
+        // Fetch Weekly Data
+        fetchWeeklyData: async () => {
+          const token = localStorage.getItem("auth-storage")
+            ? JSON.parse(localStorage.getItem("auth-storage")).state.token
+            : null;
+
+          if (!token) return;
+
+          try {
+            const response = await fetch(
+              `${import.meta.env.VITE_API_URL}/api/stats/weekly-data/`,
+              {
+                headers: {
+                  Authorization: `Token ${token}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+
+            if (response.ok) {
+              const weeklyData = await response.json();
+              set({ weeklyData });
+            }
+          } catch (error) {
+            console.error("Error fetching weekly data:", error);
+          }
+        },
+
+        // Fetch Hourly Data
+        fetchHourlyData: async () => {
+          const token = localStorage.getItem("auth-storage")
+            ? JSON.parse(localStorage.getItem("auth-storage")).state.token
+            : null;
+
+          if (!token) return;
+
+          try {
+            const response = await fetch(
+              `${import.meta.env.VITE_API_URL}/api/stats/hourly-data/`,
+              {
+                headers: {
+                  Authorization: `Token ${token}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+
+            if (response.ok) {
+              const hourlyData = await response.json();
+              set({ hourlyData });
+            }
+          } catch (error) {
+            console.error("Error fetching hourly data:", error);
+          }
+        },
+
+        // Fetch Today's Hourly Data (for today's progress chart)
+        fetchTodayHourlyData: async () => {
+          const token = localStorage.getItem("auth-storage")
+            ? JSON.parse(localStorage.getItem("auth-storage")).state.token
+            : null;
+
+          if (!token) return;
+
+          try {
+            const today = new Date().toISOString().split("T")[0];
+            const response = await fetch(
+              `${
+                import.meta.env.VITE_API_URL
+              }/api/stats/sessions/?date=${today}`,
+              {
+                headers: {
+                  Authorization: `Token ${token}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+
+            if (response.ok) {
+              const todaySessions = await response.json();
+
+              // Convert sessions to hourly data for the chart
+              const hourlyData = [];
+              for (let hour = 0; hour < 24; hour++) {
+                const sessionsAtHour = todaySessions.filter((session) => {
+                  const sessionHour = new Date(session.created_at).getHours();
+                  return sessionHour <= hour;
+                }).length;
+
+                hourlyData.push({
+                  hour: hour.toString(),
+                  sessions: sessionsAtHour,
+                });
+              }
+
+              set({ hourlyData });
+            }
+          } catch (error) {
+            console.error("Error fetching today's hourly data:", error);
+          }
+        },
+
+        // Fetch Sessions List
+        fetchSessions: async (params = {}) => {
+          const token = localStorage.getItem("auth-storage")
+            ? JSON.parse(localStorage.getItem("auth-storage")).state.token
+            : null;
+
+          if (!token) return;
+
+          set({ isLoading: true, error: null });
+          try {
+            // Build query parameters
+            const queryParams = new URLSearchParams();
+            if (params.session_type)
+              queryParams.append("session_type", params.session_type);
+            if (params.date) queryParams.append("date", params.date);
+            if (params.start_date)
+              queryParams.append("start_date", params.start_date);
+            if (params.end_date)
+              queryParams.append("end_date", params.end_date);
+
+            const queryString = queryParams.toString();
+            const url = `${import.meta.env.VITE_API_URL}/api/stats/sessions/${
+              queryString ? `?${queryString}` : ""
+            }`;
+
+            const response = await fetch(url, {
+              headers: {
+                Authorization: `Token ${token}`,
+                "Content-Type": "application/json",
+              },
+            });
+
+            if (response.ok) {
+              const sessions = await response.json();
+              set({ sessions, isLoading: false });
+            }
+          } catch (error) {
+            console.error("Error fetching sessions:", error);
+            set({ error: error.message, isLoading: false });
+          }
+        },
+
+        // Fetch All Data (comprehensive fetch)
+        fetchAllData: async () => {
+          const {
+            fetchUserStats,
+            fetchWeeklyData,
+            fetchTodayHourlyData,
+            fetchSessions,
+          } = get();
+
+          await Promise.all([
+            fetchUserStats(),
+            fetchWeeklyData(),
+            fetchTodayHourlyData(),
+            fetchSessions({
+              start_date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+                .toISOString()
+                .split("T")[0],
+              end_date: new Date().toISOString().split("T")[0],
+            }),
+          ]);
+        },
+
+        // Helper function to record a completed session
+        recordSession: async (sessionType, duration) => {
+          return get().createSession({
+            session_type: sessionType, // 'focus' or 'break'
+            duration: duration, // duration in minutes
+          });
+        },
+
+        // Helper function to get today's sessions count
+        getTodaySessionsCount: () => {
+          const { sessions } = get();
+          const today = new Date().toISOString().split("T")[0];
+          return sessions.filter(
+            (session) =>
+              session.created_at.startsWith(today) &&
+              session.session_type === "focus"
+          ).length;
+        },
+
+        // Helper function to get today's focus time
+        getTodayFocusTime: () => {
+          const { sessions } = get();
+          const today = new Date().toISOString().split("T")[0];
+          return sessions
+            .filter(
+              (session) =>
+                session.created_at.startsWith(today) &&
+                session.session_type === "focus"
+            )
+            .reduce((total, session) => total + session.duration, 0);
+        },
+
+        // Utility Actions
+        clearError: () => set({ error: null }),
+
+        reset: () =>
+          set({
+            userStats: {
+              totalSessions: 0,
+              totalFocusTime: 0,
+              todayFocusTime: 0,
+              currentStreak: 0,
+              longestStreak: 0,
+              averageSessionLength: 0,
+              thisWeekSessions: 0,
+              thisMonthSessions: 0,
+              totalBreakTime: 0,
+            },
+            weeklyData: [],
+            hourlyData: [],
+            sessions: [],
+            isLoading: false,
+            error: null,
+          }),
+      }),
+      {
+        name: "pomodoro-stats-storage",
+        partialize: (state) => ({
+          // Only persist user stats and sessions, don't persist loading states
+          userStats: state.userStats,
+          sessions: state.sessions.slice(0, 50), // Only persist recent 50 sessions
+        }),
       }
-
-      const newSession = await response.json();
-      
-      // Refresh stats after creating a session
-      await get().fetchStats();
-      
-      return newSession;
-    } catch (error) {
-      console.error("Error creating session:", error);
-      set({ error: error.message });
-      throw error;
-    }
-  },
-
-  // Reset error state
-  clearError: () => set({ error: null }),
-
-  // Reset all data
-  reset: () => set({
-    stats: {
-      totalSessions: 0,
-      totalFocusTime: 0,
-      todayFocusTime: 0,
-      currentStreak: 0,
-      longestStreak: 0,
-      averageSessionLength: 0,
-      thisWeekSessions: 0,
-      thisMonthSessions: 0,
-      totalBreakTime: 0,
-    },
-    isLoading: false,
-    error: null,
-    lastFetched: null,
-  }),
-
-  // Helper function to check if data needs refresh (older than 5 minutes)
-  shouldRefresh: () => {
-    const { lastFetched } = get();
-    if (!lastFetched) return true;
-    
-    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
-    return new Date(lastFetched) < fiveMinutesAgo;
-  },
-
-  // Auto-refresh stats if needed
-  fetchStatsIfNeeded: async () => {
-    const { shouldRefresh, fetchStats } = get();
-    if (shouldRefresh()) {
-      await fetchStats();
-    }
-  },
-}));
+    ),
+    { name: "PomodoroStatsStore" }
+  )
+);
 
 export default usePomodoroStatsStore;

@@ -19,10 +19,10 @@ export function TodayProgress({ stats, hourlyData }) {
     return `${mins}m`;
   };
 
-  // Transform data for Recharts
+  // Transform data for Recharts - ensure we have proper data structure
   const chartData = hourlyData.map((item) => ({
     hour: `${item.hour}:00`,
-    sessions: item.sessions,
+    sessions: parseInt(item.sessions) || 0,
   }));
 
   const chartConfig = {
@@ -32,8 +32,14 @@ export function TodayProgress({ stats, hourlyData }) {
     },
   };
 
-  // Calculate today's sessions from hourly data
-  const todaySessions = hourlyData[hourlyData.length - 1]?.sessions || 0;
+  // Calculate today's sessions from hourly data or use stats
+  const todaySessions =
+    hourlyData.length > 0
+      ? Math.max(...hourlyData.map((h) => parseInt(h.sessions) || 0))
+      : stats.todayFocusTime
+      ? Math.floor(stats.todayFocusTime / stats.averageSessionLength)
+      : 0;
+
   const dailyGoal = 6;
   const progressPercentage = Math.round((todaySessions / dailyGoal) * 100);
 
@@ -52,7 +58,7 @@ export function TodayProgress({ stats, hourlyData }) {
           <div className="text-center p-4 bg-muted/50 rounded-xl">
             <Timer className="w-8 h-8 text-primary mx-auto mb-2" />
             <p className="text-2xl font-bold text-foreground">
-              {formatTime(stats.todayFocusTime)}
+              {formatTime(stats.todayFocusTime || 0)}
             </p>
             <p className="text-sm text-muted-foreground">Focus Time</p>
           </div>
@@ -91,36 +97,46 @@ export function TodayProgress({ stats, hourlyData }) {
               </div>
             </div>
 
-            <ChartContainer config={chartConfig}>
-              <LineChart
-                accessibilityLayer
-                data={chartData}
-                margin={{
-                  left: 12,
-                  right: 12,
-                }}
-              >
-                <CartesianGrid vertical={false} />
-                <XAxis
-                  dataKey="hour"
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={8}
-                  tickFormatter={(value) => value.slice(0, -3)} // Remove ":00" from time
-                />
-                <ChartTooltip
-                  cursor={false}
-                  content={<ChartTooltipContent hideLabel />}
-                />
-                <Line
-                  dataKey="sessions"
-                  type="linear"
-                  stroke="#ef4444"
-                  strokeWidth={3}
-                  dot={false}
-                />
-              </LineChart>
-            </ChartContainer>
+            {chartData.length > 0 ? (
+              <ChartContainer config={chartConfig}>
+                <LineChart
+                  accessibilityLayer
+                  data={chartData}
+                  margin={{
+                    left: 12,
+                    right: 12,
+                  }}
+                >
+                  <CartesianGrid vertical={false} />
+                  <XAxis
+                    dataKey="hour"
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={8}
+                    tickFormatter={(value) => value.slice(0, -3)} // Remove ":00" from time
+                  />
+                  <ChartTooltip
+                    cursor={false}
+                    content={<ChartTooltipContent hideLabel />}
+                  />
+                  <Line
+                    dataKey="sessions"
+                    type="linear"
+                    stroke="#ef4444"
+                    strokeWidth={3}
+                    dot={false}
+                  />
+                </LineChart>
+              </ChartContainer>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                <Timer className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                <p>No sessions recorded today yet</p>
+                <p className="text-xs">
+                  Complete your first Pomodoro to see progress!
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </CardContent>

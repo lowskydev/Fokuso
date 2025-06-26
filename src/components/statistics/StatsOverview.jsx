@@ -3,13 +3,19 @@ import { Trophy, Clock, Flame, Brain } from "lucide-react";
 
 export function StatsOverview({ stats }) {
   const formatHours = (minutes) => {
+    if (!minutes || minutes === 0) return "0h";
     return (minutes / 60).toFixed(1);
+  };
+
+  const formatStreak = (days) => {
+    if (!days || days === 0) return "0 days";
+    return `${days} day${days !== 1 ? "s" : ""}`;
   };
 
   const overviewCards = [
     {
       title: "Total Sessions",
-      value: stats.totalSessions,
+      value: stats.totalSessions || 0,
       icon: Trophy,
       gradient: "from-primary to-red-500",
     },
@@ -21,13 +27,13 @@ export function StatsOverview({ stats }) {
     },
     {
       title: "Current Streak",
-      value: `${stats.currentStreak} days`,
+      value: formatStreak(stats.currentStreak),
       icon: Flame,
       gradient: "from-green-500 to-green-600",
     },
     {
-      title: "Flashcards Reviewed Today",
-      value: `${stats.flashcardsReviewedToday}`,
+      title: "Flashcards Today",
+      value: stats.flashcardsReviewedToday || 0,
       icon: Brain,
       gradient: "from-purple-500 to-purple-600",
     },
