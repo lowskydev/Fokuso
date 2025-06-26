@@ -1,6 +1,4 @@
-# 🎯 Fokuso
-
-**Transform your productivity with intelligent study systems**
+# Fokuso
 
 <div align="center">
 
