@@ -4,12 +4,12 @@
 
 <div align="center">
 
-![Fokuso Logo](https://img.shields.io/badge/Fokuso-Focus%20Master-ff4444?style=for-the-badge&logo=target&logoColor=white)
+![Fokuso Dashboard](src/assets/Stats_Page.png)
 
-[![React](https://img.shields.io/badge/React-19.0.0-61DAFB?style=flat-square&logo=react&logoColor=white)](https://reactjs.org/)
-[![Vite](https://img.shields.io/badge/Vite-6.2.0-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)
-[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4.1.5-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![Django](https://img.shields.io/badge/Backend-Django-092E20?style=flat-square&logo=django&logoColor=white)](https://djangoproject.com/)
+[![React](https://img.shields.io/badge/React-19.0.0-black?style=flat-square&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![Vite](https://img.shields.io/badge/Vite-6.2.0-black?style=flat-square&logo=vite&logoColor=646CFF)](https://vitejs.dev/)
+[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4.1.5-black?style=flat-square&logo=tailwind-css&logoColor=38B2AC)](https://tailwindcss.com/)
+[![Django](https://img.shields.io/badge/Backend-Django-black?style=flat-square&logo=django&logoColor=092E20)](https://djangoproject.com/)
 
 [✨ Features](#-features) • [🚀 Quick Start](#-quick-start) • [🛠️ Tech Stack](#%EF%B8%8F-tech-stack) • [📁 Project Structure](#-project-structure) • [🤝 Contributing](#-contributing)
 
@@ -18,6 +18,10 @@
 ---
 
 ## 📖 About
+
+<div align="center">
+  <img src="src/assets/logo.png" alt="Fokuso Logo" width="120" height="120">
+</div>
 
 Fokuso is a comprehensive productivity platform designed to enhance your learning experience through scientifically-proven techniques. Built with modern web technologies, it combines the power of the Pomodoro Technique, spaced repetition learning, and intelligent task management to help you achieve peak focus and productivity.
 
@@ -282,42 +286,6 @@ npm run test:coverage
 
 # Run tests in watch mode
 npm run test:watch
-```
-
----
-
-## 📦 Deployment
-
-### **Vercel** (Recommended)
-
-```bash
-# Install Vercel CLI
-npm i -g vercel
-
-# Deploy
-vercel
-```
-
-### **Netlify**
-
-```bash
-# Build the project
-npm run build
-
-# Deploy dist/ folder to Netlify
-```
-
-### **Docker**
-
-```dockerfile
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY . .
-RUN npm run build
-EXPOSE 5173
-CMD ["npm", "run", "preview"]
 ```
 
 ---
