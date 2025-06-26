@@ -8,6 +8,7 @@ import { Achievements } from "@/components/statistics/Achievements";
 import useFlashcardStore from "@/store/useFlashcardStore";
 
 import { useEffect } from "react";
+import usePomodoroStatsStore from "../../store/usePomodoroStatsStore";
 
 function StatisticsPage() {
   // Dummy data - will be replaced with real database queries later
@@ -15,21 +16,32 @@ function StatisticsPage() {
   const { reviewsToday, dailyStats, fetchTodayStats, fetchDailyStats } =
     useFlashcardStore();
 
+  const {
+    stats: pomodoroStats,
+    fetchStats,
+    fetchStatsIfNeeded,
+    isLoading,
+    error
+  } = usePomodoroStatsStore();
+
   useEffect(() => {
     fetchTodayStats();
     fetchDailyStats(7); // Get last 7 days
-  }, [fetchTodayStats, fetchDailyStats]);
+
+    //Fetch pomodoro stats
+    fetchStatsIfNeeded();
+  }, [fetchTodayStats, fetchDailyStats, fetchStatsIfNeeded]);
 
   const stats = {
-    totalSessions: 247,
-    totalFocusTime: 6175, // in minutes
-    todayFocusTime: 125, // in minutes
-    currentStreak: 12,
-    longestStreak: 28,
-    averageSessionLength: 25,
-    thisWeekSessions: 18,
-    thisMonthSessions: 73,
-    totalBreakTime: 1235, // in minutes
+    totalSessions: pomodoroStats.totalSessions,
+    totalFocusTime: pomodoroStats.totalFocusTime, // in minutes
+    todayFocusTime: pomodoroStats.todayFocusTime, // in minutes
+    currentStreak: pomodoroStats.currentStreak,
+    longestStreak: pomodoroStats.longestStreak,
+    averageSessionLength: pomodoroStats.averageSessionLength,
+    thisWeekSessions: pomodoroStats.thisWeekSessions,
+    thisMonthSessions: pomodoroStats.thisMonthSessions,
+    totalBreakTime: pomodoroStats.totalBreakTime, // in minutes
 
     // Flashcard data
     flashcardsReviewedToday: 24,
