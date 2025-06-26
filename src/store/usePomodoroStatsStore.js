@@ -135,34 +135,6 @@ const usePomodoroStatsStore = create(
           }
         },
 
-        // Fetch Hourly Data
-        fetchHourlyData: async () => {
-          const token = localStorage.getItem("auth-storage")
-            ? JSON.parse(localStorage.getItem("auth-storage")).state.token
-            : null;
-
-          if (!token) return;
-
-          try {
-            const response = await fetch(
-              `${import.meta.env.VITE_API_URL}/api/stats/hourly-data/`,
-              {
-                headers: {
-                  Authorization: `Token ${token}`,
-                  "Content-Type": "application/json",
-                },
-              }
-            );
-
-            if (response.ok) {
-              const hourlyData = await response.json();
-              set({ hourlyData });
-            }
-          } catch (error) {
-            console.error("Error fetching hourly data:", error);
-          }
-        },
-
         // Fetch Today's Hourly Data (for today's progress chart)
         fetchTodayHourlyData: async () => {
           const token = localStorage.getItem("auth-storage")
@@ -188,17 +160,31 @@ const usePomodoroStatsStore = create(
             if (response.ok) {
               const todaySessions = await response.json();
 
-              // Convert sessions to hourly data for the chart
+              // Filter only focus sessions
+              const focusSessions = todaySessions.filter(
+                (session) => session.session_type === "focus"
+              );
+
+              // Group sessions by hour
+              const sessionsByHour = {};
+
+              // Initialize all hours to 0
+              for (let hour = 0; hour < 24; hour++) {
+                sessionsByHour[hour] = 0;
+              }
+
+              // Count sessions per hour
+              focusSessions.forEach((session) => {
+                const sessionHour = new Date(session.created_at).getHours();
+                sessionsByHour[sessionHour]++;
+              });
+
+              // Convert to hourly data format for the chart
               const hourlyData = [];
               for (let hour = 0; hour < 24; hour++) {
-                const sessionsAtHour = todaySessions.filter((session) => {
-                  const sessionHour = new Date(session.created_at).getHours();
-                  return sessionHour <= hour;
-                }).length;
-
                 hourlyData.push({
                   hour: hour.toString(),
-                  sessions: sessionsAtHour,
+                  sessions: sessionsByHour[hour],
                 });
               }
 
@@ -281,14 +267,14 @@ const usePomodoroStatsStore = create(
           });
         },
 
-        // Helper function to get today's sessions count
+        // Helper function to get today's sessions count (FOCUS ONLY)
         getTodaySessionsCount: () => {
           const { sessions } = get();
           const today = new Date().toISOString().split("T")[0];
           return sessions.filter(
             (session) =>
               session.created_at.startsWith(today) &&
-              session.session_type === "focus"
+              session.session_type === "focus" // Only count focus sessions
           ).length;
         },
 

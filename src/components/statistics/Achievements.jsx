@@ -3,6 +3,14 @@ import { Badge } from "@/components/ui/badge";
 import { Award, Trophy } from "lucide-react";
 
 export function Achievements({ achievements }) {
+  // sort achievements by completion
+  achievements.sort((a, b) => {
+    if (a.earned === b.earned) {
+      return 0;
+    }
+    return a.earned ? -1 : 1;
+  });
+
   return (
     <Card className="bg-card/80 backdrop-blur-sm border-border shadow-xl">
       <CardHeader>
@@ -57,14 +65,14 @@ export function Achievements({ achievements }) {
                   >
                     {achievement.description}
                   </p>
-                  {achievement.earned && (
+                  {/* {achievement.earned && (
                     <Badge
                       variant="secondary"
                       className="mt-2 bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400"
                     >
                       Earned
                     </Badge>
-                  )}
+                  )} */}
                 </div>
               </div>
             </div>

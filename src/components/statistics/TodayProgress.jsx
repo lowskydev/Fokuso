@@ -35,10 +35,11 @@ export function TodayProgress({ stats, hourlyData }) {
   // Calculate today's sessions from hourly data or use stats
   const todaySessions =
     hourlyData.length > 0
-      ? Math.max(...hourlyData.map((h) => parseInt(h.sessions) || 0))
-      : stats.todayFocusTime
-      ? Math.floor(stats.todayFocusTime / stats.averageSessionLength)
-      : 0;
+      ? hourlyData.reduce(
+          (total, hour) => total + parseInt(hour.sessions || 0),
+          0
+        ) // Sum all sessions from hourly data
+      : Math.floor(stats.todayFocusTime / (stats.averageSessionLength || 25)); // Fallback calculation
 
   const dailyGoal = 6;
   const progressPercentage = Math.round((todaySessions / dailyGoal) * 100);
