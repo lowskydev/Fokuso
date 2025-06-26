@@ -287,34 +287,34 @@ Get to know our team:
         <sub><b><a href="https://github.com/lowskydev">lowskydev</a></b></sub>
       </a>
       <br />
-      <sub>🎯 Lead Developer</sub>
+      <sub>🚀 Project Leader & Full-Stack Developer</sub>
     </td>
     <td align="center">
-      <a href="https://github.com/contributor2">
-        <img src="https://github.com/contributor2.png" width="100px;" alt="Contributor 2"/>
+      <a href="https://github.com/HiraethSerra">
+        <img src="https://github.com/HiraethSerra.png" width="100px;" alt="HiraethSerra"/>
         <br />
-        <sub><b><a href="https://github.com/contributor2">Contributor 2</a></b></sub>
+        <sub><b><a href="https://github.com/HiraethSerra">HiraethSerra</a></b></sub>
       </a>
       <br />
-      <sub>🎨 UI/UX Design</sub>
+      <sub>🎨 Frontend Developer (UI/UX)</sub>
     </td>
     <td align="center">
-      <a href="https://github.com/contributor3">
-        <img src="https://github.com/contributor3.png" width="100px;" alt="Contributor 3"/>
+      <a href="https://github.com/ChantelleKwenda">
+        <img src="https://github.com/ChantelleKwenda.png" width="100px;" alt="ChantelleKwenda"/>
         <br />
-        <sub><b><a href="https://github.com/contributor3">Contributor 3</a></b></sub>
+        <sub><b><a href="https://github.com/ChantelleKwenda">ChantelleKwenda</a></b></sub>
       </a>
       <br />
-      <sub>⚡ Backend Development</sub>
+      <sub>💻 Frontend Developer</sub>
     </td>
     <td align="center">
-      <a href="https://github.com/contributor4">
-        <img src="https://github.com/contributor4.png" width="100px;" alt="Contributor 4"/>
+      <a href="https://github.com/lyes0000">
+        <img src="https://github.com/lyes0000.png" width="100px;" alt="lyes0000"/>
         <br />
-        <sub><b><a href="https://github.com/contributor4">Contributor 4</a></b></sub>
+        <sub><b><a href="https://github.com/lyes0000">lyes0000</a></b></sub>
       </a>
       <br />
-      <sub>🧪 Quality Assurance</sub>
+      <sub>⚡ Backend Developer</sub>
     </td>
   </tr>
 </table>
