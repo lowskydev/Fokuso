@@ -24,6 +24,14 @@ const usePomodoroStatsStore = create(
         isLoading: false,
         error: null,
 
+        // ADD: Flashcard stats for Statistics page only
+        flashcardStats: {
+          reviewsToday: 0,
+          correctAnswers: 0,
+          incorrectAnswers: 0,
+          accuracyPercentage: 100,
+        },
+
         // Hydration state
         _hasHydrated: false,
         setHasHydrated: (state) => {
@@ -111,6 +119,41 @@ const usePomodoroStatsStore = create(
           } catch (error) {
             console.error("Error fetching user stats:", error);
             set({ error: error.message, isLoading: false });
+          }
+        },
+
+        // Fetch flashcard stats for Statistics page
+        fetchFlashcardStats: async () => {
+          const token = localStorage.getItem("auth-storage")
+            ? JSON.parse(localStorage.getItem("auth-storage")).state.token
+            : null;
+
+          if (!token) return;
+
+          try {
+            const response = await fetch(
+              `${import.meta.env.VITE_API_URL}/api/flashcards/today-stats/`,
+              {
+                headers: {
+                  Authorization: `Token ${token}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+
+            if (response.ok) {
+              const stats = await response.json();
+              set({
+                flashcardStats: {
+                  reviewsToday: stats.flashcards_reviewed || 0,
+                  correctAnswers: stats.correct_reviews || 0,
+                  incorrectAnswers: stats.incorrect_reviews || 0,
+                  accuracyPercentage: stats.accuracy_percentage || 100,
+                },
+              });
+            }
+          } catch (error) {
+            console.error("Error fetching flashcard stats:", error);
           }
         },
 
@@ -244,19 +287,21 @@ const usePomodoroStatsStore = create(
           }
         },
 
-        // Fetch All Data (comprehensive fetch)
+        // UPDATE: Include flashcard stats in fetchAllData
         fetchAllData: async () => {
           const {
             fetchUserStats,
             fetchWeeklyData,
             fetchTodayHourlyData,
             fetchSessions,
+            fetchFlashcardStats,
           } = get();
 
           await Promise.all([
             fetchUserStats(),
             fetchWeeklyData(),
             fetchTodayHourlyData(),
+            fetchFlashcardStats(), // ADD this line
             fetchSessions({
               start_date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
                 .toISOString()
@@ -317,6 +362,12 @@ const usePomodoroStatsStore = create(
             weeklyData: [],
             hourlyData: [],
             sessions: [],
+            flashcardStats: {
+              reviewsToday: 0,
+              correctAnswers: 0,
+              incorrectAnswers: 0,
+              accuracyPercentage: 100,
+            },
             isLoading: false,
             error: null,
           }),
@@ -326,8 +377,8 @@ const usePomodoroStatsStore = create(
         partialize: (state) => ({
           userStats: state.userStats,
           sessions: state.sessions.slice(0, 50),
+          // Don't persist flashcard stats - always fetch fresh
         }),
-        // Add hydration callback
         onRehydrateStorage: (state) => {
           return () => state?.setHasHydrated(true);
         },

@@ -13,21 +13,12 @@ import { useHydration } from "@/hooks/useHydration";
 import { useEffect } from "react";
 
 function StatisticsPage() {
-  // Get flashcard data
-  const {
-    reviewsToday,
-    dailyStats,
-    fetchTodayStats,
-    fetchDailyStats,
-    initializeDailyStats,
-    _hasHydrated: flashcardHydrated,
-  } = useFlashcardStore();
-
-  // Get Pomodoro data
+  // Only use the Pomodoro store
   const {
     userStats,
     weeklyData,
     hourlyData,
+    flashcardStats, //  Get flashcard stats from Pomodoro store
     fetchAllData,
     getTodaySessionsCount,
     getTodayFocusTime,
@@ -35,24 +26,15 @@ function StatisticsPage() {
     _hasHydrated: pomodoroHydrated,
   } = usePomodoroStatsStore();
 
-  // Wait for both stores to hydrate
-  const hasHydrated = useHydration(useFlashcardStore, usePomodoroStatsStore);
+  // Wait for hydration
+  const hasHydrated = useHydration(usePomodoroStatsStore);
 
   useEffect(() => {
     // Only fetch data after hydration is complete
     if (hasHydrated) {
-      initializeDailyStats();
-      fetchTodayStats();
-      fetchDailyStats(7);
-      fetchAllData();
+      fetchAllData(); // This now includes flashcard stats
     }
-  }, [
-    hasHydrated,
-    fetchTodayStats,
-    fetchDailyStats,
-    fetchAllData,
-    initializeDailyStats,
-  ]);
+  }, [hasHydrated, fetchAllData]);
 
   // Show loading state while hydrating
   if (!hasHydrated) {
@@ -68,9 +50,11 @@ function StatisticsPage() {
     );
   }
 
-  // Combine real data from both sources
+  console.log("XD", flashcardStats);
+
+  // SIMPLIFIED: All data from one store
   const combinedStats = {
-    // Pomodoro stats from API
+    // Pomodoro stats
     totalSessions: userStats.totalSessions,
     totalFocusTime: userStats.totalFocusTime,
     todayFocusTime: userStats.todayFocusTime,
@@ -81,13 +65,11 @@ function StatisticsPage() {
     thisMonthSessions: userStats.thisMonthSessions,
     totalBreakTime: userStats.totalBreakTime,
 
-    // Flashcard data from existing store with fallbacks
-    flashcardsReviewedToday: reviewsToday || 0,
-    totalFlashcards: 156, // This could come from flashcard store
-    correctAnswers: dailyStats?.correct_reviews || 0,
-    incorrectAnswers: dailyStats?.incorrect_reviews || 0,
-    cardsToReview: 12, // This could be calculated from due flashcards
-    averageAccuracy: dailyStats?.accuracy_percentage || 100,
+    // Flashcard stats - now from the same store!
+    flashcardsReviewedToday: flashcardStats.reviewsToday,
+    correctAnswers: flashcardStats.correctAnswers,
+    incorrectAnswers: flashcardStats.incorrectAnswers,
+    averageAccuracy: flashcardStats.accuracyPercentage,
   };
 
   // Use real hourly data from API or fallback to empty array

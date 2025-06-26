@@ -124,9 +124,7 @@ export function DetailedStats({ stats }) {
           </div>
           <div className="text-center p-3 bg-purple-50 dark:bg-purple-950/20 rounded-lg">
             <p className="text-sm font-medium text-purple-700 dark:text-purple-400">
-              {stats.cardsToReview > 0
-                ? `${stats.cardsToReview} cards due for review`
-                : "All caught up! 🎉"}
+              {`Your accuracy is ${stats.averageAccuracy}%`}
             </p>
             <p className="text-xs text-purple-600 dark:text-purple-500">
               {accuracy >= 80

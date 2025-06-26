@@ -483,6 +483,7 @@ const useFlashcardStore = create(
         },
 
         // Fetch today's review stats
+        // Fetch today's review stats
         fetchTodayStats: async () => {
           const token = localStorage.getItem("auth-storage")
             ? JSON.parse(localStorage.getItem("auth-storage")).state.token
@@ -512,6 +513,8 @@ const useFlashcardStore = create(
 
             if (response.ok) {
               const stats = await response.json();
+
+              // IMPORTANT: Set the stats directly without calling initializeDailyStats
               set({
                 dailyStats: stats,
                 reviewsToday: stats.flashcards_reviewed,
@@ -559,6 +562,7 @@ const useFlashcardStore = create(
         // Initialize daily stats if not present
         initializeDailyStats: () => {
           set((state) => {
+            // Only initialize if dailyStats is null/undefined AND the store has been hydrated
             if (!state.dailyStats && state._hasHydrated) {
               return {
                 ...state,
@@ -570,7 +574,7 @@ const useFlashcardStore = create(
                 },
               };
             }
-            return state;
+            return state; // Don't change anything if dailyStats already exists
           });
         },
 
@@ -592,7 +596,8 @@ const useFlashcardStore = create(
         partialize: (state) => ({
           decks: state.decks,
           reviewsToday: state.reviewsToday,
-          dailyStats: state.dailyStats,
+          // Don't persist dailyStats - let it always be fetched fresh
+          // dailyStats: state.dailyStats,
         }),
         // Add hydration callback
         onRehydrateStorage: (state) => {
