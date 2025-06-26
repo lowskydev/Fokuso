@@ -73,7 +73,6 @@ Whether you're a student, professional, or lifelong learner, Fokuso provides the
 - **Real-time Dashboard**: Live productivity metrics
 - **Progress Visualization**: Charts and graphs for insights
 - **Achievement System**: Gamified productivity milestones
-- **Export Options**: Data export for external analysis
 - **Trend Analysis**: Long-term productivity patterns
 
 ### 🎨 **Modern User Experience**
@@ -81,7 +80,6 @@ Whether you're a student, professional, or lifelong learner, Fokuso provides the
 - **Responsive Design**: Perfect on desktop, tablet, and mobile
 - **Dark/Light Themes**: Comfortable viewing in any environment
 - **Intuitive Interface**: Clean, distraction-free design
-- **Accessibility**: WCAG compliant for all users
 - **Progressive Web App**: Install and use offline
 
 ---
@@ -180,35 +178,26 @@ npm run preview
 
 ```
 src/
-├── 📁 components/           # Reusable UI components
-│   ├── 📁 calendar/         # Calendar-specific components
-│   ├── 📁 flashcards/       # Flashcard system components
-│   ├── 📁 layouts/          # Page layout components
-│   ├── 📁 pages/            # Route page components
-│   ├── 📁 pomodoro/         # Timer components
-│   ├── 📁 statistics/       # Analytics components
-│   ├── 📁 todo/             # Task management components
-│   ├── 📁 ui/               # Base UI primitives
-│   └── 📁 theme-provider.jsx # Theme context
+├── 📁 components/                # Reusable UI components
+│   ├── 📁 calendar/              # Calendar-specific components
+│   ├── 📁 flashcards/            # Flashcard system components
+│   ├── 📁 layouts/               # Page layout components
+│   ├── 📁 pages/                 # Route page components
+│   ├── 📁 pomodoro/              # Timer components
+│   ├── 📁 statistics/            # Analytics components
+│   ├── 📁 todo/                  # Task management components
+│   ├── 📁 ui/                    # Base UI primitives
+│   └── 📁 theme-provider.jsx     # Theme context
 │
-├── 📁 hooks/                # Custom React hooks
-│   └── 📄 use-mobile.js     # Mobile detection hook
+├── 📁 store/                     # State management
+│   ├── 📄 useAuthStore.js        # Authentication state
+│   ├── 📄 useCalendarStore.js    # Calendar data
+│   ├── 📄 useFlashcardStore.js   # Flashcard system
+│   └── 📄 useTodoStore.js        # Todo management
 │
-├── 📁 lib/                  # Utility libraries
-│   └── 📄 utils.js          # Common utility functions
-│
-├── 📁 store/                # State management
-│   ├── 📄 useAuthStore.js   # Authentication state
-│   ├── 📄 useCalendarStore.js # Calendar data
-│   ├── 📄 useFlashcardStore.js # Flashcard system
-│   └── 📄 useTodoStore.js   # Todo management
-│
-├── 📁 utils/                # Utility functions
-│   └── 📄 sound.js          # Audio notification system
-│
-├── 📄 App.jsx               # Main application component
-├── 📄 main.jsx              # Application entry point
-└── 📄 index.css             # Global styles
+├── 📄 App.jsx                    # Main application component
+├── 📄 main.jsx                   # Application entry point
+└── 📄 index.css                  # Global styles
 ```
 
 ### **Key Architecture Decisions**
@@ -264,30 +253,6 @@ Fokuso supports extensive customization through:
 - **Component Variants**: Flexible component styling
 - **Responsive Design**: Seamless experience across devices
 
-```css
-/* Example theme customization */
-:root {
-  --primary: oklch(0.645 0.246 16.439);
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.141 0.005 285.823);
-}
-```
-
----
-
-## 🧪 Testing
-
-```bash
-# Run unit tests
-npm run test
-
-# Run tests with coverage
-npm run test:coverage
-
-# Run tests in watch mode
-npm run test:watch
-```
-
 ---
 
 ## 🤝 Contributing
@@ -306,23 +271,10 @@ We love contributions! Here's how you can help make Fokuso even better:
 
 - Follow the existing code style and conventions
 - Write meaningful commit messages
-- Add tests for new features
-- Update documentation as needed
-- Ensure all tests pass before submitting
-
-### **Areas for Contribution**
-
-- 🐛 **Bug fixes** and performance improvements
-- ✨ **New features** and enhancements
-- 📚 **Documentation** improvements
-- 🎨 **UI/UX** enhancements
-- 🧪 **Testing** and quality assurance
 
 ---
 
 ## 👥 Contributors
-
-We're grateful to these amazing people who have contributed to Fokuso:
 
 <table>
   <tr>
@@ -365,8 +317,6 @@ We're grateful to these amazing people who have contributed to Fokuso:
   </tr>
 </table>
 
-**Want to join this list?** Check out our [Contributing Guidelines](#-contributing) and make your first contribution!
-
 ---
 
 ## 📄 License
@@ -379,20 +329,8 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 - **Francesco Cirillo** for the Pomodoro Technique
 - **Piotr Wozniak** for the SM-2 spaced repetition algorithm
-- **Vercel** for the amazing deployment platform
 - **Radix UI** for accessible component primitives
 - **TailwindCSS** for the utility-first CSS framework
-
----
-
-## 📞 Support
-
-Need help? We've got you covered:
-
-- 📧 **Email**: support@fokuso.app
-- 💬 **Discord**: [Join our community](https://discord.gg/fokuso)
-- 📖 **Documentation**: [Read the docs](https://docs.fokuso.app)
-- 🐛 **Bug Reports**: [Create an issue](https://github.com/lowskydev/Fokuso/issues)
 
 ---
 
