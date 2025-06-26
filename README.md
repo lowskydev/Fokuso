@@ -1,8 +1,9 @@
 # Fokuso
 
 <div align="center">
+  <img src="src/assets/logo.png" alt="Fokuso Logo" width="120" height="120">
+</div>
 
-![Fokuso Dashboard](src/assets/Stats_Page.png)
 
 [![React](https://img.shields.io/badge/React-19.0-61DAFB?style=for-the-badge&labelColor=black&logo=react&logoColor=61DAFB)](https://reactjs.org/)
 [![Vite](https://img.shields.io/badge/Vite-6.2-646CFF?style=for-the-badge&labelColor=black&logo=vite&logoColor=646CFF)](https://vitejs.dev/)
@@ -18,8 +19,8 @@
 ## 📖 About
 
 <div align="center">
-  <img src="src/assets/logo.png" alt="Fokuso Logo" width="120" height="120">
-</div>
+
+![Fokuso Dashboard](src/assets/Stats_Page.png)
 
 Fokuso is a comprehensive productivity platform designed to enhance your learning experience through scientifically-proven techniques. Built with modern web technologies, it combines the power of the Pomodoro Technique, spaced repetition learning, and intelligent task management to help you achieve peak focus and productivity.
 
