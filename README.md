@@ -276,40 +276,42 @@ We love contributions! Here's how you can help make Fokuso even better:
 
 ## 👥 Contributors
 
+Get to know our team:
+
 <table>
   <tr>
     <td align="center">
-      <a href="https://github.com/contributor1">
-        <img src="https://via.placeholder.com/100x100?text=C1" width="100px;" alt="Contributor 1"/>
+      <a href="https://github.com/lowskydev">
+        <img src="https://github.com/lowskydev.png" width="100px;" alt="lowskydev"/>
         <br />
-        <sub><b>Contributor 1</b></sub>
+        <sub><b><a href="https://github.com/lowskydev">lowskydev</a></b></sub>
       </a>
       <br />
-      <sub>🎯 Product Vision</sub>
+      <sub>🎯 Lead Developer</sub>
     </td>
     <td align="center">
       <a href="https://github.com/contributor2">
-        <img src="https://via.placeholder.com/100x100?text=C2" width="100px;" alt="Contributor 2"/>
+        <img src="https://github.com/contributor2.png" width="100px;" alt="Contributor 2"/>
         <br />
-        <sub><b>Contributor 2</b></sub>
+        <sub><b><a href="https://github.com/contributor2">Contributor 2</a></b></sub>
       </a>
       <br />
       <sub>🎨 UI/UX Design</sub>
     </td>
     <td align="center">
       <a href="https://github.com/contributor3">
-        <img src="https://via.placeholder.com/100x100?text=C3" width="100px;" alt="Contributor 3"/>
+        <img src="https://github.com/contributor3.png" width="100px;" alt="Contributor 3"/>
         <br />
-        <sub><b>Contributor 3</b></sub>
+        <sub><b><a href="https://github.com/contributor3">Contributor 3</a></b></sub>
       </a>
       <br />
       <sub>⚡ Backend Development</sub>
     </td>
     <td align="center">
       <a href="https://github.com/contributor4">
-        <img src="https://via.placeholder.com/100x100?text=C4" width="100px;" alt="Contributor 4"/>
+        <img src="https://github.com/contributor4.png" width="100px;" alt="Contributor 4"/>
         <br />
-        <sub><b>Contributor 4</b></sub>
+        <sub><b><a href="https://github.com/contributor4">Contributor 4</a></b></sub>
       </a>
       <br />
       <sub>🧪 Quality Assurance</sub>
