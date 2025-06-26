@@ -6,10 +6,10 @@
 
 ![Fokuso Dashboard](src/assets/Stats_Page.png)
 
-[![React](https://img.shields.io/badge/React-19.0.0-black?style=flat-square&logo=react&logoColor=61DAFB)](https://reactjs.org/)
-[![Vite](https://img.shields.io/badge/Vite-6.2.0-black?style=flat-square&logo=vite&logoColor=646CFF)](https://vitejs.dev/)
-[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4.1.5-black?style=flat-square&logo=tailwind-css&logoColor=38B2AC)](https://tailwindcss.com/)
-[![Django](https://img.shields.io/badge/Backend-Django-black?style=flat-square&logo=django&logoColor=092E20)](https://djangoproject.com/)
+[![React](https://img.shields.io/badge/React-19.0-61DAFB?style=for-the-badge&labelColor=black&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![Vite](https://img.shields.io/badge/Vite-6.2-646CFF?style=for-the-badge&labelColor=black&logo=vite&logoColor=646CFF)](https://vitejs.dev/)
+[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4.1-38B2AC?style=for-the-badge&labelColor=black&logo=tailwind-css&logoColor=38B2AC)](https://tailwindcss.com/)
+[![Django](https://img.shields.io/badge/Backend-Django-092E20?style=for-the-badge&labelColor=black&logo=django&logoColor=092E20)](https://djangoproject.com/)
 
 [✨ Features](#-features) • [🚀 Quick Start](#-quick-start) • [🛠️ Tech Stack](#%EF%B8%8F-tech-stack) • [📁 Project Structure](#-project-structure) • [🤝 Contributing](#-contributing)
 
