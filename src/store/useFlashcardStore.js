@@ -13,6 +13,13 @@ const useFlashcardStore = create(
         error: null,
         dailyStats: null,
         reviewsToday: 0,
+        isRefreshing: false,
+
+        // Hydration state
+        _hasHydrated: false,
+        setHasHydrated: (state) => {
+          set({ _hasHydrated: state });
+        },
 
         // Deck Actions
         fetchDecks: async () => {
@@ -328,21 +335,58 @@ const useFlashcardStore = create(
             const reviewResult = await response.json();
 
             // Update the flashcard with new review data
-            set((state) => ({
-              flashcards: state.flashcards.map((flashcard) =>
-                flashcard.id === flashcardId
-                  ? {
-                      ...flashcard,
-                      next_review: reviewResult.new_next_review,
-                      interval: reviewResult.new_interval,
-                      ease_factor: reviewResult.new_ease_factor,
-                      repetition: reviewResult.new_repetition,
-                      is_learning: reviewResult.is_learning,
-                    }
-                  : flashcard
-              ),
-              isLoading: false,
-            }));
+            set((state) => {
+              // Update dailyStats with the new review
+              const updatedDailyStats = state.dailyStats
+                ? {
+                    ...state.dailyStats,
+                    flashcards_reviewed:
+                      reviewResult.reviews_today ||
+                      state.dailyStats.flashcards_reviewed + 1,
+                    correct_reviews:
+                      grade > 1
+                        ? state.dailyStats.correct_reviews + 1
+                        : state.dailyStats.correct_reviews,
+                    incorrect_reviews:
+                      grade === 1
+                        ? state.dailyStats.incorrect_reviews + 1
+                        : state.dailyStats.incorrect_reviews,
+                    accuracy_percentage:
+                      reviewResult.accuracy_percentage ||
+                      Math.round(
+                        ((grade > 1
+                          ? state.dailyStats.correct_reviews + 1
+                          : state.dailyStats.correct_reviews) /
+                          (state.dailyStats.flashcards_reviewed + 1)) *
+                          100
+                      ),
+                  }
+                : {
+                    flashcards_reviewed: 1,
+                    correct_reviews: grade > 1 ? 1 : 0,
+                    incorrect_reviews: grade === 1 ? 1 : 0,
+                    accuracy_percentage: grade > 1 ? 100 : 0,
+                  };
+
+              return {
+                flashcards: state.flashcards.map((flashcard) =>
+                  flashcard.id === flashcardId
+                    ? {
+                        ...flashcard,
+                        next_review: reviewResult.new_next_review,
+                        interval: reviewResult.new_interval,
+                        ease_factor: reviewResult.new_ease_factor,
+                        repetition: reviewResult.new_repetition,
+                        is_learning: reviewResult.is_learning,
+                      }
+                    : flashcard
+                ),
+                isLoading: false,
+                reviewsToday:
+                  reviewResult.reviews_today || state.reviewsToday + 1,
+                dailyStats: updatedDailyStats,
+              };
+            });
 
             return reviewResult;
           } catch (error) {
@@ -357,7 +401,6 @@ const useFlashcardStore = create(
             ? JSON.parse(localStorage.getItem("auth-storage")).state.token
             : null;
 
-          // Note: NO loading state changes here
           try {
             const response = await fetch(
               `${
@@ -379,24 +422,57 @@ const useFlashcardStore = create(
 
             const reviewResult = await response.json();
 
-            // Update the flashcard with new review data (but no loading state)
-            set((state) => ({
-              flashcards: state.flashcards.map((flashcard) =>
-                flashcard.id === flashcardId
-                  ? {
-                      ...flashcard,
-                      next_review: reviewResult.new_next_review,
-                      interval: reviewResult.new_interval,
-                      ease_factor: reviewResult.new_ease_factor,
-                      repetition: reviewResult.new_repetition,
-                      is_learning: reviewResult.is_learning,
-                    }
-                  : flashcard
-              ),
-              // Update today's review count
-              reviewsToday:
-                reviewResult.reviews_today || state.reviewsToday + 1,
-            }));
+            set((state) => {
+              // Update dailyStats with the new review
+              const updatedDailyStats = state.dailyStats
+                ? {
+                    ...state.dailyStats,
+                    flashcards_reviewed:
+                      reviewResult.reviews_today ||
+                      state.dailyStats.flashcards_reviewed + 1,
+                    correct_reviews:
+                      grade > 1
+                        ? state.dailyStats.correct_reviews + 1
+                        : state.dailyStats.correct_reviews,
+                    incorrect_reviews:
+                      grade === 1
+                        ? state.dailyStats.incorrect_reviews + 1
+                        : state.dailyStats.incorrect_reviews,
+                    accuracy_percentage:
+                      reviewResult.accuracy_percentage ||
+                      Math.round(
+                        ((grade > 1
+                          ? state.dailyStats.correct_reviews + 1
+                          : state.dailyStats.correct_reviews) /
+                          (state.dailyStats.flashcards_reviewed + 1)) *
+                          100
+                      ),
+                  }
+                : {
+                    flashcards_reviewed: 1,
+                    correct_reviews: grade > 1 ? 1 : 0,
+                    incorrect_reviews: grade === 1 ? 1 : 0,
+                    accuracy_percentage: grade > 1 ? 100 : 0,
+                  };
+
+              return {
+                flashcards: state.flashcards.map((flashcard) =>
+                  flashcard.id === flashcardId
+                    ? {
+                        ...flashcard,
+                        next_review: reviewResult.new_next_review,
+                        interval: reviewResult.new_interval,
+                        ease_factor: reviewResult.new_ease_factor,
+                        repetition: reviewResult.new_repetition,
+                        is_learning: reviewResult.is_learning,
+                      }
+                    : flashcard
+                ),
+                reviewsToday:
+                  reviewResult.reviews_today || state.reviewsToday + 1,
+                dailyStats: updatedDailyStats,
+              };
+            });
 
             return reviewResult;
           } catch (error) {
@@ -414,6 +490,15 @@ const useFlashcardStore = create(
 
           if (!token) return;
 
+          // Prevent multiple simultaneous calls
+          const currentState = get();
+          if (currentState.isRefreshing) {
+            console.log("fetchTodayStats already in progress, skipping...");
+            return;
+          }
+
+          set({ isRefreshing: true });
+
           try {
             const response = await fetch(
               `${import.meta.env.VITE_API_URL}/api/flashcards/today-stats/`,
@@ -430,10 +515,14 @@ const useFlashcardStore = create(
               set({
                 dailyStats: stats,
                 reviewsToday: stats.flashcards_reviewed,
+                isRefreshing: false,
               });
+            } else {
+              set({ isRefreshing: false });
             }
           } catch (error) {
             console.error("Error fetching today's stats:", error);
+            set({ isRefreshing: false });
           }
         },
 
@@ -467,60 +556,22 @@ const useFlashcardStore = create(
           }
         },
 
-        // Update the reviewFlashcard method to update local state
-        reviewFlashcard: async (flashcardId, grade) => {
-          const token = localStorage.getItem("auth-storage")
-            ? JSON.parse(localStorage.getItem("auth-storage")).state.token
-            : null;
-
-          set({ isLoading: true, error: null });
-          try {
-            const response = await fetch(
-              `${
-                import.meta.env.VITE_API_URL
-              }/api/flashcards/${flashcardId}/review/`,
-              {
-                method: "POST",
-                headers: {
-                  Authorization: `Token ${token}`,
-                  "Content-Type": "application/json",
+        // Initialize daily stats if not present
+        initializeDailyStats: () => {
+          set((state) => {
+            if (!state.dailyStats && state._hasHydrated) {
+              return {
+                ...state,
+                dailyStats: {
+                  flashcards_reviewed: 0,
+                  correct_reviews: 0,
+                  incorrect_reviews: 0,
+                  accuracy_percentage: 100,
                 },
-                body: JSON.stringify({ grade }),
-              }
-            );
-
-            if (!response.ok) {
-              throw new Error("Failed to review flashcard");
+              };
             }
-
-            const reviewResult = await response.json();
-
-            // Update the flashcard with new review data
-            set((state) => ({
-              flashcards: state.flashcards.map((flashcard) =>
-                flashcard.id === flashcardId
-                  ? {
-                      ...flashcard,
-                      next_review: reviewResult.new_next_review,
-                      interval: reviewResult.new_interval,
-                      ease_factor: reviewResult.new_ease_factor,
-                      repetition: reviewResult.new_repetition,
-                      is_learning: reviewResult.is_learning,
-                    }
-                  : flashcard
-              ),
-              isLoading: false,
-              // Update today's review count
-              reviewsToday:
-                reviewResult.reviews_today || state.reviewsToday + 1,
-            }));
-
-            return reviewResult;
-          } catch (error) {
-            console.error("Error reviewing flashcard:", error);
-            set({ error: error.message, isLoading: false });
-            throw error;
-          }
+            return state;
+          });
         },
 
         // Utility Actions
@@ -532,15 +583,21 @@ const useFlashcardStore = create(
             flashcards: [],
             isLoading: false,
             error: null,
+            dailyStats: null,
+            reviewsToday: 0,
           }),
       }),
       {
         name: "flashcard-storage",
         partialize: (state) => ({
-          // Only persist decks, don't persist loading states or errors
           decks: state.decks,
-          reviewsToday: state.reviewsToday, // Persist today's review count
+          reviewsToday: state.reviewsToday,
+          dailyStats: state.dailyStats,
         }),
+        // Add hydration callback
+        onRehydrateStorage: (state) => {
+          return () => state?.setHasHydrated(true);
+        },
       }
     ),
     { name: "FlashcardStore" }

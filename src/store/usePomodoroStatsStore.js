@@ -1,3 +1,4 @@
+// src/store/usePomodoroStatsStore.js
 import { create } from "zustand";
 import { persist, devtools } from "zustand/middleware";
 
@@ -22,6 +23,12 @@ const usePomodoroStatsStore = create(
         sessions: [],
         isLoading: false,
         error: null,
+
+        // Hydration state
+        _hasHydrated: false,
+        setHasHydrated: (state) => {
+          set({ _hasHydrated: state });
+        },
 
         // Session Management
         createSession: async (sessionData) => {
@@ -317,10 +324,13 @@ const usePomodoroStatsStore = create(
       {
         name: "pomodoro-stats-storage",
         partialize: (state) => ({
-          // Only persist user stats and sessions, don't persist loading states
           userStats: state.userStats,
-          sessions: state.sessions.slice(0, 50), // Only persist recent 50 sessions
+          sessions: state.sessions.slice(0, 50),
         }),
+        // Add hydration callback
+        onRehydrateStorage: (state) => {
+          return () => state?.setHasHydrated(true);
+        },
       }
     ),
     { name: "PomodoroStatsStore" }

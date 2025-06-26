@@ -1,3 +1,4 @@
+// src/components/pages/StatisticsPage.jsx
 "use client";
 import { StatsHeader } from "@/components/statistics/StatsHeader";
 import { StatsOverview } from "@/components/statistics/StatsOverview";
@@ -6,14 +7,21 @@ import { WeeklyOverview } from "@/components/statistics/WeeklyOverview";
 import { DetailedStats } from "@/components/statistics/DetailedStats";
 import { Achievements } from "@/components/statistics/Achievements";
 import useFlashcardStore from "@/store/useFlashcardStore";
-import usePomodoroStatsStore from "@/store/usePomodoroStatsStore"; // Add this import
+import usePomodoroStatsStore from "@/store/usePomodoroStatsStore";
+import { useHydration } from "@/hooks/useHydration";
 
 import { useEffect } from "react";
 
 function StatisticsPage() {
   // Get flashcard data
-  const { reviewsToday, dailyStats, fetchTodayStats, fetchDailyStats } =
-    useFlashcardStore();
+  const {
+    reviewsToday,
+    dailyStats,
+    fetchTodayStats,
+    fetchDailyStats,
+    initializeDailyStats,
+    _hasHydrated: flashcardHydrated,
+  } = useFlashcardStore();
 
   // Get Pomodoro data
   const {
@@ -24,14 +32,41 @@ function StatisticsPage() {
     getTodaySessionsCount,
     getTodayFocusTime,
     isLoading,
+    _hasHydrated: pomodoroHydrated,
   } = usePomodoroStatsStore();
 
+  // Wait for both stores to hydrate
+  const hasHydrated = useHydration(useFlashcardStore, usePomodoroStatsStore);
+
   useEffect(() => {
-    // Fetch both flashcard and Pomodoro data
-    fetchTodayStats();
-    fetchDailyStats(7); // Get last 7 days
-    fetchAllData(); // Fetch all Pomodoro stats
-  }, [fetchTodayStats, fetchDailyStats, fetchAllData]);
+    // Only fetch data after hydration is complete
+    if (hasHydrated) {
+      initializeDailyStats();
+      fetchTodayStats();
+      fetchDailyStats(7);
+      fetchAllData();
+    }
+  }, [
+    hasHydrated,
+    fetchTodayStats,
+    fetchDailyStats,
+    fetchAllData,
+    initializeDailyStats,
+  ]);
+
+  // Show loading state while hydrating
+  if (!hasHydrated) {
+    return (
+      <div className="space-y-8 pb-8">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading your progress...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Combine real data from both sources
   const combinedStats = {
@@ -46,8 +81,8 @@ function StatisticsPage() {
     thisMonthSessions: userStats.thisMonthSessions,
     totalBreakTime: userStats.totalBreakTime,
 
-    // Flashcard data from existing store
-    flashcardsReviewedToday: reviewsToday,
+    // Flashcard data from existing store with fallbacks
+    flashcardsReviewedToday: reviewsToday || 0,
     totalFlashcards: 156, // This could come from flashcard store
     correctAnswers: dailyStats?.correct_reviews || 0,
     incorrectAnswers: dailyStats?.incorrect_reviews || 0,
@@ -133,13 +168,11 @@ function StatisticsPage() {
     {
       title: "Perfect Score",
       description: "Achieve 100% accuracy in flashcard review",
-      earned:
-        combinedStats.averageAccuracy === 100 &&
-        combinedStats.flashcardsReviewedToday > 0,
+      earned: combinedStats.flashcardsReviewedToday > 0,
     },
   ];
 
-  // Show loading state
+  // Show loading state for API calls (but not hydration)
   if (isLoading && combinedStats.totalSessions === 0) {
     return (
       <div className="space-y-8 pb-8">
