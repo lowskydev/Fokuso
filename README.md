@@ -290,6 +290,15 @@ Get to know our team:
       <sub>🚀 Project Leader & Full-Stack Developer</sub>
     </td>
     <td align="center">
+      <a href="https://github.com/lyes0000">
+        <img src="https://github.com/lyes0000.png" width="100px;" alt="lyes0000"/>
+        <br />
+        <sub><b><a href="https://github.com/lyes0000">lyes0000</a></b></sub>
+      </a>
+      <br />
+      <sub>⚡ Backend Developer</sub>
+    </td>
+    <td align="center">
       <a href="https://github.com/HiraethSerra">
         <img src="https://github.com/HiraethSerra.png" width="100px;" alt="HiraethSerra"/>
         <br />
@@ -306,15 +315,6 @@ Get to know our team:
       </a>
       <br />
       <sub>💻 Frontend Developer</sub>
-    </td>
-    <td align="center">
-      <a href="https://github.com/lyes0000">
-        <img src="https://github.com/lyes0000.png" width="100px;" alt="lyes0000"/>
-        <br />
-        <sub><b><a href="https://github.com/lyes0000">lyes0000</a></b></sub>
-      </a>
-      <br />
-      <sub>⚡ Backend Developer</sub>
     </td>
   </tr>
 </table>
