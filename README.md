@@ -116,11 +116,16 @@ Before you begin, ensure you have the following installed:
    ```
 
 4. **Open your browser**
+
    ```
    Navigate to http://localhost:5173
    ```
 
-5. **Set up environment variables** (optional)
+5. **Setup the Fokuso Backend**
+
+   Follow the instructions in the [Fokuso Backend README](https://github.com/lowskydev/Fokuso-API) to set up the backend.
+
+6. **Set up environment variables** (optional)
 
    ```bash
    cp .env.example .env
