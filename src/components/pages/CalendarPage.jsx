@@ -38,17 +38,24 @@ function CalendarPage() {
     const currentMonth = currentDate.getMonth();
     const currentYear = currentDate.getFullYear();
 
-    // Calculate start and end dates for the month
-    const startDate = new Date(currentYear, currentMonth, 1)
-      .toISOString()
-      .split("T")[0];
-    const endDate = new Date(currentYear, currentMonth + 1, 0)
-      .toISOString()
-      .split("T")[0];
+    // Get first day of month
+    const firstDay = new Date(currentYear, currentMonth, 1);
+    // Get last day of month
+    const lastDay = new Date(currentYear, currentMonth + 1, 0);
+
+    // Add a small buffer to ensure we get all events
+    const startDate = new Date(firstDay);
+    startDate.setDate(startDate.getDate() - 1); // One day before
+
+    const endDate = new Date(lastDay);
+    endDate.setDate(endDate.getDate() + 1); // One day after
+
+    const startDateStr = startDate.toISOString().split("T")[0];
+    const endDateStr = endDate.toISOString().split("T")[0];
 
     fetchEvents({
-      start_date: startDate,
-      end_date: endDate,
+      start_date: startDateStr,
+      end_date: endDateStr,
     });
   }, [currentDate, fetchEvents]);
 
