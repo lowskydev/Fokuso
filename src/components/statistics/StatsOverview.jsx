@@ -3,7 +3,7 @@ import { Trophy, Clock, Flame, Brain } from "lucide-react";
 
 export function StatsOverview({ stats }) {
   const formatHours = (minutes) => {
-    if (!minutes || minutes === 0) return "0h";
+    if (!minutes || minutes === 0) return "0";
     return (minutes / 60).toFixed(1);
   };
 
