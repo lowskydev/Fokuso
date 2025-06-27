@@ -109,22 +109,22 @@ Before you begin, ensure you have the following installed:
    npm install
    ```
 
-3. **Set up environment variables**
-
-   ```bash
-   cp .env.example .env
-   # Edit .env with your configuration
-   ```
-
-4. **Start the development server**
+3. **Start the development server**
 
    ```bash
    npm run dev
    ```
 
-5. **Open your browser**
+4. **Open your browser**
    ```
    Navigate to http://localhost:5173
+   ```
+
+5. **Set up environment variables** (optional)
+
+   ```bash
+   cp .env.example .env
+   # Edit .env with your configuration
    ```
 
 ### Production Build
