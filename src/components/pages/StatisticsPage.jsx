@@ -50,8 +50,6 @@ function StatisticsPage() {
     );
   }
 
-  console.log("XD", flashcardStats);
-
   // SIMPLIFIED: All data from one store
   const combinedStats = {
     // Pomodoro stats
