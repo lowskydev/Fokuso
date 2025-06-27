@@ -200,29 +200,6 @@ export function SettingsDialog({
               </p>
             </div>
           </div>
-
-          <Separator />
-
-          <div className="flex items-center justify-between">
-            <div>
-              <h4 className="text-lg font-medium text-foreground">
-                Reset Statistics
-              </h4>
-              <p className="text-sm text-muted-foreground">
-                Clear your completed sessions count
-              </p>
-            </div>
-            <Button
-              onClick={() => {
-                setCompletedSessions(0);
-                localStorage.setItem("completedSessions", "0");
-              }}
-              variant="outline"
-              className="text-red-600 border-red-200 hover:bg-red-50 dark:text-red-400 dark:border-red-800 dark:hover:bg-red-950/20"
-            >
-              Reset Stats
-            </Button>
-          </div>
         </div>
       </DialogContent>
     </Dialog>
